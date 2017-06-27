@@ -64,5 +64,23 @@ public class NetworkUtils {
         }
     }
 
+    public static ContentValues[] getRecipeContentValuesFromJsonResponse(String jsonResponse)
+            throws JSONException {
 
+        JSONArray jsonArray = new JSONArray(jsonResponse);
+
+        ContentValues[] contentValues = new ContentValues[jsonArray.length()];
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject recipeObject = jsonArray.getJSONObject(i);
+            ContentValues recipeValues = new ContentValues();
+
+            int recipeId = recipeObject.getInt(JSON_ID);
+            String recipeName = recipeObject.getString(JSON_NAME);
+            int servings = recipeObject.getInt(JSON_SERVINGS);
+
+            contentValues[i] = recipeValues;
+        }
+
+        return contentValues;
+    }
 }
