@@ -13,19 +13,22 @@ import net.simonvt.schematic.annotation.PrimaryKey;
 
 public class RecipeContract {
 
-    @DataType(DataType.Type.INTEGER)
-    @PrimaryKey(onConflict = ConflictResolutionType.REPLACE)
-    @AutoIncrement
-    public static final String COLUMN_ID = "_id";
+    public class RecipeEntry {
+        @DataType(DataType.Type.INTEGER)
+        @PrimaryKey(onConflict = ConflictResolutionType.REPLACE)
+        @AutoIncrement
+        public static final String COLUMN_ID = "_id";
 
-    @DataType(DataType.Type.INTEGER)
-    @NotNull
-    public static final String COLUMN_RECIPE_ID = "recipe_id";
+        @DataType(DataType.Type.INTEGER)
+        @NotNull
+        public static final String COLUMN_RECIPE_ID = "recipe_id";
 
-    @DataType(DataType.Type.TEXT)
-    @NotNull
-    public static final String COLUMN_RECIPE_NAME = "recipe";
+        @DataType(DataType.Type.TEXT)
+        @NotNull
+        public static final String COLUMN_RECIPE_NAME = "recipe";
 
-    @DataType(DataType.Type.INTEGER)
-    public static final String COLUMN_RECIPE_SERVINGS = "servings";
+        @DataType(DataType.Type.INTEGER)
+        public static final String COLUMN_RECIPE_SERVINGS = "servings";
+    }
+
 }

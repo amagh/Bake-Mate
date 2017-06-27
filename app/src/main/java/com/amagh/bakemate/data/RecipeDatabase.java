@@ -11,6 +11,6 @@ import net.simonvt.schematic.annotation.Table;
 public class RecipeDatabase {
     public static final int VERSION = 1;
 
-    @Table(RecipeContract.class)
+    @Table(RecipeContract.RecipeEntry.class)
     public static final String RECIPES = "recipes";
 }
