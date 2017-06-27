@@ -2,5 +2,5 @@
     <string name="app_name">Bake Mate</string>
 
     <!-- URL for recipes -->
-    <string name="udacity_recipe_url">http://go.udacity.com/android-baking-app-json</string>
+    <string name="udacity_recipe_url">https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/baking.json</string>
 </resources>
