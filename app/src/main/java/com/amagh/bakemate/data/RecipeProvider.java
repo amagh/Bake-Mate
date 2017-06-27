@@ -23,9 +23,30 @@ public class RecipeProvider {
 
         @ContentUri(
                 path = "recipes",
-                type = "vnd.android.cursor.dir/recipes",
-                defaultSort = RecipeContract.RecipeEntry.COLUMN_ID + " ASC")
+                type = "vnd.android.cursor.dir/recipe",
+                defaultSort = RecipeContract.RecipeEntry.COLUMN_RECIPE_ID + " ASC")
         public static final Uri RECIPES = Uri.parse("content://" + AUTHORITY + "/recipes");
 
+    }
+
+    @TableEndpoint(table = RecipeDatabase.INGREDIENTS)
+    public static class Ingredients {
+
+        @ContentUri(
+                path = "ingredients",
+                type = "vnd.android.cursor.dir/ingredient",
+                defaultSort = RecipeContract.IngredientEntry.COLUMN_ID + " ASC")
+        public static final Uri INGREDIENTS = Uri.parse("content://" + AUTHORITY + "/ingredients");
+
+    }
+
+    @TableEndpoint(table = RecipeDatabase.STEPS)
+    public static class Steps {
+
+        @ContentUri(
+                path = "steps",
+                type = "vnd.android.cursor.dir/step",
+                defaultSort = RecipeContract.StepEntry.COLUMN_STEP_ID + " ASC")
+        public static final Uri STEPS = Uri.parse("content://" + AUTHORITY + "/steps");
     }
 }

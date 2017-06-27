@@ -15,4 +15,10 @@ public class RecipeDatabase {
 
     @Table(RecipeContract.RecipeEntry.class)
     public static final String RECIPES = "recipes";
+
+    @Table(RecipeContract.IngredientEntry.class)
+    public static final String INGREDIENTS = "ingredients";
+
+    @Table(RecipeContract.StepEntry.class)
+    public static final String STEPS = "steps";
 }

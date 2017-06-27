@@ -59,4 +59,28 @@ public class TestUtilities {
 
         return recipeValues;
     }
+
+    public static ContentValues getIngredientValues() {
+        ContentValues ingredientValues = new ContentValues();
+        ingredientValues.put(RecipeContract.IngredientEntry.COLUMN_RECIPE_ID, 0);
+        ingredientValues.put(RecipeContract.IngredientEntry.COLUMN_QUANTITY, 12);
+        ingredientValues.put(RecipeContract.IngredientEntry.COLUMN_MEASURE, "CUP");
+        ingredientValues.put(RecipeContract.IngredientEntry.COLUMN_INGREDIENT, "flour");
+
+        return ingredientValues;
+    }
+
+    public static ContentValues getStepValues() {
+        ContentValues stepValues = new ContentValues();
+        stepValues.put(RecipeContract.StepEntry.COLUMN_STEP_ID, 0);
+        stepValues.put(RecipeContract.StepEntry.COLUMN_RECIPE_ID, 0);
+        stepValues.put(RecipeContract.StepEntry.COLUMN_SHORT_DESC, "Recipe Instruction");
+        stepValues.put(RecipeContract.StepEntry.COLUMN_DESCRIPTION, "Complete Recipe Instruction");
+        stepValues.put(
+                RecipeContract.StepEntry.COLUMN_VIDEO_URL,
+                "https://d17h27t6h515a5.cloudfront.net/topher/2017/April/58ffd974_-intro-creampie/-intro-creampie.mp4"
+        );
+
+        return stepValues;
+    }
 }

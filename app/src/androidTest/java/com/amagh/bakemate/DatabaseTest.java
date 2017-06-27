@@ -32,7 +32,7 @@ public class DatabaseTest {
     }
 
     @Test
-    public void testProviderInsert() {
+    public void testInsertRecipe() {
         // Get dummy recipe values
         ContentValues recipeValues = TestUtilities.getRecipeContentValues();
 
@@ -51,6 +51,67 @@ public class DatabaseTest {
                 null
         );
 
+        // Check the Cursor
+        checkCursor(cursor, recipeValues);
+    }
+
+    @Test
+    public void testInsertIngredient() {
+        // Insert recipe values into the database because of ForeignKey Constraint
+        testInsertRecipe();
+
+        // Get dummy ingredient values
+        ContentValues ingredientValues = TestUtilities.getIngredientValues();
+
+        // Insert values into database
+        mContext.getContentResolver().insert(
+                RecipeProvider.Ingredients.INGREDIENTS,
+                ingredientValues
+        );
+
+        // Query the database
+        Cursor cursor = mContext.getContentResolver().query(
+                RecipeProvider.Ingredients.INGREDIENTS,
+                null,
+                null,
+                null,
+                null
+        );
+
+        // Check the Cursor
+        checkCursor(cursor, ingredientValues);
+    }
+
+    @Test
+    public void testInsertStep() {
+        testInsertRecipe();
+
+        ContentValues stepValues = TestUtilities.getStepValues();
+
+        mContext.getContentResolver().insert(
+                RecipeProvider.Steps.STEPS,
+                stepValues
+        );
+
+        Cursor cursor = mContext.getContentResolver().query(
+                RecipeProvider.Steps.STEPS,
+                null,
+                null,
+                null,
+                null
+        );
+
+        checkCursor(cursor, stepValues);
+    }
+
+    /**
+     * Checks to ensure the Cursor is valid and that it contains values that match the ContentValues
+     * use to generate the database values.
+     *
+     * @param cursor    Cursor containing database values
+     * @param values    ContentValues to check against
+     */
+    public void checkCursor(Cursor cursor, ContentValues values) {
         // Check to ensure Cursor is not null
         String nullCursorError = "Error querying database. Cursor is null.";
         assertNotNull(nullCursorError, cursor);
@@ -59,7 +120,7 @@ public class DatabaseTest {
         String emptyCursorError = "Error - Cursor does not contain any values.";
         assertTrue(emptyCursorError, cursor.moveToFirst());
 
-        TestUtilities.validateCursorValues(cursor, recipeValues);
+        TestUtilities.validateCursorValues(cursor, values);
 
         // Close the Cursor
         cursor.close();
