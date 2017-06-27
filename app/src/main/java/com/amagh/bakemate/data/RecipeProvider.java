@@ -20,6 +20,7 @@ public class RecipeProvider {
 
     @TableEndpoint(table = RecipeDatabase.RECIPES)
     public static class Recipes {
+
         @ContentUri(
                 path = "recipes",
                 type = "vnd.android.cursor.dir/recipes",

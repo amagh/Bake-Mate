@@ -39,7 +39,6 @@ public class NetworkUtils {
 
     public static String getHttpResponse(String urlString) throws IOException {
         URL url = new URL(urlString);
-
         HttpURLConnection urlConnection = null;
 
         try {
