@@ -20,7 +20,7 @@ public class RecipeContract {
 
     @DataType(DataType.Type.INTEGER)
     @NotNull
-    public static final String COLUMN_RECIPE_DI = "recipe_id";
+    public static final String COLUMN_RECIPE_ID = "recipe_id";
 
     @DataType(DataType.Type.TEXT)
     @NotNull
