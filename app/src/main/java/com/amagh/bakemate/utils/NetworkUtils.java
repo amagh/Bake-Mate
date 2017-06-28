@@ -6,7 +6,7 @@ import java.net.URL;
 import java.util.Scanner;
 
 /**
- * POJO Helper class for connecting to the network and parsing JSON responses
+ * Helper class for connecting to the network and retrieving the response
  */
 
 public class NetworkUtils {

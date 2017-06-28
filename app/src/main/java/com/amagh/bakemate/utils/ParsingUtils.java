@@ -12,7 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by hnoct on 6/27/2017.
+ * Helper class for parsing the JSON Object and creating ContentValues describing each element
+ * within.
  */
 
 public class ParsingUtils {
@@ -157,7 +158,7 @@ public class ParsingUtils {
                 stepValues.put(RecipeContract.StepEntry.COLUMN_RECIPE_ID, recipeId);
                 stepValues.put(RecipeContract.StepEntry.COLUMN_STEP_ID, stepId);
                 stepValues.put(RecipeContract.StepEntry.COLUMN_SHORT_DESC, shortDesc);
-                stepValues.put(RecipeContract.StepEntry.COLUMN_SHORT_DESC, description);
+                stepValues.put(RecipeContract.StepEntry.COLUMN_DESCRIPTION, description);
                 stepValues.put(RecipeContract.StepEntry.COLUMN_VIDEO_URL, videoUrl);
 
                 contentValuesList.add(stepValues);
