@@ -40,6 +40,7 @@ public class RecipeListActivity extends AppCompatActivity implements LoaderManag
         // Set up the RecyclerView
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         mAdapter = new RecipeAdapter();
+        mAdapter.setHasStableIds(true);
         mBinding.recipeListRv.setAdapter(mAdapter);
         mBinding.recipeListRv.setLayoutManager(layoutManager);
 

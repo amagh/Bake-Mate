@@ -57,9 +57,18 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
 
     @Override
     public int getItemCount() {
+        // Return Cursor count if Cursor is valid
         if (mCursor != null) return mCursor.getCount();
 
         return 0;
+    }
+
+    @Override
+    public long getItemId(int position) {
+        // Return the recipeId
+        mCursor.moveToPosition(position);
+
+        return mCursor.getInt(Projection.COLUMN_RECIPE_ID);
     }
 
     public void swapCursor(Cursor newCursor) {
