@@ -3,9 +3,14 @@ package com.amagh.bakemate.utils;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.media.ThumbnailUtils;
 import android.net.Uri;
+import android.provider.MediaStore;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.amagh.bakemate.data.RecipeContract;
 import com.amagh.bakemate.data.RecipeProvider;
@@ -28,6 +33,8 @@ import static junit.framework.Assert.assertNotNull;
 
 public class DatabaseUtils {
     // **Constants** //
+    private static final String TAG = DatabaseUtils.class.getSimpleName();
+
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({RECIPE, INGREDIENT, STEP})
     public @interface ValueType {
@@ -109,5 +116,41 @@ public class DatabaseUtils {
         );
 
         return recipeValuesList.size();
+    }
+
+    /**
+     * Retrieves the URL for the last video for a given recipe to be used to load a thumbnail for
+     * the recipe
+     *
+     * @param context   Interface to global Context
+     * @param recipeId  ID of the recipe to be used to query the database
+     * @return String of URL for the video of the last step for the recipe
+     */
+    public static String getVideoUrlForThumbnail(@NonNull Context context, int recipeId) {
+        // Query the database, filtering for the recipeId and sorting by highest step ID
+        Cursor cursor = context.getContentResolver().query(
+                RecipeProvider.Steps.STEPS,
+                new String[] {
+                        RecipeContract.StepEntry.COLUMN_VIDEO_URL,
+                        RecipeContract.StepEntry.COLUMN_RECIPE_ID},
+                RecipeContract.StepEntry.COLUMN_RECIPE_ID + " = ?",
+                new String[] {Integer.toString(recipeId)},
+                RecipeContract.StepEntry.COLUMN_STEP_ID + " DESC"
+        );
+
+        // Init the variable to return
+        String videoUrl = null;
+
+        // Check to see if Cursor is valid, if so retrieve the videoUrl
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                videoUrl = cursor.getString(0);
+            }
+
+            // Close the Cursor
+            cursor.close();
+        }
+
+        return videoUrl;
     }
 }
