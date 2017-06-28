@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Default Values -->
+    <dimen name="default_horizontal_activity_margin">16dp</dimen>
+    <dimen name="default_vertical_activity_margin">16dp</dimen>
+    <dimen name="card_corner_radius">10dp</dimen>
+
+    <dimen name="text_vertical_margin">8dp</dimen>
+    <dimen name="text_horizontal_margin">8dp</dimen>
+
+    <dimen name="list_recipe_image_height">200dp</dimen>
+</resources>

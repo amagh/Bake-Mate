@@ -3,4 +3,7 @@
 
     <!-- URL for recipes -->
     <string name="udacity_recipe_url">https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/baking.json</string>
+
+    <!-- Dummy text for layouts -->
+    <string name="list_recipe_title_placeholder">Cheesecake</string>
 </resources>
