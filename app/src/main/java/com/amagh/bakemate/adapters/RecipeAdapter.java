@@ -2,10 +2,7 @@ package com.amagh.bakemate.adapters;
 
 import android.database.Cursor;
 import android.databinding.DataBindingUtil;
-import android.graphics.Bitmap;
-import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,8 +34,8 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
                 RecipeContract.RecipeEntry.COLUMN_RECIPE_NAME
         };
 
-        int COLUMN_RECIPE_ID        = 0;
-        int COLUMN_RECIPE_NAME      = 1;
+        int IDX_RECIPE_ID = 0;
+        int IDX_RECIPE_NAME = 1;
     }
 
     // **Member Variables** //
@@ -76,7 +73,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
         // Return the recipeId
         mCursor.moveToPosition(position);
 
-        return mCursor.getInt(Projection.COLUMN_RECIPE_ID);
+        return mCursor.getInt(Projection.IDX_RECIPE_ID);
     }
 
     public void swapCursor(Cursor newCursor) {
@@ -113,7 +110,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
             int position = getAdapterPosition();
             mCursor.moveToPosition(position);
 
-            int recipeId = mCursor.getInt(Projection.COLUMN_RECIPE_ID);
+            int recipeId = mCursor.getInt(Projection.IDX_RECIPE_ID);
 
             // Pass the click event and recipeId to mClickHandler
             mClickHandler.onRecipeClicked(recipeId);
@@ -124,8 +121,8 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
             mCursor.moveToPosition(position);
 
             // Retrieve recipe information from Cursor
-            int recipeId = mCursor.getInt(Projection.COLUMN_RECIPE_ID);
-            String recipe = mCursor.getString(Projection.COLUMN_RECIPE_NAME);
+            int recipeId = mCursor.getInt(Projection.IDX_RECIPE_ID);
+            String recipe = mCursor.getString(Projection.IDX_RECIPE_NAME);
 
             // Get videoUrl to utilize a still frame as the image since no recipes contain a
             // thumbnail
