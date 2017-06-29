@@ -3,6 +3,8 @@ package com.amagh.bakemate.data;
 import android.content.ContentUris;
 import android.net.Uri;
 
+import com.amagh.bakemate.models.Ingredient;
+
 import net.simonvt.schematic.annotation.ContentProvider;
 import net.simonvt.schematic.annotation.ContentUri;
 import net.simonvt.schematic.annotation.InexactContentUri;
@@ -61,7 +63,7 @@ public class RecipeProvider {
                 path        = Path.RECIPES,
                 type        = "vnd.android.cursor.dir/recipe",
                 defaultSort = RecipeContract.RecipeEntry.COLUMN_RECIPE_ID + " ASC")
-        public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + RecipeDatabase.STEPS);
+        public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + RecipeDatabase.RECIPES);
 
         @InexactContentUri(
                 path        = Path.RECIPES + "/#",
@@ -81,7 +83,7 @@ public class RecipeProvider {
                 path        = Path.INGREDIENTS,
                 type        = "vnd.android.cursor.dir/ingredient",
                 defaultSort = RecipeContract.IngredientEntry.COLUMN_ID + " ASC")
-        public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + RecipeDatabase.INGREDIENTS);
+        public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" +RecipeDatabase.INGREDIENTS);
 
         @InexactContentUri(
                 path        = Path.INGREDIENTS + "/" + Path.RECIPES + "/#",
@@ -91,7 +93,7 @@ public class RecipeProvider {
                 pathSegment = 2,
                 defaultSort = RecipeContract.IngredientEntry.COLUMN_MEASURE + " ASC")
         public static Uri forRecipe(long recipeId) {
-            return Recipes.CONTENT_URI.buildUpon()
+            return CONTENT_URI.buildUpon()
                     .appendPath(Path.RECIPES)
                     .appendPath(Long.toString(recipeId))
                     .build();
@@ -106,7 +108,7 @@ public class RecipeProvider {
                 path        = Path.STEPS,
                 type        = "vnd.android.cursor.dir/step",
                 defaultSort = RecipeContract.StepEntry.COLUMN_STEP_ID + " ASC")
-        public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + RecipeDatabase.STEPS);
+        public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + RecipeDatabase.STEPS);
 
         @InexactContentUri(
                 path        = Path.STEPS + "/" + Path.RECIPES + "/#",
