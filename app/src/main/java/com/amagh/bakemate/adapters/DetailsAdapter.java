@@ -4,6 +4,7 @@ import android.database.Cursor;
 import android.databinding.DataBindingUtil;
 import android.databinding.ViewDataBinding;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +25,9 @@ import com.amagh.bakemate.utils.DatabaseUtils;
 
 public class DetailsAdapter extends RecyclerView.Adapter<DetailsAdapter.DetailsViewHolder> {
     // **Constants** //
+    private final String TAG = DetailsAdapter.class.getSimpleName();
+
+    // ViewTypes
     private static final int RECIPE_DETAILS_VIEW        = 0;
     private static final int INGREDIENTS_VIEW           = 1;
     private static final int STEPS_VIEW                 = 2;
@@ -93,10 +97,18 @@ public class DetailsAdapter extends RecyclerView.Adapter<DetailsAdapter.DetailsV
                 break;
             default: throw new UnsupportedOperationException("Unknown ViewType: " + viewType);
         }
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
 
-        // Inflate the View using the layoutId
-        View view = LayoutInflater.from(parent.getContext()).inflate(layoutId, parent, false);
-        return new DetailsViewHolder(view);
+        if (viewType < INGREDIENTS_HEADER_VIEW) {
+            // Create a ViewDataBinding using the layoutId
+            ViewDataBinding binding = DataBindingUtil.inflate(inflater, layoutId, parent, false);
+            return new DetailsViewHolder(binding);
+        } else {
+            // Inflate the View using the layoutId
+            View view = inflater.inflate(layoutId, parent, false);
+            view.setTag(viewType);
+            return new DetailsViewHolder(view);
+        }
     }
 
     @Override
@@ -176,9 +188,14 @@ public class DetailsAdapter extends RecyclerView.Adapter<DetailsAdapter.DetailsV
         // **Member Variables** //
         private ViewDataBinding mBinding;
 
+        public DetailsViewHolder(ViewDataBinding binding) {
+            super(binding.getRoot());
+
+            mBinding = binding;
+        }
+
         public DetailsViewHolder(View itemView) {
             super(itemView);
-            mBinding = DataBindingUtil.bind(itemView);
         }
 
         public void bindData(int position) {
@@ -227,8 +244,11 @@ public class DetailsAdapter extends RecyclerView.Adapter<DetailsAdapter.DetailsV
                     Step step = new Step(videoUrl, shortDescription, description);
 
                     ((ListItemStepBinding) mBinding).setStep(step);
+                    break;
                 }
             }
+
+            mBinding.executePendingBindings();
         }
     }
 }
