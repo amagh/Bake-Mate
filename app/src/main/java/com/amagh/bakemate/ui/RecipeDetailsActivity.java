@@ -5,11 +5,14 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 
 import com.amagh.bakemate.R;
+import com.amagh.bakemate.data.RecipeDatabase;
 
 public class RecipeDetailsActivity extends AppCompatActivity {
     // **Constants** //
+    private static final String TAG = RecipeDetailsActivity.class.getSimpleName();
 
     // **Member Variables**//
     private Uri mRecipeUri;
@@ -28,6 +31,8 @@ public class RecipeDetailsActivity extends AppCompatActivity {
 
         if (intent.getData() != null) {
             mRecipeUri = intent.getData();
+        } else {
+            Log.d(TAG, "No URI passed!");
         }
 
         if (savedInstanceState == null && mRecipeUri != null) {

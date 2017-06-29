@@ -28,7 +28,7 @@ public class RecipeListActivity extends AppCompatActivity implements RecipeListF
      * @param recipeId  ID of the recipe to open details for
      */
     private void startDetailsActivity(int recipeId) {
-        // Generate the URI to load the single recipe
+        // Generate the URI to load a single recipe
         Uri recipeUri = RecipeProvider.Recipes.withId(recipeId);
 
         // Create and launch the explicit Intent with recipeUri attached

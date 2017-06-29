@@ -8,6 +8,8 @@ import net.simonvt.schematic.annotation.ContentUri;
 import net.simonvt.schematic.annotation.InexactContentUri;
 import net.simonvt.schematic.annotation.TableEndpoint;
 
+import java.util.List;
+
 /**
  * Uses the Schematic (https://github.com/SimonVT/schematic) to create a content provider and
  * define URIs for the provider
@@ -17,20 +19,39 @@ import net.simonvt.schematic.annotation.TableEndpoint;
         authority = RecipeProvider.AUTHORITY,
         database = RecipeDatabase.class)
 public class RecipeProvider {
-
+    // **Constants** //
     public static final String AUTHORITY = "com.amagh.bakemate.provider";
-    public static final String JOIN_RECIPE_INGREDIENT_STEP =
-            "JOIN " + RecipeDatabase.INGREDIENTS + " ON "                                       +
-            RecipeDatabase.RECIPES + "." + RecipeContract.RecipeEntry.COLUMN_RECIPE_ID + " = "  +
-            RecipeDatabase.INGREDIENTS + "." + RecipeContract.IngredientEntry.COLUMN_RECIPE_ID  +
-            "JOIN" + RecipeDatabase.STEPS + " ON "                                              +
-            RecipeDatabase.RECIPES + "." + RecipeContract.RecipeEntry.COLUMN_RECIPE_ID + " = "  +
-            RecipeDatabase.STEPS + "." + RecipeContract.StepEntry.COLUMN_RECIPE_ID;
+//    public static final String JOIN_RECIPE_INGREDIENT_STEP =
+//            "JOIN " + RecipeDatabase.INGREDIENTS + " ON "                                       +
+//            RecipeDatabase.RECIPES + "." + RecipeContract.RecipeEntry.COLUMN_RECIPE_ID + " = "  +
+//            RecipeDatabase.INGREDIENTS + "." + RecipeContract.IngredientEntry.COLUMN_RECIPE_ID  +
+//            "JOIN" + RecipeDatabase.STEPS + " ON "                                              +
+//            RecipeDatabase.RECIPES + "." + RecipeContract.RecipeEntry.COLUMN_RECIPE_ID + " = "  +
+//            RecipeDatabase.STEPS + "." + RecipeContract.StepEntry.COLUMN_RECIPE_ID;
 
     interface Path {
         String RECIPES = "recipes";
         String INGREDIENTS = "ingredients";
         String STEPS = "steps";
+    }
+
+    /**
+     * Helper method for retrieving the recipeId from the URI
+     *
+     * @param uri URI containing a recipeId
+     * @return The ID of the recipe in the URI or -1 if not recipeId is contained in the URI
+     */
+    public static long getRecipeIdFromUri(Uri uri) {
+        // Get all path segments
+        List<String> segments = uri.getPathSegments();
+
+        // Check to see if URI contains the correct preceding segment
+        if (segments.contains(Path.RECIPES)) {
+            // recipeId is contained in the segment after Path.RECIPES
+            return Long.parseLong(segments.get(segments.indexOf(Path.RECIPES) + 1));
+        } else {
+            return -1;
+        }
     }
 
     @TableEndpoint(table = RecipeDatabase.RECIPES)
@@ -40,7 +61,7 @@ public class RecipeProvider {
                 path        = Path.RECIPES,
                 type        = "vnd.android.cursor.dir/recipe",
                 defaultSort = RecipeContract.RecipeEntry.COLUMN_RECIPE_ID + " ASC")
-        public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/recipes");
+        public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + RecipeDatabase.STEPS);
 
         @InexactContentUri(
                 path        = Path.RECIPES + "/#",
@@ -60,7 +81,7 @@ public class RecipeProvider {
                 path        = Path.INGREDIENTS,
                 type        = "vnd.android.cursor.dir/ingredient",
                 defaultSort = RecipeContract.IngredientEntry.COLUMN_ID + " ASC")
-        public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/ingredients");
+        public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + RecipeDatabase.INGREDIENTS);
 
         @InexactContentUri(
                 path        = Path.INGREDIENTS + "/" + Path.RECIPES + "/#",
@@ -85,7 +106,7 @@ public class RecipeProvider {
                 path        = Path.STEPS,
                 type        = "vnd.android.cursor.dir/step",
                 defaultSort = RecipeContract.StepEntry.COLUMN_STEP_ID + " ASC")
-        public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/steps");
+        public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + RecipeDatabase.STEPS);
 
         @InexactContentUri(
                 path        = Path.STEPS + "/" + Path.RECIPES + "/#",
