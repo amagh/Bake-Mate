@@ -11,7 +11,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <activity android:name=".ui.RecipeListActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -21,10 +20,18 @@
         </activity>
 
         <provider
-            android:authorities="com.amagh.bakemate.provider"
             android:name=".data.generated.RecipeProvider"
+            android:authorities="com.amagh.bakemate.provider"
             android:exported="false" />
 
+        <activity
+            android:name=".ui.RecipeDetailsActivity"
+            android:parentActivityName=".ui.RecipeListActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.amagh.bakemate.ui.RecipeListActivity" />
+        </activity>
     </application>
 
 </manifest>
