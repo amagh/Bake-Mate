@@ -14,34 +14,31 @@
         android:layout_height="wrap_content">
 
         <TextView
+            android:id="@+id/list_details_name_tv"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@{details.name}"
+            android:layout_marginLeft="@dimen/list_step_thumbnail_key_line"
+            android:layout_marginStart="@dimen/list_step_thumbnail_key_line"
+            android:layout_marginRight="@dimen/list_details_name_right_margin"
+            android:layout_marginEnd="@dimen/list_details_name_right_margin"
+            android:layout_marginTop="@dimen/default_vertical_activity_margin"
+            style="@style/Base.TextAppearance.AppCompat.Headline"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="@string/list_details_placeholder" />
+
+        <TextView
             android:id="@+id/list_details_servings_tv"
-            android:layout_width="wrap_content"
+            android:layout_width="@dimen/list_details_servings_width"
             android:layout_height="wrap_content"
             android:layout_marginRight="@dimen/default_horizontal_activity_margin"
             android:layout_marginEnd="@dimen/default_horizontal_activity_margin"
             android:text="@{details.servings}"
             app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBaseline_toBaselineOf="@id/list_details_name_tv"
             tools:text="@string/list_details_servings_placeholder"/>
-
-        <TextView
-            android:id="@+id/list_details_name_tv"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="@{details.name}"
-            android:layout_marginLeft="@dimen/list_step_thumbnail_size"
-            android:layout_marginStart="@dimen/list_step_thumbnail_size"
-            android:layout_marginRight="@dimen/text_horizontal_margin"
-            android:layout_marginEnd="@dimen/text_horizontal_margin"
-            android:layout_marginTop="@dimen/default_vertical_activity_margin"
-            android:layout_marginBottom="@dimen/list_details_bottom_margin"
-            style="@style/Base.TextAppearance.AppCompat.Headline"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toLeftOf="@id/list_details_servings_tv"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            tools:text="@string/list_details_placeholder" />
-
-
 
     </android.support.constraint.ConstraintLayout>
 </layout>
