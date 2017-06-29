@@ -11,13 +11,11 @@ import com.amagh.bakemate.R;
  */
 
 public class Recipe extends BaseObservable {
-    private long recipeId;
     private String name;
     private int servings;
     private Context mContext;
 
-    public Recipe(Context context, long recipeId, String name, int servings) {
-        this.recipeId = recipeId;
+    public Recipe(Context context, String name, int servings) {
         this.name = name;
         this.servings = servings;
         mContext = context;
