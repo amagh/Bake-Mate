@@ -16,10 +16,14 @@
     <dimen name="list_ingredient_measure_width">45dp</dimen>
     <dimen name="list_ingredient_vertical_separation">4dp</dimen>
 
+    <dimen name="list_details_servings_width">80dp</dimen>
     <dimen name="list_details_bottom_margin">16dp</dimen>
+    <dimen name="list_details_name_right_margin">104dp</dimen>
 
     <dimen name="list_step_thumbnail_size">48dp</dimen>
     <dimen name="list_step_thumbnail_padding">4dp</dimen>
     <dimen name="list_step_thumbnail_margin">12dp</dimen>
     <dimen name="list_step_thumbnail_key_line">72dp</dimen>
+
+    <dimen name="list_header_top_margin">32dp</dimen>
 </resources>
