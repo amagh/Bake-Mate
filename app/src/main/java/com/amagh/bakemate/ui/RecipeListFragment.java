@@ -53,7 +53,15 @@ public class RecipeListFragment extends Fragment implements LoaderManager.Loader
 
         // Set up the RecyclerView
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
-        mAdapter = new RecipeAdapter();
+
+        mAdapter = new RecipeAdapter(new RecipeAdapter.ClickHandler() {
+            @Override
+            public void onRecipeClicked(int recipeId) {
+                // Pass click event to RecipeListActivity
+                ((RecipeListActivity)getActivity()).onRecipeClicked(recipeId);
+            }
+        });
+
         mAdapter.setHasStableIds(true);
         mBinding.recipeListRv.setAdapter(mAdapter);
         mBinding.recipeListRv.setLayoutManager(layoutManager);
@@ -108,5 +116,9 @@ public class RecipeListFragment extends Fragment implements LoaderManager.Loader
                 mAdapter.swapCursor(null);
             }
         }
+    }
+
+    public interface RecipeClickCallback {
+        void onRecipeClicked(int recipeId);
     }
 }

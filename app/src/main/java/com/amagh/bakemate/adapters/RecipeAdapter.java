@@ -3,6 +3,7 @@ package com.amagh.bakemate.adapters;
 import android.database.Cursor;
 import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
+import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,6 +23,13 @@ import com.bumptech.glide.Glide;
 public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeViewHolder> {
     // **Constants** //
     private static final String TAG = RecipeAdapter.class.getSimpleName();
+
+    // **Member Variables** //
+    private ClickHandler mClickHandler;
+
+    public RecipeAdapter(ClickHandler clickHandler) {
+        mClickHandler = clickHandler;
+    }
 
     public interface Projection {
         String[] RECIPE_PROJECTION = {
@@ -81,13 +89,34 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
         }
     }
 
-    public class RecipeViewHolder extends RecyclerView.ViewHolder {
+    public interface ClickHandler {
+        void onRecipeClicked(int recipeId);
+    }
+
+    public class RecipeViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         // **Member Variables** //
         ListItemRecipeBinding mBinding;
 
         public RecipeViewHolder(ListItemRecipeBinding binding) {
             super(binding.getRoot());
+
             mBinding = binding;
+
+            // Set the OnClickListener
+            View itemView = mBinding.getRoot();
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View view) {
+            // Retrieve the recipeId of the ViewHolder that was clicked
+            int position = getAdapterPosition();
+            mCursor.moveToPosition(position);
+
+            int recipeId = mCursor.getInt(Projection.COLUMN_RECIPE_ID);
+
+            // Pass the click event and recipeId to mClickHandler
+            mClickHandler.onRecipeClicked(recipeId);
         }
 
         public void bindData(int position) {
