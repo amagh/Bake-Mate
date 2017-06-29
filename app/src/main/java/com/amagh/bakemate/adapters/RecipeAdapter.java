@@ -34,8 +34,8 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
                 RecipeContract.RecipeEntry.COLUMN_RECIPE_NAME
         };
 
-        int IDX_RECIPE_ID = 0;
-        int IDX_RECIPE_NAME = 1;
+        int IDX_RECIPE_ID       = 0;
+        int IDX_RECIPE_NAME     = 1;
     }
 
     // **Member Variables** //
