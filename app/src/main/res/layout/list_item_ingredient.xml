@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="ingredient"
+            type="com.amagh.bakemate.models.Ingredient" />
+    </data>
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/list_ingredient_vertical_separation"
+        android:layout_marginBottom="@dimen/list_ingredient_vertical_separation"
+        android:layout_marginLeft="@dimen/default_horizontal_activity_margin"
+        android:layout_marginStart="@dimen/default_horizontal_activity_margin"
+        android:layout_marginRight="@dimen/default_horizontal_activity_margin"
+        android:layout_marginEnd="@dimen/default_horizontal_activity_margin">
+
+        <TextView
+            android:id="@+id/list_ingredient_quantity_tv"
+            android:layout_width="@dimen/list_ingredient_quantity_width"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:text="@{ingredient.quantity}"
+            app:layout_constraintLeft_toLeftOf="parent"
+            tools:text="@string/list_ingredient_quantity_placeholder"
+            />
+
+        <TextView
+            android:id="@+id/list_ingredient_measure_tv"
+            android:layout_width="@dimen/list_ingredient_measure_width"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/text_horizontal_margin"
+            android:layout_marginStart="@dimen/text_horizontal_margin"
+            android:text="@{ingredient.measure}"
+            app:layout_constraintLeft_toRightOf="@id/list_ingredient_quantity_tv"
+            tools:text="@string/list_ingredient_measure_placeholder"/>
+
+        <TextView
+            android:id="@+id/list_ingredient_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/text_horizontal_margin"
+            android:layout_marginStart="@dimen/text_horizontal_margin"
+            android:text="@{ingredient.ingredient}"
+            app:layout_constraintLeft_toRightOf="@id/list_ingredient_measure_tv"
+            tools:text="@string/list_ingredient_placeholder"/>
+
+    </android.support.constraint.ConstraintLayout>
+</layout>

@@ -6,4 +6,7 @@
 
     <!-- Dummy text for layouts -->
     <string name="list_recipe_title_placeholder">Cheesecake</string>
+    <string name="list_ingredient_quantity_placeholder">12</string>
+    <string name="list_ingredient_measure_placeholder">cups</string>
+    <string name="list_ingredient_placeholder">cream</string>
 </resources>

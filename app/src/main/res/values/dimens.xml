@@ -9,5 +9,9 @@
     <dimen name="text_horizontal_margin">8dp</dimen>
 
     <dimen name="list_recipe_image_height">200dp</dimen>
-    <dimen name="list_item_vertical_separation">8dp</dimen>
+    <dimen name="list_recipe_vertical_separation">8dp</dimen>
+
+    <dimen name="list_ingredient_quantity_width">40dp</dimen>
+    <dimen name="list_ingredient_measure_width">50dp</dimen>
+    <dimen name="list_ingredient_vertical_separation">4dp</dimen>
 </resources>
