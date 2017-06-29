@@ -6,12 +6,20 @@
     <dimen name="card_corner_radius">10dp</dimen>
 
     <dimen name="text_vertical_margin">8dp</dimen>
+    <dimen name="text_vertical_margin_small">4dp</dimen>
     <dimen name="text_horizontal_margin">8dp</dimen>
 
     <dimen name="list_recipe_image_height">200dp</dimen>
     <dimen name="list_recipe_vertical_separation">8dp</dimen>
 
-    <dimen name="list_ingredient_quantity_width">40dp</dimen>
-    <dimen name="list_ingredient_measure_width">50dp</dimen>
+    <dimen name="list_ingredient_quantity_width">35dp</dimen>
+    <dimen name="list_ingredient_measure_width">45dp</dimen>
     <dimen name="list_ingredient_vertical_separation">4dp</dimen>
+
+    <dimen name="list_details_bottom_margin">16dp</dimen>
+
+    <dimen name="list_step_thumbnail_size">48dp</dimen>
+    <dimen name="list_step_thumbnail_padding">4dp</dimen>
+    <dimen name="list_step_thumbnail_margin">12dp</dimen>
+    <dimen name="list_step_thumbnail_key_line">72dp</dimen>
 </resources>
