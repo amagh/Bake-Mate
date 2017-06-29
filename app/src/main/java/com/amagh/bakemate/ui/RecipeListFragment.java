@@ -3,7 +3,6 @@ package com.amagh.bakemate.ui;
 import android.database.Cursor;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -18,7 +17,6 @@ import com.amagh.bakemate.adapters.RecipeAdapter;
 import com.amagh.bakemate.data.RecipeContract;
 import com.amagh.bakemate.data.RecipeDatabase;
 import com.amagh.bakemate.data.RecipeProvider;
-import com.amagh.bakemate.databinding.FragmentRecipeDetailsBinding;
 import com.amagh.bakemate.databinding.FragmentRecipeListBinding;
 import com.amagh.bakemate.sync.SyncRecipesTaskLoader;
 
@@ -84,7 +82,7 @@ public class RecipeListFragment extends Fragment implements LoaderManager.Loader
             case RECIPE_CURSOR_LOADER: {
                 return new CursorLoader(
                         getActivity(),
-                        RecipeProvider.Recipes.RECIPES,
+                        RecipeProvider.Recipes.CONTENT_URI,
                         RecipeAdapter.Projection.RECIPE_PROJECTION,
                         null,
                         null,

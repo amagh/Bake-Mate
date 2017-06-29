@@ -1,9 +1,11 @@
 package com.amagh.bakemate.data;
 
+import android.content.ContentUris;
 import android.net.Uri;
 
 import net.simonvt.schematic.annotation.ContentProvider;
 import net.simonvt.schematic.annotation.ContentUri;
+import net.simonvt.schematic.annotation.InexactContentUri;
 import net.simonvt.schematic.annotation.TableEndpoint;
 
 /**
@@ -18,15 +20,30 @@ public class RecipeProvider {
 
     public static final String AUTHORITY = "com.amagh.bakemate.provider";
 
+    interface Path {
+        String RECIPES = "recipes";
+        String INGREDIENTS = "ingredients";
+        String STEPS = "steps";
+    }
+
     @TableEndpoint(table = RecipeDatabase.RECIPES)
     public static class Recipes {
 
         @ContentUri(
-                path = "recipes",
+                path = Path.RECIPES,
                 type = "vnd.android.cursor.dir/recipe",
                 defaultSort = RecipeContract.RecipeEntry.COLUMN_RECIPE_ID + " ASC")
-        public static final Uri RECIPES = Uri.parse("content://" + AUTHORITY + "/recipes");
+        public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/recipes");
 
+        @InexactContentUri(
+                path = Path.RECIPES + "/#",
+                name = "RECIPE_ID",
+                type = "vnd.android.cursor.item/recipe",
+                whereColumn = RecipeContract.RecipeEntry.COLUMN_RECIPE_ID,
+                pathSegment = 1)
+        public static Uri withId(long recipeId) {
+            return ContentUris.withAppendedId(CONTENT_URI, recipeId);
+        }
     }
 
     @TableEndpoint(table = RecipeDatabase.INGREDIENTS)
@@ -36,7 +53,7 @@ public class RecipeProvider {
                 path = "ingredients",
                 type = "vnd.android.cursor.dir/ingredient",
                 defaultSort = RecipeContract.IngredientEntry.COLUMN_ID + " ASC")
-        public static final Uri INGREDIENTS = Uri.parse("content://" + AUTHORITY + "/ingredients");
+        public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/ingredients");
 
     }
 
@@ -47,6 +64,6 @@ public class RecipeProvider {
                 path = "steps",
                 type = "vnd.android.cursor.dir/step",
                 defaultSort = RecipeContract.StepEntry.COLUMN_STEP_ID + " ASC")
-        public static final Uri STEPS = Uri.parse("content://" + AUTHORITY + "/steps");
+        public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/steps");
     }
 }

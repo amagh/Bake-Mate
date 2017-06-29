@@ -38,13 +38,13 @@ public class DatabaseTest {
 
         // Insert values into database
         mContext.getContentResolver().insert(
-                RecipeProvider.Recipes.RECIPES,
+                RecipeProvider.Recipes.CONTENT_URI,
                 recipeValues
         );
 
         // Query database
         Cursor cursor = mContext.getContentResolver().query(
-                RecipeProvider.Recipes.RECIPES,
+                RecipeProvider.Recipes.CONTENT_URI,
                 null,
                 null,
                 null,
@@ -65,13 +65,13 @@ public class DatabaseTest {
 
         // Insert values into database
         mContext.getContentResolver().insert(
-                RecipeProvider.Ingredients.INGREDIENTS,
+                RecipeProvider.Ingredients.CONTENT_URI,
                 ingredientValues
         );
 
         // Query the database
         Cursor cursor = mContext.getContentResolver().query(
-                RecipeProvider.Ingredients.INGREDIENTS,
+                RecipeProvider.Ingredients.CONTENT_URI,
                 null,
                 null,
                 null,
@@ -89,12 +89,12 @@ public class DatabaseTest {
         ContentValues stepValues = TestUtilities.getStepValues();
 
         mContext.getContentResolver().insert(
-                RecipeProvider.Steps.STEPS,
+                RecipeProvider.Steps.CONTENT_URI,
                 stepValues
         );
 
         Cursor cursor = mContext.getContentResolver().query(
-                RecipeProvider.Steps.STEPS,
+                RecipeProvider.Steps.CONTENT_URI,
                 null,
                 null,
                 null,

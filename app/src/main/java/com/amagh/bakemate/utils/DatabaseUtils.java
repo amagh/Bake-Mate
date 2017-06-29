@@ -3,14 +3,9 @@ package com.amagh.bakemate.utils;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.media.ThumbnailUtils;
 import android.net.Uri;
-import android.provider.MediaStore;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.amagh.bakemate.data.RecipeContract;
 import com.amagh.bakemate.data.RecipeProvider;
@@ -59,17 +54,17 @@ public class DatabaseUtils {
         // Set the uri to query/insert based on the ValueType
         switch (type) {
             case RECIPE: {
-                uri = RecipeProvider.Recipes.RECIPES;
+                uri = RecipeProvider.Recipes.CONTENT_URI;
                 break;
             }
 
             case INGREDIENT: {
-                uri = RecipeProvider.Ingredients.INGREDIENTS;
+                uri = RecipeProvider.Ingredients.CONTENT_URI;
                 break;
             }
 
             case STEP: {
-                uri = RecipeProvider.Steps.STEPS;
+                uri = RecipeProvider.Steps.CONTENT_URI;
                 break;
             }
         }
@@ -129,7 +124,7 @@ public class DatabaseUtils {
     public static String getVideoUrlForThumbnail(@NonNull Context context, int recipeId) {
         // Query the database, filtering for the recipeId and sorting by highest step ID
         Cursor cursor = context.getContentResolver().query(
-                RecipeProvider.Steps.STEPS,
+                RecipeProvider.Steps.CONTENT_URI,
                 new String[] {
                         RecipeContract.StepEntry.COLUMN_VIDEO_URL,
                         RecipeContract.StepEntry.COLUMN_RECIPE_ID},
