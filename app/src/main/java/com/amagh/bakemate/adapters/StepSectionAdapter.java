@@ -16,7 +16,7 @@ import com.amagh.bakemate.ui.StepDetailsFragment;
  * Created by hnoct on 6/29/2017.
  */
 
-public class StepSectionAdapter extends FragmentStatePagerAdapter {
+public class StepSectionAdapter extends FragmentStatePagerAdapter implements StepDetailsActivity.PageChangeCallBack{
     // **Constants** //
     private static final String TAG = StepSectionAdapter.class.getSimpleName();
     public interface StepProjection {
@@ -32,30 +32,31 @@ public class StepSectionAdapter extends FragmentStatePagerAdapter {
     }
 
     // **Member Variables** //
-    private final Context mContext;
     private Cursor mCursor;
+    private Step[] mSteps;
+    private Context mContext;
 
-    public StepSectionAdapter(Context context, FragmentManager fm) {
+    public StepSectionAdapter(StepDetailsActivity activity, FragmentManager fm) {
         super(fm);
 
-        mContext = context;
+        mContext = activity;
+        activity.setPageChangeCallBack(this);
     }
 
     @Override
     public Fragment getItem(int position) {
-        // Move Cursor to correct position
-        mCursor.moveToPosition(position);
+        if (mSteps[position] == null) {
+            // Move Cursor to correct position
+            mCursor.moveToPosition(position);
 
-        // Create a Step to pass to the newInstance method
-        Step step = Step.createStepFromCursor(mCursor);
-        step.setStepId(position);
-        step.setPlayer(mContext);
+            // Create a Step to pass to the newInstance method
+            Step step = Step.createStepFromCursor(mCursor);
+            step.setStepId(position);
 
-        if (StepDetailsActivity.sCurrentPosition == position) {
-            step.getPlayer().setPlayWhenReady(true);
+            mSteps[position] = step;
         }
 
-        return StepDetailsFragment.newInstance(step, position);
+        return StepDetailsFragment.newInstance(mSteps[position], position);
     }
 
     @Override
@@ -80,6 +81,27 @@ public class StepSectionAdapter extends FragmentStatePagerAdapter {
     public void swapCursor(Cursor newCursor) {
         mCursor = newCursor;
 
-        if (mCursor != null) notifyDataSetChanged();
+        if (mCursor != null) {
+            mSteps = new Step[mCursor.getCount()];
+            notifyDataSetChanged();
+        }
+    }
+
+    @Override
+    public void onPageChanged(int currentPage) {
+        // Start the player on the currentPage. Stop all other players
+        for (int i = 0; i < mSteps.length; i++) {
+            Step step = mSteps[i];
+
+            if (step == null) return;
+
+            if (i == currentPage) {
+                step.setPlayer(mContext);
+            } else {
+                if (step.getPlayer() != null) {
+                    step.stopPlayer();
+                }
+            }
+        }
     }
 }

@@ -169,7 +169,7 @@ public class Step extends BaseObservable implements Parcelable{
                 null,
                 null);
 
-        // Set mediaSoruce into player
+        // Set mediaSource into player
         player.prepare(mediaSource);
 
         if (playerPosition != 0) {

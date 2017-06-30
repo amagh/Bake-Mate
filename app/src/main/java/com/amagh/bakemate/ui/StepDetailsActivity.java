@@ -41,7 +41,7 @@ public class StepDetailsActivity extends AppCompatActivity implements LoaderMana
     private Cursor mCursor;
     private StepSectionAdapter mPagerAdapter;
     private ActivityStepDetailsBinding mBinding;
-    private List<PageChangeCallBack> mPageChangeCallBacks;
+    private PageChangeCallBack mPageChangeCallBack;
 
     public static int sCurrentPosition;
 
@@ -82,8 +82,8 @@ public class StepDetailsActivity extends AppCompatActivity implements LoaderMana
                 // through state changes
                 sCurrentPosition = position;
 
-                for (PageChangeCallBack pageChangeCallBack : mPageChangeCallBacks) {
-                    pageChangeCallBack.onPageChanged(sCurrentPosition);
+                if (mPageChangeCallBack != null) {
+                    mPageChangeCallBack.onPageChanged(position);
                 }
             }
 
@@ -124,7 +124,7 @@ public class StepDetailsActivity extends AppCompatActivity implements LoaderMana
 
     }
 
-    interface PageChangeCallBack {
+    public interface PageChangeCallBack {
         void onPageChanged(int currentPage);
     }
 
@@ -133,28 +133,7 @@ public class StepDetailsActivity extends AppCompatActivity implements LoaderMana
      *
      * @param pageChangeCallBack PageChangeCallBack to be registered
      */
-    void setPageChangeCallBack(PageChangeCallBack pageChangeCallBack) {
-        // If the List of PageChangeCallBacks has not been initialized, init
-        if (mPageChangeCallBacks == null) {
-            mPageChangeCallBacks = new ArrayList<>();
-        }
-
-        // If the List does not contain the PageChangeCallBack to be registered, add it to the List
-        // of CallBacks to notify
-        if (!mPageChangeCallBacks.contains(pageChangeCallBack)) {
-            mPageChangeCallBacks.add(pageChangeCallBack);
-        }
-    }
-
-    /**
-     * Removes a PageChangeCallBack from the List of PageChangeCallBacks to be notified
-     *
-     * @param pageChangeCallBack PageChangeCallBack to be removed
-     */
-    void removePageChangeCallBack(PageChangeCallBack pageChangeCallBack) {
-        // If the List contains the PageChangeCallBack, remove it
-        if (mPageChangeCallBacks.contains(pageChangeCallBack)) {
-            mPageChangeCallBacks.remove(pageChangeCallBack);
-        }
+    public void setPageChangeCallBack(PageChangeCallBack pageChangeCallBack) {
+        mPageChangeCallBack = pageChangeCallBack;
     }
 }
