@@ -1,5 +1,6 @@
 package com.amagh.bakemate.models;
 
+import android.database.Cursor;
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 import android.databinding.BindingAdapter;
@@ -11,6 +12,7 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.amagh.bakemate.BR;
+import com.amagh.bakemate.data.RecipeContract;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
@@ -102,6 +104,29 @@ public class Step extends BaseObservable implements Parcelable{
         notifyPropertyChanged(BR.visibility);
     }
 
+    /**
+     * Helper method for creating a Step from Cursor contents
+     *
+     * @param cursor    Cursor describing the recipe step. Should already be in the correct position
+     * @return A Step Object created with information from the Cursor
+     */
+    public static Step createStepFromCursor(Cursor cursor) {
+        // Retrieve the index of the columns required to make a Step. Retrieving the information
+        // dynamically will remove the requirement of passing a projection and column index through
+        int IDX_SHORT_DESC = cursor.getColumnIndex(RecipeContract.StepEntry.COLUMN_SHORT_DESC);
+        int IDX_DESCRIPTION = cursor.getColumnIndex(RecipeContract.StepEntry.COLUMN_DESCRIPTION);
+        int IDX_VIDEO_URL = cursor.getColumnIndex(RecipeContract.StepEntry.COLUMN_VIDEO_URL);
+
+        // Retrieve info from database
+        String shortDescription = cursor.getString(IDX_SHORT_DESC);
+        String description = cursor.getString(IDX_DESCRIPTION);
+        String videoUrl = cursor.getString(IDX_VIDEO_URL);
+
+        return new Step(videoUrl, shortDescription, description);
+    }
+
+    // Parcelable Related Methods
+
     public static final Parcelable.Creator<Step> CREATOR = new Parcelable.Creator<Step>() {
         @Override
         public Step createFromParcel(Parcel parcel) {
@@ -125,4 +150,5 @@ public class Step extends BaseObservable implements Parcelable{
         parcel.writeString(description);
         parcel.writeString(videoUrl);
     }
+
 }
