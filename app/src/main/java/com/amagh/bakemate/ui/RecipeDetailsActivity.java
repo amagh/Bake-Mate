@@ -10,7 +10,7 @@ import android.util.Log;
 import com.amagh.bakemate.R;
 import com.amagh.bakemate.data.RecipeDatabase;
 
-public class RecipeDetailsActivity extends AppCompatActivity {
+public class RecipeDetailsActivity extends AppCompatActivity implements RecipeDetailsFragment.StepClickCallback{
     // **Constants** //
     private static final String TAG = RecipeDetailsActivity.class.getSimpleName();
 
@@ -49,4 +49,8 @@ public class RecipeDetailsActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onStepClicked(long recipeId, long stepId) {
+
+    }
 }

@@ -59,20 +59,28 @@ public class DetailsAdapter extends RecyclerView.Adapter<DetailsAdapter.DetailsV
 
     public interface StepProjection {
         String[] STEP_PROJECTION = {
+                RecipeContract.StepEntry.COLUMN_STEP_ID,
                 RecipeContract.StepEntry.COLUMN_SHORT_DESC,
                 RecipeContract.StepEntry.COLUMN_DESCRIPTION,
                 RecipeContract.StepEntry.COLUMN_VIDEO_URL
         };
 
-        int IDX_STEP_SHORT_DESC         = 0;
-        int IDX_STEP_DESCRIPTION        = 1;
-        int IDX_STEP_VIDEO_URL          = 2;
+        int IDX_STEP_ID                 = 0;
+        int IDX_STEP_SHORT_DESC         = 1;
+        int IDX_STEP_DESCRIPTION        = 2;
+        int IDX_STEP_VIDEO_URL          = 3;
     }
 
     // **Member Variables** //
     private Cursor mRecipeCursor;
     private Cursor mIngredientsCursor;
     private Cursor mStepsCursor;
+
+    private final ClickHandler mClickHandler;
+
+    public DetailsAdapter(ClickHandler clickHandler) {
+        mClickHandler = clickHandler;
+    }
 
     @Override
     public DetailsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -102,11 +110,10 @@ public class DetailsAdapter extends RecyclerView.Adapter<DetailsAdapter.DetailsV
         if (viewType < INGREDIENTS_HEADER_VIEW) {
             // Create a ViewDataBinding using the layoutId
             ViewDataBinding binding = DataBindingUtil.inflate(inflater, layoutId, parent, false);
-            return new DetailsViewHolder(binding);
+            return new DetailsViewHolder(binding, viewType);
         } else {
             // Inflate the View using the layoutId
             View view = inflater.inflate(layoutId, parent, false);
-            view.setTag(viewType);
             return new DetailsViewHolder(view);
         }
     }
@@ -184,13 +191,34 @@ public class DetailsAdapter extends RecyclerView.Adapter<DetailsAdapter.DetailsV
         }
     }
 
+    public interface ClickHandler {
+        void onStepClicked(long stepId);
+    }
+
     public class DetailsViewHolder extends RecyclerView.ViewHolder {
         // **Member Variables** //
         private ViewDataBinding mBinding;
 
-        public DetailsViewHolder(ViewDataBinding binding) {
+        public DetailsViewHolder(ViewDataBinding binding, int viewType) {
             super(binding.getRoot());
 
+            // Only set an OnClickListener for ViewHolders with step-information
+            if (viewType == STEPS_VIEW) {
+                binding.getRoot().setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        // Compensate for headers and ingredients
+                        int position = getAdapterPosition() - 3 - mIngredientsCursor.getCount();
+
+                        // Get the ID of the selected step
+                        mStepsCursor.moveToPosition(position);
+                        long stepId = mStepsCursor.getLong(StepProjection.IDX_STEP_ID);
+
+                        // Pass the ID to the ClickHandler
+                        mClickHandler.onStepClicked(stepId);
+                    }
+                });
+            }
             mBinding = binding;
         }
 

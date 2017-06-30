@@ -84,7 +84,13 @@ public class RecipeDetailsFragment extends Fragment implements LoaderManager.Loa
      */
     private void initRecyclerView() {
         // Init the Adapter and LayoutManager
-        mAdapter = new DetailsAdapter();
+        mAdapter = new DetailsAdapter(new DetailsAdapter.ClickHandler() {
+            @Override
+            public void onStepClicked(long stepId) {
+                // Pass recipeId and stepId to RecipeDetailsActivity
+                ((RecipeDetailsActivity) getActivity()).onStepClicked(mRecipeId, stepId);
+            }
+        });
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
 
         // Set them to the RecyclerView
@@ -154,5 +160,9 @@ public class RecipeDetailsFragment extends Fragment implements LoaderManager.Loa
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
 
+    }
+
+    interface StepClickCallback {
+        void onStepClicked(long recipeId, long stepId);
     }
 }
