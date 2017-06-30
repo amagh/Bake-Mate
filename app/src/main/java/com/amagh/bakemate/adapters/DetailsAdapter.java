@@ -35,7 +35,7 @@ public class DetailsAdapter extends RecyclerView.Adapter<DetailsAdapter.DetailsV
     private static final int STEPS_HEADER_VIEW          = 4;
 
     // Column Projections
-    interface RecipeProjection {
+    public interface RecipeProjection {
         String[] RECIPE_DETAILS_PROJECTION = {
                 RecipeContract.RecipeEntry.COLUMN_RECIPE_NAME,
                 RecipeContract.RecipeEntry.COLUMN_RECIPE_SERVINGS
@@ -45,7 +45,7 @@ public class DetailsAdapter extends RecyclerView.Adapter<DetailsAdapter.DetailsV
         int IDX_RECIPE_SERVINGS         = 1;
     }
 
-    interface IngredientProjection {
+    public interface IngredientProjection {
         String[] INGREDIENT_PROJECTION = {
                 RecipeContract.IngredientEntry.COLUMN_QUANTITY,
                 RecipeContract.IngredientEntry.COLUMN_MEASURE,
@@ -57,7 +57,7 @@ public class DetailsAdapter extends RecyclerView.Adapter<DetailsAdapter.DetailsV
         int IDX_INGREDIENT_NAME         = 2;
     }
 
-    interface StepProjection {
+    public interface StepProjection {
         String[] STEP_PROJECTION = {
                 RecipeContract.StepEntry.COLUMN_SHORT_DESC,
                 RecipeContract.StepEntry.COLUMN_DESCRIPTION,
@@ -220,11 +220,11 @@ public class DetailsAdapter extends RecyclerView.Adapter<DetailsAdapter.DetailsV
                     position = position - 2;
                     mIngredientsCursor.moveToPosition(position);
 
-                    int quantity = mIngredientsCursor.getInt(IngredientProjection.IDX_INGREDIENT_QUANTITY);
+                    double quantity = mIngredientsCursor.getDouble(IngredientProjection.IDX_INGREDIENT_QUANTITY);
                     String measure = mIngredientsCursor.getString(IngredientProjection.IDX_INGREDIENT_MEASURE);
                     String ingredientName = mIngredientsCursor.getString(IngredientProjection.IDX_INGREDIENT_NAME);
 
-                    Ingredient ingredient = new Ingredient(quantity, measure, ingredientName);
+                    Ingredient ingredient = new Ingredient(mBinding.getRoot().getContext(), quantity, measure, ingredientName);
 
                     ((ListItemIngredientBinding) mBinding).setIngredient(ingredient);
                     break;
