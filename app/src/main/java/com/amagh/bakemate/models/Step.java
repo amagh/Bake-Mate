@@ -21,7 +21,6 @@ import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
-import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
@@ -44,6 +43,7 @@ public class Step extends BaseObservable implements Parcelable{
 
     private int visibility;
     private SimpleExoPlayer player;
+    private long playerPosition;
     private int stepId;
 
     public Step(String videoUrl, String shortDescription, String description) {
@@ -140,17 +140,25 @@ public class Step extends BaseObservable implements Parcelable{
         this.stepId = stepId;
     }
 
+    public void stopPlayer() {
+        // Save player's current position so it can be re-set when the user re-enters the Fragment
+        playerPosition = player.getCurrentPosition();
+        player.stop();
+    }
+
     public void setPlayer(Context context) {
         if (videoUrl == null || videoUrl.isEmpty()) {
             // No media, nothing to play
             return;
         }
 
+        if (player == null) {
+            // Init SimpleExoPlayer
+            this.player = ExoPlayerFactory.newSimpleInstance(context, new DefaultTrackSelector());
+        }
+
         // Convert String videoUrl to a Uri
         Uri videoUri = Uri.parse(videoUrl);
-
-        // Init SimpleExoPlayer
-        this.player = ExoPlayerFactory.newSimpleInstance(context, new DefaultTrackSelector());
 
         // Init MediaSource from the videoUri
         String userAgent = Util.getUserAgent(context, "BakeMate");
@@ -163,6 +171,13 @@ public class Step extends BaseObservable implements Parcelable{
 
         // Set mediaSoruce into player
         player.prepare(mediaSource);
+
+        if (playerPosition != 0) {
+            // Seek to the previous position if it was saved
+            player.seekTo(playerPosition);
+        }
+
+        notifyPropertyChanged(BR.player);
     }
 
     /**
