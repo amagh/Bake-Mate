@@ -16,7 +16,7 @@ import com.amagh.bakemate.ui.StepDetailsFragment;
  * Created by hnoct on 6/29/2017.
  */
 
-public class StepSectionAdapter extends FragmentStatePagerAdapter implements StepDetailsActivity.PageChangeCallBack{
+public class StepSectionAdapter extends FragmentStatePagerAdapter implements StepDetailsActivity.PageChangeListener {
     // **Constants** //
     private static final String TAG = StepSectionAdapter.class.getSimpleName();
     public interface StepProjection {

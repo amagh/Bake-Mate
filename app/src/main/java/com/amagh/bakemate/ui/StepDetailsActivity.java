@@ -4,26 +4,19 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.databinding.DataBindingUtil;
 import android.net.Uri;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 
 import com.amagh.bakemate.R;
 import com.amagh.bakemate.adapters.StepSectionAdapter;
 import com.amagh.bakemate.databinding.ActivityStepDetailsBinding;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static com.amagh.bakemate.ui.StepDetailsActivity.BundleKeys.STEP_ID;
 
@@ -41,7 +34,7 @@ public class StepDetailsActivity extends AppCompatActivity implements LoaderMana
     private Cursor mCursor;
     private StepSectionAdapter mPagerAdapter;
     private ActivityStepDetailsBinding mBinding;
-    private PageChangeCallBack mPageChangeCallBack;
+    private PageChangeListener mPageChangeListener;
 
     public static int sCurrentPosition;
 
@@ -82,8 +75,9 @@ public class StepDetailsActivity extends AppCompatActivity implements LoaderMana
                 // through state changes
                 sCurrentPosition = position;
 
-                if (mPageChangeCallBack != null) {
-                    mPageChangeCallBack.onPageChanged(position);
+                // Notify registered PageChangeListener of page change
+                if (mPageChangeListener != null) {
+                    mPageChangeListener.onPageChanged(position);
                 }
             }
 
@@ -124,16 +118,16 @@ public class StepDetailsActivity extends AppCompatActivity implements LoaderMana
 
     }
 
-    public interface PageChangeCallBack {
+    public interface PageChangeListener {
         void onPageChanged(int currentPage);
     }
 
     /**
-     * Registers a PageChangeCallBack to be notified when the user changes pages
+     * Registers a PageChangeListener to be notified when the user changes pages
      *
-     * @param pageChangeCallBack PageChangeCallBack to be registered
+     * @param pageChangeListener PageChangeListener to be registered
      */
-    public void setPageChangeCallBack(PageChangeCallBack pageChangeCallBack) {
-        mPageChangeCallBack = pageChangeCallBack;
+    public void setPageChangeCallBack(PageChangeListener pageChangeListener) {
+        mPageChangeListener = pageChangeListener;
     }
 }
