@@ -12,8 +12,7 @@
     <dimen name="list_recipe_image_height">200dp</dimen>
     <dimen name="list_recipe_vertical_separation">8dp</dimen>
 
-    <dimen name="list_ingredient_quantity_width">35dp</dimen>
-    <dimen name="list_ingredient_measure_width">45dp</dimen>
+    <dimen name="list_ingredient_quantity_width">50dp</dimen>
     <dimen name="list_ingredient_vertical_separation">4dp</dimen>
 
     <dimen name="list_details_servings_width">80dp</dimen>

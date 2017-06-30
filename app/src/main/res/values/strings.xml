@@ -9,12 +9,25 @@
     <!-- List item recipe details item -->
     <string name="list_details_servings_format">Servings: %d</string>
 
+    <!-- List item ingredient -->
+    <string name="list_ingredient_header">Ingredients</string>
+
+    <!-- List item step -->
+    <string name="list_step_header">Directions</string>
+
+    <!-- Measurements units to be displayed in RecipeDetailsActivity -->
+    <string name="measurement_gram">g</string>
+    <string name="measurement_tablespoon">Tbsp</string>
+    <string name="measurement_teaspoon">tsp</string>
+    <string name="measurement_package">pkg</string>
+    <string name="measurement_cup">cup</string>
+    <string name="measurement_ounce">oz</string>
+
     <!-- Dummy text for layouts -->
     <!-- Recipe list layout -->
     <string name="list_recipe_title_placeholder">Cheesecake</string>
 
     <!-- List item ingredient -->
-    <string name="list_ingredient_header">Ingredients</string>
     <string name="list_ingredient_quantity_placeholder">12</string>
     <string name="list_ingredient_measure_placeholder">cups</string>
     <string name="list_ingredient_placeholder">cream</string>
@@ -24,9 +37,10 @@
     <string name="list_details_servings_placeholder">Servings: 8</string>
 
     <!-- List item step -->
-    <string name="list_step_header">Directions</string>
     <string name="list_step_short_description_placeholder">Starting prep</string>
     <string name="list_step_description_placeholder">
-        1. Preheat the oven to 350°F. Butter the bottoms and sides of two 9" round pans with 2\"-high sides. Cover the bottoms of the pans with rounds of parchment paper, and butter the paper as well.
+        1. Preheat the oven to 350°F. Butter the bottoms and sides of two 9\" round pans with 2\"-high sides. Cover the bottoms of the pans with rounds of parchment paper, and butter the paper as well.
     </string>
+
+
 </resources>
