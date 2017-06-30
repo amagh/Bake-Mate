@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import com.amagh.bakemate.R;
 import com.amagh.bakemate.data.RecipeContract;
 import com.amagh.bakemate.databinding.ListItemRecipeBinding;
+import com.amagh.bakemate.models.Recipe;
 import com.amagh.bakemate.utils.DatabaseUtils;
 import com.bumptech.glide.Glide;
 
@@ -122,18 +123,14 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
 
             // Retrieve recipe information from Cursor
             int recipeId = mCursor.getInt(Projection.IDX_RECIPE_ID);
-            String recipe = mCursor.getString(Projection.IDX_RECIPE_NAME);
+            String recipeName = mCursor.getString(Projection.IDX_RECIPE_NAME);
 
             // Get videoUrl to utilize a still frame as the image since no recipes contain a
             // thumbnail
             String videoUrl = DatabaseUtils.getVideoUrlForThumbnail(itemView.getContext(), recipeId);
 
-            // Populate Views
-            Glide.with(itemView.getContext())
-                    .load(videoUrl)
-                    .into(mBinding.listRecipeIv);
-
-            mBinding.listRecipeNameTv.setText(recipe);
+            Recipe recipe = new Recipe(recipeName, videoUrl);
+            mBinding.setRecipe(recipe);
 
             // Force bindings to execute immediately
             mBinding.executePendingBindings();
