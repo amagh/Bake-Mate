@@ -4,6 +4,7 @@ import android.content.Context;
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 import android.databinding.BindingAdapter;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.ImageView;
@@ -87,7 +88,7 @@ public class Recipe extends BaseObservable {
     }
 
     @BindingAdapter({"bind:videoUrl", "bind:listener"})
-    public static void loadVideoThumbnail(ImageView imageView, String videoUrl, RequestListener listener) {
+    public static void loadVideoThumbnail(ImageView imageView, String videoUrl, RequestListener<Drawable> listener) {
         Glide.with(imageView.getContext())
                 .load(videoUrl)
                 .listener(listener)

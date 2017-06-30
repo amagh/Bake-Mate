@@ -3,6 +3,7 @@ package com.amagh.bakemate.models;
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 import android.databinding.BindingAdapter;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.ImageView;
@@ -75,7 +76,7 @@ public class Step extends BaseObservable {
     }
 
     @BindingAdapter({"bind:videoUrl", "bind:listener"})
-    public static void loadVideoThumbnail(ImageView imageView, String videoUrl, RequestListener listener) {
+    public static void loadVideoThumbnail(ImageView imageView, String videoUrl, RequestListener<Drawable> listener) {
         if (videoUrl.isEmpty()) {
             // Nothing to load
             return;
