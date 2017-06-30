@@ -1,15 +1,57 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="com.amagh.bakemate.ui.StepDetailsFragment">
 
-    <TextView
-        android:id="@+id/section_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:textSize="40sp"
-        android:text="1"/>
+    <data>
+        <variable
+            name="step"
+            type="com.amagh.bakemate.models.Step" />
+    </data>
 
-</RelativeLayout>
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.google.android.exoplayer2.ui.SimpleExoPlayerView
+            android:id="@+id/step_details_exo"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/step_detail_exoplayer_height"
+            android:visibility="@{step.visibility}"
+            app:player="@{step.player}"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent" />
+
+        <TextView
+            android:id="@+id/step_details_short_description_tv"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/default_horizontal_activity_margin"
+            android:layout_marginStart="@dimen/default_horizontal_activity_margin"
+            android:layout_marginRight="@dimen/default_horizontal_activity_margin"
+            android:layout_marginEnd="@dimen/default_horizontal_activity_margin"
+            android:layout_marginTop="@dimen/default_vertical_activity_margin"
+            android:text="@{step.shortDescription}"
+            style="@style/TextAppearance.AppCompat.Title"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/step_details_exo"
+            tools:text="@string/list_step_short_description_placeholder"/>
+
+        <TextView
+            android:id="@+id/step_details_description_tv"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/text_vertical_margin"
+            android:lineSpacingExtra="@dimen/text_vertical_margin_small"
+            android:text="@{step.description}"
+            style="@style/TextAppearance.AppCompat.Body1"
+            app:layout_constraintLeft_toLeftOf="@id/step_details_short_description_tv"
+            app:layout_constraintRight_toRightOf="@id/step_details_short_description_tv"
+            app:layout_constraintTop_toBottomOf="@id/step_details_short_description_tv"
+            tools:text="@string/list_step_description_placeholder"/>
+
+    </android.support.constraint.ConstraintLayout>
+
+</layout>

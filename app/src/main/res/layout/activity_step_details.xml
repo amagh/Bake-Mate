@@ -29,7 +29,7 @@
             </android.support.v7.widget.Toolbar>
 
             <com.astuetz.PagerSlidingTabStrip
-                android:id="@+id/step_details_ts"
+                android:id="@+id/step_details_view_pager_ts"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize" />
 

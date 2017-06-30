@@ -17,7 +17,6 @@ import com.amagh.bakemate.databinding.ListItemStepBinding;
 import com.amagh.bakemate.models.Ingredient;
 import com.amagh.bakemate.models.Recipe;
 import com.amagh.bakemate.models.Step;
-import com.amagh.bakemate.utils.DatabaseUtils;
 
 /**
  * Created by hnoct on 6/28/2017.
