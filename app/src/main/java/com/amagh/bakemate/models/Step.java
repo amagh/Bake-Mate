@@ -4,6 +4,8 @@ import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 import android.databinding.BindingAdapter;
 import android.graphics.drawable.Drawable;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.ImageView;
@@ -20,7 +22,7 @@ import com.bumptech.glide.request.target.Target;
  * Created by hnoct on 6/29/2017.
  */
 
-public class Step extends BaseObservable {
+public class Step extends BaseObservable implements Parcelable{
     private final String videoUrl;
     private final String shortDescription;
     private final String description;
@@ -34,6 +36,12 @@ public class Step extends BaseObservable {
 
         // If there is no video thumbnail to load, then ProgressBar should be hidden
         visibility = !videoUrl.isEmpty() ? View.VISIBLE : View.GONE;
+    }
+
+    public Step(Parcel parcel) {
+        this.videoUrl = parcel.readString();
+        this.shortDescription = parcel.readString();
+        this.description = parcel.readString();
     }
 
     @Bindable
@@ -92,5 +100,29 @@ public class Step extends BaseObservable {
         // Set visibility to GONE and then notify the Listener of the change in property
         visibility = View.GONE;
         notifyPropertyChanged(BR.visibility);
+    }
+
+    public static final Parcelable.Creator<Step> CREATOR = new Parcelable.Creator<Step>() {
+        @Override
+        public Step createFromParcel(Parcel parcel) {
+            return new Step(parcel);
+        }
+
+        @Override
+        public Step[] newArray(int i) {
+            return new Step[0];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(shortDescription);
+        parcel.writeString(description);
+        parcel.writeString(videoUrl);
     }
 }

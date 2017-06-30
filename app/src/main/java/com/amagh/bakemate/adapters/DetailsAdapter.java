@@ -219,6 +219,7 @@ public class DetailsAdapter extends RecyclerView.Adapter<DetailsAdapter.DetailsV
                     }
                 });
             }
+
             mBinding = binding;
         }
 
