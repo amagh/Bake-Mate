@@ -4,16 +4,13 @@ import android.content.Context;
 import android.database.Cursor;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import android.util.Log;
 
 import com.amagh.bakemate.R;
 import com.amagh.bakemate.data.RecipeContract;
 import com.amagh.bakemate.models.Step;
+import com.amagh.bakemate.ui.StepDetailsActivity;
 import com.amagh.bakemate.ui.StepDetailsFragment;
-
-import static com.amagh.bakemate.adapters.StepSectionAdapter.StepProjection.IDX_STEP_SHORT_DESC;
 
 /**
  * Created by hnoct on 6/29/2017.
@@ -51,8 +48,14 @@ public class StepSectionAdapter extends FragmentStatePagerAdapter {
 
         // Create a Step to pass to the newInstance method
         Step step = Step.createStepFromCursor(mCursor);
+        step.setStepId(position);
+        step.setPlayer(mContext);
 
-        return StepDetailsFragment.newInstance(step);
+        if (StepDetailsActivity.sCurrentPosition == position) {
+            step.getPlayer().setPlayWhenReady(true);
+        }
+
+        return StepDetailsFragment.newInstance(step, position);
     }
 
     @Override

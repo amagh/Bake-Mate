@@ -22,6 +22,9 @@ import com.amagh.bakemate.R;
 import com.amagh.bakemate.adapters.StepSectionAdapter;
 import com.amagh.bakemate.databinding.ActivityStepDetailsBinding;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static com.amagh.bakemate.ui.StepDetailsActivity.BundleKeys.STEP_ID;
 
 public class StepDetailsActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -38,6 +41,7 @@ public class StepDetailsActivity extends AppCompatActivity implements LoaderMana
     private Cursor mCursor;
     private StepSectionAdapter mPagerAdapter;
     private ActivityStepDetailsBinding mBinding;
+    private List<PageChangeCallBack> mPageChangeCallBacks;
 
     public static int sCurrentPosition;
 
@@ -56,7 +60,7 @@ public class StepDetailsActivity extends AppCompatActivity implements LoaderMana
             mStepsUri = intent.getData();
 
             // Position that the user selected
-            sCurrentPosition = (int) intent.getLongExtra(STEP_ID, 0) - 1;
+            sCurrentPosition = (int) intent.getLongExtra(STEP_ID, 0);
         } else {
             Log.d(TAG, "No URI passed");
         }
@@ -65,8 +69,8 @@ public class StepDetailsActivity extends AppCompatActivity implements LoaderMana
 
         // Set up the ViewPager with the sections adapter.
         mBinding.stepDetailsVp.setAdapter(mPagerAdapter);
-        mBinding.stepDetailsTs.setViewPager(mBinding.stepDetailsVp);
-        mBinding.stepDetailsTs.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+        mBinding.stepDetailsViewPagerTs.setViewPager(mBinding.stepDetailsVp);
+        mBinding.stepDetailsViewPagerTs.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
@@ -77,6 +81,10 @@ public class StepDetailsActivity extends AppCompatActivity implements LoaderMana
                 // Set the current position whenever the user changes it so it can be persisted
                 // through state changes
                 sCurrentPosition = position;
+
+                for (PageChangeCallBack pageChangeCallBack : mPageChangeCallBacks) {
+                    pageChangeCallBack.onPageChanged(sCurrentPosition);
+                }
             }
 
             @Override
@@ -114,5 +122,39 @@ public class StepDetailsActivity extends AppCompatActivity implements LoaderMana
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
 
+    }
+
+    interface PageChangeCallBack {
+        void onPageChanged(int currentPage);
+    }
+
+    /**
+     * Registers a PageChangeCallBack to be notified when the user changes pages
+     *
+     * @param pageChangeCallBack PageChangeCallBack to be registered
+     */
+    void setPageChangeCallBack(PageChangeCallBack pageChangeCallBack) {
+        // If the List of PageChangeCallBacks has not been initialized, init
+        if (mPageChangeCallBacks == null) {
+            mPageChangeCallBacks = new ArrayList<>();
+        }
+
+        // If the List does not contain the PageChangeCallBack to be registered, add it to the List
+        // of CallBacks to notify
+        if (!mPageChangeCallBacks.contains(pageChangeCallBack)) {
+            mPageChangeCallBacks.add(pageChangeCallBack);
+        }
+    }
+
+    /**
+     * Removes a PageChangeCallBack from the List of PageChangeCallBacks to be notified
+     *
+     * @param pageChangeCallBack PageChangeCallBack to be removed
+     */
+    void removePageChangeCallBack(PageChangeCallBack pageChangeCallBack) {
+        // If the List contains the PageChangeCallBack, remove it
+        if (mPageChangeCallBacks.contains(pageChangeCallBack)) {
+            mPageChangeCallBacks.remove(pageChangeCallBack);
+        }
     }
 }
