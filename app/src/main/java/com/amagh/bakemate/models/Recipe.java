@@ -11,8 +11,10 @@ import android.widget.ImageView;
 
 import com.amagh.bakemate.BR;
 import com.amagh.bakemate.R;
-import com.bumptech.glide.Glide;
+import com.amagh.bakemate.glide.GlideApp;
+import com.amagh.bakemate.glide.RecipeGlideSignature;
 import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
@@ -89,8 +91,10 @@ public class Recipe extends BaseObservable {
 
     @BindingAdapter({"bind:videoUrl", "bind:listener"})
     public static void loadVideoThumbnail(ImageView imageView, String videoUrl, RequestListener<Drawable> listener) {
-        Glide.with(imageView.getContext())
+        GlideApp.with(imageView.getContext())
                 .load(videoUrl)
+                .signature(new RecipeGlideSignature(imageView.getContext().getResources().getInteger(R.integer.glide_current_version)))
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .listener(listener)
                 .into(imageView);
     }
