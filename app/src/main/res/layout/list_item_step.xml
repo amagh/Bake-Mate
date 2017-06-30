@@ -23,6 +23,7 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:videoUrl="@{step.videoUrl}"
+            app:listener="@{step.listener}"
             tools:src="@drawable/recipe_thumbnail_placeholder"/>
 
         <ImageView
@@ -34,6 +35,16 @@
             app:layout_constraintTop_toTopOf="@id/list_step_thumbnail_iv"
             app:layout_constraintBottom_toBottomOf="@id/list_step_thumbnail_iv"
             android:src="@drawable/ic_play_arrow" />
+
+        <ProgressBar
+            android:id="@+id/list_step_thumbnail_pb"
+            android:layout_width="@dimen/list_step_thumbnail_size"
+            android:layout_height="@dimen/list_step_thumbnail_size"
+            android:visibility="@{step.visibility}"
+            app:layout_constraintLeft_toLeftOf="@id/list_step_thumbnail_iv"
+            app:layout_constraintRight_toRightOf="@id/list_step_thumbnail_iv"
+            app:layout_constraintTop_toTopOf="@id/list_step_thumbnail_iv"
+            app:layout_constraintBottom_toBottomOf="@id/list_step_thumbnail_iv"/>
 
         <TextView
             android:id="@+id/list_step_short_description_tv"
