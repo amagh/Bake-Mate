@@ -23,6 +23,9 @@
     <string name="measurement_cup">cup</string>
     <string name="measurement_ounce">oz</string>
 
+    <!-- String format for the tab indicator for StepDetailsActivity -->
+    <string name="step">Step %d</string>
+
     <!-- Dummy text for layouts -->
     <!-- Recipe list layout -->
     <string name="list_recipe_title_placeholder">Cheesecake</string>
@@ -41,6 +44,5 @@
     <string name="list_step_description_placeholder">
         1. Preheat the oven to 350°F. Butter the bottoms and sides of two 9\" round pans with 2\"-high sides. Cover the bottoms of the pans with rounds of parchment paper, and butter the paper as well.
     </string>
-
 
 </resources>
