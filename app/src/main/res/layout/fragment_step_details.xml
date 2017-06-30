@@ -19,6 +19,7 @@
             android:layout_height="@dimen/step_detail_exoplayer_height"
             android:visibility="@{step.visibility}"
             app:player="@{step.player}"
+            app:mediaSource="@{step.mediaSource}"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent" />
