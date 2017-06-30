@@ -16,20 +16,15 @@ import android.widget.ImageView;
 
 import com.amagh.bakemate.BR;
 import com.amagh.bakemate.data.RecipeContract;
+import com.amagh.bakemate.ui.StepDetailsActivity;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
-import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
-import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
-import com.google.android.exoplayer2.util.Util;
 
 /**
  * Created by hnoct on 6/29/2017.
@@ -43,6 +38,7 @@ public class Step extends BaseObservable implements Parcelable{
 
     private int visibility;
     private SimpleExoPlayer player;
+    private ExtractorMediaSource mediaSource;
     private long playerPosition;
     private int stepId;
 
@@ -99,6 +95,11 @@ public class Step extends BaseObservable implements Parcelable{
         return player;
     }
 
+    @Bindable
+    public ExtractorMediaSource getMediaSource( ) {
+        return mediaSource;
+    }
+
     @BindingAdapter({"bind:videoUrl", "bind:listener"})
     public static void loadVideoThumbnail(ImageView imageView, String videoUrl, RequestListener<Drawable> listener) {
         if (videoUrl == null || videoUrl.isEmpty()) {
@@ -112,12 +113,15 @@ public class Step extends BaseObservable implements Parcelable{
                 .into(imageView);
     }
 
-    @BindingAdapter("bind:player")
-    public static void loadVideoIntoPlayer(SimpleExoPlayerView playerView, SimpleExoPlayer player) {
+    @BindingAdapter({"bind:player", "bind:mediaSource"})
+    public static void loadVideoIntoPlayer(SimpleExoPlayerView playerView, SimpleExoPlayer player, ExtractorMediaSource mediaSource) {
         if (player == null) {
             // No media, nothing to play
             return;
         }
+
+        // Load the MediaSource into the SimpleExoPlayer
+        player.prepare(mediaSource);
 
         // Set player to the SimpleExoPlayerView
         playerView.setPlayer(player);
@@ -140,44 +144,40 @@ public class Step extends BaseObservable implements Parcelable{
         this.stepId = stepId;
     }
 
+    /**
+     * Stops video playback and prevents the ExoVideoPlayerView from attempting to load the video
+     */
     public void stopPlayer() {
         // Save player's current position so it can be re-set when the user re-enters the Fragment
         playerPosition = player.getCurrentPosition();
+
+        // Stop the video playback
         player.stop();
+        player.prepare(null);
+
+        // Set member variables to null so they can't be loaded by loadVideoIntoPlayer()
+        player = null;
+        mediaSource = null;
+
+        // Notify of property change
+        notifyPropertyChanged(BR.mediaSource);
     }
 
-    public void setPlayer(Context context) {
-        if (videoUrl == null || videoUrl.isEmpty()) {
-            // No media, nothing to play
-            return;
-        }
+    /**
+     * Retrieves the SimpleExoVideoPlayer instance held by the Activity
+     *
+     * @param context       Activity with getPlayer() method
+     * @param mediaSource   The MediaSource that will be prepared by the player for video playback
+     */
+    public void setPlayer(Context context, ExtractorMediaSource mediaSource) {
+        // Retrieve the SimpleExoPlayer from the Activity
+        this.player = ((StepDetailsActivity) context).getPlayer();
 
-        if (player == null) {
-            // Init SimpleExoPlayer
-            this.player = ExoPlayerFactory.newSimpleInstance(context, new DefaultTrackSelector());
-        }
+        // Set member variable to parameter
+        this.mediaSource = mediaSource;
 
-        // Convert String videoUrl to a Uri
-        Uri videoUri = Uri.parse(videoUrl);
-
-        // Init MediaSource from the videoUri
-        String userAgent = Util.getUserAgent(context, "BakeMate");
-        MediaSource mediaSource = new ExtractorMediaSource(
-                videoUri,
-                new DefaultDataSourceFactory(context, userAgent),
-                new DefaultExtractorsFactory(),
-                null,
-                null);
-
-        // Set mediaSource into player
-        player.prepare(mediaSource);
-
-        if (playerPosition != 0) {
-            // Seek to the previous position if it was saved
-            player.seekTo(playerPosition);
-        }
-
-        notifyPropertyChanged(BR.player);
+        // Notify of property change
+        notifyPropertyChanged(BR.mediaSource);
     }
 
     /**

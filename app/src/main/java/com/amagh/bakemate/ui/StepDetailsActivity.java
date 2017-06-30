@@ -17,6 +17,9 @@ import android.util.Log;
 import com.amagh.bakemate.R;
 import com.amagh.bakemate.adapters.StepSectionAdapter;
 import com.amagh.bakemate.databinding.ActivityStepDetailsBinding;
+import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 
 import static com.amagh.bakemate.ui.StepDetailsActivity.BundleKeys.STEP_ID;
 
@@ -35,6 +38,7 @@ public class StepDetailsActivity extends AppCompatActivity implements LoaderMana
     private StepSectionAdapter mPagerAdapter;
     private ActivityStepDetailsBinding mBinding;
     private PageChangeListener mPageChangeListener;
+    private SimpleExoPlayer mPlayer;
 
     public static int sCurrentPosition;
 
@@ -87,6 +91,9 @@ public class StepDetailsActivity extends AppCompatActivity implements LoaderMana
             }
         });
 
+        //Initialize the SimpleExoPlayer to be shared among all Fragments in the ViewPager
+        mPlayer = ExoPlayerFactory.newSimpleInstance(this, new DefaultTrackSelector());
+
         // Init the CursorLoader for the Steps
         getSupportLoaderManager().initLoader(STEP_CURSOR_LOADER1, null, this);
     }
@@ -129,5 +136,33 @@ public class StepDetailsActivity extends AppCompatActivity implements LoaderMana
      */
     public void setPageChangeCallBack(PageChangeListener pageChangeListener) {
         mPageChangeListener = pageChangeListener;
+    }
+
+    /**
+     * Retrieves the SimpleExoPlayer to be used for video playback
+     *
+     * @return SimpleExoPlayer bound to this Activity
+     */
+    public SimpleExoPlayer getPlayer() {
+        return mPlayer;
+    }
+
+    /**
+     * Retrieves the StepSectionAdapter used by this Activity's ViewPager
+     *
+     * @return The StepSectionAdapter used by this Activity's ViewPager
+     */
+    public StepSectionAdapter getPagerAdapter() {
+        return mPagerAdapter;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        // Release the player
+        mPlayer.stop();
+        mPlayer.release();
+        mPlayer = null;
     }
 }

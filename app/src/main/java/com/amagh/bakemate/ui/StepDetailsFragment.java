@@ -13,6 +13,7 @@ import com.amagh.bakemate.databinding.FragmentStepDetailsBinding;
 import com.amagh.bakemate.models.Step;
 
 import static com.amagh.bakemate.ui.StepDetailsFragment.BundleKeys.STEP;
+import static junit.framework.Assert.assertNotNull;
 
 /**
  * Created by hnoct on 6/29/2017.
@@ -28,7 +29,6 @@ public class StepDetailsFragment extends Fragment {
 
     // **Member Variables** //
     private Step mStep;
-    private int mStepid;
     private FragmentStepDetailsBinding mBinding;
 
     public static StepDetailsFragment newInstance(Step step, int stepId) {
@@ -65,6 +65,20 @@ public class StepDetailsFragment extends Fragment {
         // Bind data to the View
         mBinding.setStep(mStep);
 
+        // Setup the SimpleExoPlayer for the Step
+        if (getActivity() instanceof StepDetailsActivity) {
+            if (StepDetailsActivity.sCurrentPosition == mStep.getStepId()) {
+                mStep.setPlayer(
+                        getActivity(),
+                        ((StepDetailsActivity) getActivity()).getPagerAdapter().getMediaSource(mStep.getStepId())
+                );
+
+                // Set the currentPage variable in the StepPagerAdapter so the Adapter can properly
+                // track page changes
+                ((StepDetailsActivity) getActivity()).getPagerAdapter().setCurrentPage(mStep.getStepId());
+            }
+        }
+
         return rootView;
     }
 
@@ -73,7 +87,7 @@ public class StepDetailsFragment extends Fragment {
         super.onDestroyView();
 
         // Release the Player
-//        releasePlayer();
+        releasePlayer();
     }
 
     /**
