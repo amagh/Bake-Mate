@@ -9,6 +9,7 @@ import android.util.Log;
 
 import com.amagh.bakemate.R;
 import com.amagh.bakemate.data.RecipeDatabase;
+import com.amagh.bakemate.data.RecipeProvider;
 
 public class RecipeDetailsActivity extends AppCompatActivity implements RecipeDetailsFragment.StepClickCallback{
     // **Constants** //
@@ -51,6 +52,22 @@ public class RecipeDetailsActivity extends AppCompatActivity implements RecipeDe
 
     @Override
     public void onStepClicked(long recipeId, long stepId) {
+        // Start the StepDetailsActivity
+        startStepDetailsActivity(recipeId, stepId);
 
+    }
+
+    private void startStepDetailsActivity(long recipeId, long stepId) {
+        // Create the URI that will point to the steps for the recipe
+        Uri stepsUri = RecipeProvider.Steps.forRecipe(recipeId);
+
+        // Create Intent for RecipeDetailsActivity, set the URI, and put the page selected as an
+        // extra
+        Intent intent = new Intent(this, StepDetailsActivity.class);
+        intent.setData(stepsUri);
+        intent.putExtra(StepDetailsActivity.BundleKeys.STEP_ID, stepId);
+
+        // Launch the intent
+        startActivity(intent);
     }
 }
