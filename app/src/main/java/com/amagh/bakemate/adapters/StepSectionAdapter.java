@@ -78,14 +78,16 @@ public class StepSectionAdapter extends FragmentStatePagerAdapter implements Ste
 
     @Override
     public CharSequence getPageTitle(int position) {
+        // Set the title for the first tab to "Intro"
+        if (position == 0) {
+            return mContext.getString(R.string.step_intro);
+        }
+
         // Move Cursor to correct position
         mCursor.moveToPosition(position);
 
-        // Add 1 to the position to get the step number
-        int step = position + 1;
-
         // Return formatted String
-        return mContext.getString(R.string.step, step);
+        return mContext.getString(R.string.step, position);
     }
 
     public void swapCursor(Cursor newCursor) {

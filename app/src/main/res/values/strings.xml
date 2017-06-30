@@ -26,6 +26,9 @@
     <!-- String format for the tab indicator for StepDetailsActivity -->
     <string name="step">Step %d</string>
 
+    <!-- String for the Recipe Intro tab -->
+    <string name="step_intro">Intro</string>
+
     <!-- Dummy text for layouts -->
     <!-- Recipe list layout -->
     <string name="list_recipe_title_placeholder">Cheesecake</string>
