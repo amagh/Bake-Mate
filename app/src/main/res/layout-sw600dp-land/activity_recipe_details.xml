@@ -7,22 +7,27 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <include
-            layout="@layout/content_recipe_details"
+        <FrameLayout
             android:id="@+id/container_recipe_details"
             android:layout_width="0dp"
             android:layout_height="0dp"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toLeftOf="@id/container_step_details"
+            app:layout_constraintRight_toLeftOf="@+id/container_step_details"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <include layout="@layout/content_recipe_details"/>
+
+        </FrameLayout>
+
+
 
         <include
             layout="@layout/content_step_details"
             android:id="@+id/container_step_details"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            app:layout_constraintLeft_toRightOf="@id/container_recipe_details"
+            app:layout_constraintLeft_toRightOf="@+id/container_recipe_details"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent" />
