@@ -13,11 +13,15 @@ import com.amagh.bakemate.data.RecipeProvider;
 import com.amagh.bakemate.models.Step;
 import com.amagh.bakemate.utils.DatabaseUtils;
 import com.amagh.bakemate.utils.LayoutUtils;
+import com.amagh.bakemate.utils.ManageSimpleExoPlayerInterface;
+import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 
 import static junit.framework.Assert.assertNotNull;
 
-public class RecipeDetailsActivity extends AppCompatActivity implements RecipeDetailsFragment.StepClickCallback{
+public class RecipeDetailsActivity extends AppCompatActivity
+        implements RecipeDetailsFragment.StepClickCallback, ManageSimpleExoPlayerInterface{
     // **Constants** //
     private static final String TAG = RecipeDetailsActivity.class.getSimpleName();
 
@@ -57,6 +61,10 @@ public class RecipeDetailsActivity extends AppCompatActivity implements RecipeDe
 
             // Check whether StepDetailsFragment needs to be inflated
             if (LayoutUtils.inTwoPane(this)) {
+                // Instantiate the SimpleExoPlayer member variable
+                if (mPlayer == null) {
+                    mPlayer = ExoPlayerFactory.newSimpleInstance(this, new DefaultTrackSelector());
+                }
                 // Generate the Cursor to be used to create the Step for the Fragment
                 long recipeId = RecipeProvider.getRecipeIdFromUri(mRecipeUri);
 
@@ -99,5 +107,10 @@ public class RecipeDetailsActivity extends AppCompatActivity implements RecipeDe
 
         // Launch the intent
         startActivity(intent);
+    }
+
+    @Override
+    public SimpleExoPlayer getPlayer() {
+        return mPlayer;
     }
 }

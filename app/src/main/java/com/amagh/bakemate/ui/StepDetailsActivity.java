@@ -17,13 +17,15 @@ import android.util.Log;
 import com.amagh.bakemate.R;
 import com.amagh.bakemate.adapters.StepSectionAdapter;
 import com.amagh.bakemate.databinding.ActivityStepDetailsBinding;
+import com.amagh.bakemate.utils.ManageSimpleExoPlayerInterface;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 
 import static com.amagh.bakemate.ui.StepDetailsActivity.BundleKeys.STEP_ID;
 
-public class StepDetailsActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+public class StepDetailsActivity extends AppCompatActivity
+        implements LoaderManager.LoaderCallbacks<Cursor>, ManageSimpleExoPlayerInterface {
     // **Constants** //
     private static final String TAG = StepDetailsActivity.class.getSimpleName();
     private static final int STEP_CURSOR_LOADER1 = 6587;
@@ -138,11 +140,7 @@ public class StepDetailsActivity extends AppCompatActivity implements LoaderMana
         mPageChangeListener = pageChangeListener;
     }
 
-    /**
-     * Retrieves the SimpleExoPlayer to be used for video playback
-     *
-     * @return SimpleExoPlayer bound to this Activity
-     */
+    @Override
     public SimpleExoPlayer getPlayer() {
         return mPlayer;
     }
