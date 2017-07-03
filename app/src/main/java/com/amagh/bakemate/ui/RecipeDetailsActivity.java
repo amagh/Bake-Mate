@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -18,6 +19,7 @@ import com.amagh.bakemate.utils.ManageSimpleExoPlayerInterface;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
+import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 
 import static junit.framework.Assert.assertNotNull;
 
@@ -25,6 +27,7 @@ public class RecipeDetailsActivity extends MediaSourceActivity
         implements RecipeDetailsFragment.StepClickCallback, ManageSimpleExoPlayerInterface{
     // **Constants** //
     private static final String TAG = RecipeDetailsActivity.class.getSimpleName();
+    private static final String STEP_DETAILS_FRAG = "step_details_fragment";
 
     // **Member Variables**//
     private Uri mRecipeUri;
@@ -41,7 +44,6 @@ public class RecipeDetailsActivity extends MediaSourceActivity
 
         // Retrieve the URI for the recipe
         Intent intent = getIntent();
-
         if (intent.getData() != null) {
             mRecipeUri = intent.getData();
         } else {
@@ -71,11 +73,14 @@ public class RecipeDetailsActivity extends MediaSourceActivity
                 swapStepDetailsFragment(recipeId, 0L);
             }
         }
+
     }
 
     @Override
     public void onStepClicked(long recipeId, long stepId) {
+        // Check whether the Activity is using a two-pane layout
         if (getResources().getBoolean(R.bool.two_pane)) {
+            // Swap the Step being used by the StepDetailsFragment
             swapStepDetailsFragment(recipeId, stepId);
         } else {
             // Start the StepDetailsActivity
@@ -116,13 +121,22 @@ public class RecipeDetailsActivity extends MediaSourceActivity
         assertNotNull(cursor);
         cursor.close();
 
-        // Initialize the StepDetailsFragment with the Step
-        StepDetailsFragment detailsFragment = StepDetailsFragment.newInstance(step, (int) stepId);
+        // Check if the StepDetailsFragment has already been inflated
+        StepDetailsFragment detailsFragment =
+                (StepDetailsFragment)getSupportFragmentManager().findFragmentByTag(STEP_DETAILS_FRAG);
 
-        // Swap the Fragment into the container
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.container_step_details, detailsFragment)
-                .commit();
+        if (detailsFragment == null) {
+            // Initialize the StepDetailsFragment with the Step
+            detailsFragment = StepDetailsFragment.newInstance(step, (int) stepId);
+
+            // Swap the Fragment into the container
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.container_step_details, detailsFragment, STEP_DETAILS_FRAG)
+                    .commit();
+        } else {
+            // Swap the Step being used by the StepDetailsFragment
+            detailsFragment.swapStep(step);
+        }
     }
 
     @Override
