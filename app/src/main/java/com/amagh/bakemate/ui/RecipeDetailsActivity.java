@@ -9,6 +9,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 
 import com.amagh.bakemate.R;
+import com.amagh.bakemate.adapters.StepSectionAdapter;
 import com.amagh.bakemate.data.RecipeProvider;
 import com.amagh.bakemate.models.Step;
 import com.amagh.bakemate.utils.DatabaseUtils;
@@ -64,34 +65,22 @@ public class RecipeDetailsActivity extends MediaSourceActivity
                 if (mPlayer == null) {
                     mPlayer = ExoPlayerFactory.newSimpleInstance(this, new DefaultTrackSelector());
                 }
-                // Generate the Cursor to be used to create the Step for the Fragment
+                // Create the StepDetailsFragment and swap it into the container
                 long recipeId = RecipeProvider.getRecipeIdFromUri(mRecipeUri);
 
-                Uri stepUri = RecipeProvider.Steps.forRecipeAndStep(recipeId, 0);
-                Cursor stepCursor = DatabaseUtils.getCursorForStep(this, stepUri);
-
-                // Generate the Step from the Cursor
-                Step step = Step.createStepFromCursor(stepCursor);
-
-                // Close the Cursor
-                assertNotNull(stepCursor);
-                stepCursor.close();
-
-                // Create the Fragment containing the Step details and inflate it into the view
-                StepDetailsFragment detailsFragment = StepDetailsFragment.newInstance(step, 0);
-
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.container_step_details, detailsFragment)
-                        .commit();
+                swapStepDetailsFragment(recipeId, 0L);
             }
         }
     }
 
     @Override
     public void onStepClicked(long recipeId, long stepId) {
-        // Start the StepDetailsActivity
-        startStepDetailsActivity(recipeId, stepId);
-
+        if (getResources().getBoolean(R.bool.two_pane)) {
+            swapStepDetailsFragment(recipeId, stepId);
+        } else {
+            // Start the StepDetailsActivity
+            startStepDetailsActivity(recipeId, stepId);
+        }
     }
 
     private void startStepDetailsActivity(long recipeId, long stepId) {
@@ -106,6 +95,34 @@ public class RecipeDetailsActivity extends MediaSourceActivity
 
         // Launch the intent
         startActivity(intent);
+    }
+
+    /**
+     * Instantiates a new instance of StepDetailsFragment and swaps it into the the layout container
+     *
+     * @param recipeId  The ID of the recipe containing the Step
+     * @param stepId    The ID of the step to generate a Fragment for
+     */
+    private void swapStepDetailsFragment(long recipeId, long stepId) {
+        // Generate a Cursor with the Step's details
+        Uri stepUri = RecipeProvider.Steps.forRecipeAndStep(recipeId, stepId);
+        Cursor cursor = DatabaseUtils.getCursorForStep(this, stepUri);
+
+        // Generate a Step from the Cursor
+        Step step = Step.createStepFromCursor(cursor);
+        step.setStepId((int) stepId);
+
+        // Close the Cursor
+        assertNotNull(cursor);
+        cursor.close();
+
+        // Initialize the StepDetailsFragment with the Step
+        StepDetailsFragment detailsFragment = StepDetailsFragment.newInstance(step, (int) stepId);
+
+        // Swap the Fragment into the container
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.container_step_details, detailsFragment)
+                .commit();
     }
 
     @Override
