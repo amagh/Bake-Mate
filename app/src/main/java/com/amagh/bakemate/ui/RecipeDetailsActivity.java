@@ -57,7 +57,7 @@ public class RecipeDetailsActivity extends MediaSourceActivity
             fragment.setArguments(args);
 
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container_recipe_details, fragment)
+                    .replace(R.id.container_recipe_details, fragment)
                     .commit();
 
             // Check whether StepDetailsFragment needs to be inflated
