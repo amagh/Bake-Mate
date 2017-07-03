@@ -123,5 +123,18 @@ public class RecipeProvider {
                     .appendPath(Long.toString(recipeId))
                     .build();
         }
+
+        @InexactContentUri(
+                path        = Path.STEPS + "/" + Path.RECIPES + "/#/" + Path.STEPS + "/#",
+                name        = "STEP_WITH_RECIPE_ID_AND_STEP_ID",
+                type = "vnd.android.cursor.item/step",
+                whereColumn = {RecipeContract.StepEntry.COLUMN_RECIPE_ID, RecipeContract.StepEntry.COLUMN_STEP_ID},
+                pathSegment = {2, 4})
+        public static Uri forRecipeAndStep(long recipeId, long stepId) {
+            return forRecipe(recipeId).buildUpon()
+                    .appendPath(Path.STEPS)
+                    .appendPath(Long.toString(stepId))
+                    .build();
+        }
     }
 }
