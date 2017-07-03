@@ -129,4 +129,14 @@ public class RecipeDetailsActivity extends MediaSourceActivity
     public SimpleExoPlayer getPlayer() {
         return mPlayer;
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        if (mPlayer != null) {
+            mPlayer.stop();
+            mPlayer.release();
+        }
+    }
 }
