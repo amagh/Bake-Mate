@@ -17,8 +17,8 @@ import com.amagh.bakemate.BR;
 import com.amagh.bakemate.R;
 import com.amagh.bakemate.data.RecipeContract;
 import com.amagh.bakemate.glide.RecipeGlideSignature;
-import com.amagh.bakemate.ui.StepDetailsActivity;
 import com.amagh.bakemate.glide.GlideApp;
+import com.amagh.bakemate.utils.ManageSimpleExoPlayerInterface;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.GlideException;
@@ -175,7 +175,9 @@ public class Step extends BaseObservable implements Parcelable{
      */
     public void setPlayer(Context context, ExtractorMediaSource mediaSource) {
         // Retrieve the SimpleExoPlayer from the Activity
-        this.player = ((StepDetailsActivity) context).getPlayer();
+        if (context instanceof ManageSimpleExoPlayerInterface) {
+            this.player = ((ManageSimpleExoPlayerInterface) context).getPlayer();
+        }
 
         // Set member variable to parameter
         this.mediaSource = mediaSource;
