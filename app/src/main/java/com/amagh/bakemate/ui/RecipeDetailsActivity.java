@@ -20,7 +20,7 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 
 import static junit.framework.Assert.assertNotNull;
 
-public class RecipeDetailsActivity extends AppCompatActivity
+public class RecipeDetailsActivity extends MediaSourceActivity
         implements RecipeDetailsFragment.StepClickCallback, ManageSimpleExoPlayerInterface{
     // **Constants** //
     private static final String TAG = RecipeDetailsActivity.class.getSimpleName();
@@ -61,7 +61,6 @@ public class RecipeDetailsActivity extends AppCompatActivity
 
             // Check whether StepDetailsFragment needs to be inflated
             if (LayoutUtils.inTwoPane(this)) {
-                // Instantiate the SimpleExoPlayer member variable
                 if (mPlayer == null) {
                     mPlayer = ExoPlayerFactory.newSimpleInstance(this, new DefaultTrackSelector());
                 }

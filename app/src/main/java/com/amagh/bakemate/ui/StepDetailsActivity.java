@@ -24,7 +24,7 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 
 import static com.amagh.bakemate.ui.StepDetailsActivity.BundleKeys.STEP_ID;
 
-public class StepDetailsActivity extends AppCompatActivity
+public class StepDetailsActivity extends MediaSourceActivity
         implements LoaderManager.LoaderCallbacks<Cursor>, ManageSimpleExoPlayerInterface {
     // **Constants** //
     private static final String TAG = StepDetailsActivity.class.getSimpleName();
