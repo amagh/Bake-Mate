@@ -20,8 +20,6 @@
 
         </FrameLayout>
 
-
-
         <include
             layout="@layout/content_step_details"
             android:id="@+id/container_step_details"

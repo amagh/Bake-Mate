@@ -1,6 +1,7 @@
 package com.amagh.bakemate.ui;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -11,6 +12,9 @@ import com.amagh.bakemate.data.RecipeProvider;
 import com.amagh.bakemate.models.Step;
 import com.amagh.bakemate.utils.DatabaseUtils;
 import com.amagh.bakemate.utils.LayoutUtils;
+import com.google.android.exoplayer2.SimpleExoPlayer;
+
+import static junit.framework.Assert.assertNotNull;
 
 public class RecipeDetailsActivity extends AppCompatActivity implements RecipeDetailsFragment.StepClickCallback{
     // **Constants** //
@@ -18,6 +22,7 @@ public class RecipeDetailsActivity extends AppCompatActivity implements RecipeDe
 
     // **Member Variables**//
     private Uri mRecipeUri;
+    private SimpleExoPlayer mPlayer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,12 +54,22 @@ public class RecipeDetailsActivity extends AppCompatActivity implements RecipeDe
                     .replace(R.id.fragment_container_recipe_details, fragment)
                     .commit();
 
+            // Check whether StepDetailsFragment needs to be inflated
             if (LayoutUtils.inTwoPane(this)) {
+                // Generate the Cursor to be used to create the Step for the Fragment
                 long recipeId = RecipeProvider.getRecipeIdFromUri(mRecipeUri);
 
                 Uri stepUri = RecipeProvider.Steps.forRecipeAndStep(recipeId, 0);
+                Cursor stepCursor = DatabaseUtils.getCursorForStep(this, stepUri);
 
-                Step step = Step.createStepFromCursor(DatabaseUtils.getCursorForStep(this, stepUri));
+                // Generate the Step from the Cursor
+                Step step = Step.createStepFromCursor(stepCursor);
+
+                // Close the Cursor
+                assertNotNull(stepCursor);
+                stepCursor.close();
+
+                // Create the Fragment containing the Step details and inflate it into the view
                 StepDetailsFragment detailsFragment = StepDetailsFragment.newInstance(step, 0);
 
                 getSupportFragmentManager().beginTransaction()
