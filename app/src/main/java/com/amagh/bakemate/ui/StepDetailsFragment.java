@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import com.amagh.bakemate.R;
 import com.amagh.bakemate.databinding.FragmentStepDetailsBinding;
 import com.amagh.bakemate.models.Step;
+import com.google.android.exoplayer2.source.ExtractorMediaSource;
 
 import static com.amagh.bakemate.ui.StepDetailsFragment.BundleKeys.STEP;
 import static junit.framework.Assert.assertNotNull;
@@ -77,6 +78,12 @@ public class StepDetailsFragment extends Fragment {
                 // track page changes
                 ((StepDetailsActivity) getActivity()).getPagerAdapter().setCurrentPage(mStep.getStepId());
             }
+        } else if (getActivity() instanceof MediaSourceActivity) {
+            // Generate the ExtractorMediaSource
+            ExtractorMediaSource mediaSource = ((MediaSourceActivity) getActivity()).getMediaSource(mStep);
+
+            // Set the SimpleExoPlayer for the Step to utilize the ExtractorMediaSource
+            mStep.setPlayer(getActivity(), mediaSource);
         }
 
         return rootView;
