@@ -4,12 +4,13 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 
 import com.amagh.bakemate.R;
-import com.amagh.bakemate.data.RecipeDatabase;
 import com.amagh.bakemate.data.RecipeProvider;
+import com.amagh.bakemate.models.Step;
+import com.amagh.bakemate.utils.DatabaseUtils;
+import com.amagh.bakemate.utils.LayoutUtils;
 
 public class RecipeDetailsActivity extends AppCompatActivity implements RecipeDetailsFragment.StepClickCallback{
     // **Constants** //
@@ -23,9 +24,9 @@ public class RecipeDetailsActivity extends AppCompatActivity implements RecipeDe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe_details);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+//        setSupportActionBar(toolbar);
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         // Retrieve the URI for the recipe
         Intent intent = getIntent();
@@ -45,8 +46,21 @@ public class RecipeDetailsActivity extends AppCompatActivity implements RecipeDe
             fragment.setArguments(args);
 
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container, fragment)
+                    .replace(R.id.fragment_container_recipe_details, fragment)
                     .commit();
+
+            if (LayoutUtils.inTwoPane(this)) {
+                long recipeId = RecipeProvider.getRecipeIdFromUri(mRecipeUri);
+
+                Uri stepUri = RecipeProvider.Steps.forRecipeAndStep(recipeId, 0);
+
+                Step step = Step.createStepFromCursor(DatabaseUtils.getCursorForStep(this, stepUri));
+                StepDetailsFragment detailsFragment = StepDetailsFragment.newInstance(step, 0);
+
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.container_step_details, detailsFragment)
+                        .commit();
+            }
         }
     }
 
