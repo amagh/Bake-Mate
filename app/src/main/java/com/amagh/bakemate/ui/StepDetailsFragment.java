@@ -88,22 +88,4 @@ public class StepDetailsFragment extends Fragment {
 
         return rootView;
     }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-
-        // Release the Player
-        releasePlayer();
-    }
-
-    /**
-     * Stops media playback and released the player
-     */
-    private void releasePlayer() {
-        if (mStep.getPlayer() == null) return;
-
-        mStep.getPlayer().stop();
-        mStep.getPlayer().release();
-    }
 }
