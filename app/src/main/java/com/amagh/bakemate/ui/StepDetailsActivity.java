@@ -7,7 +7,6 @@ import android.net.Uri;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
 import android.support.v4.view.ViewPager;
@@ -16,12 +15,14 @@ import android.util.Log;
 
 import com.amagh.bakemate.R;
 import com.amagh.bakemate.adapters.StepSectionAdapter;
+import com.amagh.bakemate.data.RecipeProvider;
 import com.amagh.bakemate.databinding.ActivityStepDetailsBinding;
 import com.amagh.bakemate.utils.ManageSimpleExoPlayerInterface;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 
+import static com.amagh.bakemate.ui.RecipeDetailsActivity.SavedInstanceStateKeys.PREVIOUS_CONFIGURATION_KEY;
 import static com.amagh.bakemate.ui.StepDetailsActivity.BundleKeys.STEP_ID;
 
 public class StepDetailsActivity extends MediaSourceActivity
@@ -31,7 +32,7 @@ public class StepDetailsActivity extends MediaSourceActivity
     private static final int STEP_CURSOR_LOADER1 = 6587;
 
     interface BundleKeys {
-        String STEP_ID = "step_id";
+        String STEP_ID          = "step_id";
     }
 
     // **Member Variables** //
@@ -42,7 +43,7 @@ public class StepDetailsActivity extends MediaSourceActivity
     private PageChangeListener mPageChangeListener;
     private SimpleExoPlayer mPlayer;
 
-    public static int sCurrentPosition;
+    public static int sCurrentPosition = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,9 +60,35 @@ public class StepDetailsActivity extends MediaSourceActivity
             mStepsUri = intent.getData();
 
             // Position that the user selected
-            sCurrentPosition = (int) intent.getLongExtra(STEP_ID, 0);
+            if (sCurrentPosition == -1) {
+                sCurrentPosition = (int) intent.getLongExtra(STEP_ID, 0);
+            }
         } else {
             Log.d(TAG, "No URI passed");
+        }
+
+        if (savedInstanceState != null) {
+            @RecipeDetailsActivity.LayoutConfiguration int previousConfig =
+                    savedInstanceState.getInt(PREVIOUS_CONFIGURATION_KEY);
+
+            // Check whether a layout configuration change has occurred
+            if (previousConfig == RecipeDetailsActivity.LayoutConfiguration.SINGLE_PANEL &&
+                    getResources().getBoolean(R.bool.two_pane)) {
+                // Switching from single panel layout to master-detail flow, launch the
+                // RecipeDetailsActivity and pre-load the current Step in the details pane
+                long recipeId = RecipeProvider.getRecipeIdFromUri(mStepsUri);
+                Uri recipeUri = RecipeProvider.Recipes.withId(recipeId);
+
+                Intent recipeDetailsIntent = new Intent(this, RecipeDetailsActivity.class);
+                recipeDetailsIntent.setData(recipeUri);
+                recipeDetailsIntent.putExtra(STEP_ID, sCurrentPosition);
+
+                startActivity(recipeDetailsIntent);
+
+                // Close this Activity to release resources and prevent errors if a second
+                // configuration change occurs
+                finish();
+            }
         }
 
         mPagerAdapter = new StepSectionAdapter(this, getSupportFragmentManager());
@@ -162,5 +189,22 @@ public class StepDetailsActivity extends MediaSourceActivity
         mPlayer.stop();
         mPlayer.release();
         mPlayer = null;
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        // Init the int to be put into the Bundle
+        @RecipeDetailsActivity.LayoutConfiguration int layoutConfig;
+
+        // Set layoutConfig based on whether layout uses master-detail-flow
+        if (getResources().getBoolean(R.bool.two_pane)) {
+            layoutConfig = RecipeDetailsActivity.LayoutConfiguration.MASTER_DETAIL_FLOW;
+        } else {
+            layoutConfig = RecipeDetailsActivity.LayoutConfiguration.SINGLE_PANEL;
+        }
+
+        // Save the layout config in the Bundle
+        outState.putInt(PREVIOUS_CONFIGURATION_KEY, layoutConfig);
     }
 }
