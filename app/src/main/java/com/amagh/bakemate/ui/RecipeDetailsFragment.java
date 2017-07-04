@@ -165,4 +165,18 @@ public class RecipeDetailsFragment extends Fragment implements LoaderManager.Loa
     interface StepClickCallback {
         void onStepClicked(long recipeId, long stepId);
     }
+
+    /**
+     * Scrolls the DetailsAdapter to the position matching the Step's ID
+     *
+     * @param stepId    ID of the Step to scroll to
+     */
+    public void scrollToStep(long stepId) {
+        // Offset the position by adding 3 for the headers and the recipe details and then the
+        // count of ingredients
+        int position = (int) stepId + 3 + mIngredientsCursor.getCount();
+
+        // Smooth scroll to the offset position
+        mBinding.recipeDetailsRv.smoothScrollToPosition(position);
+    }
 }

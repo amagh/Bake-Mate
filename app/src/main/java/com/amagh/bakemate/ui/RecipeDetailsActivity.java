@@ -32,6 +32,7 @@ public class RecipeDetailsActivity extends MediaSourceActivity
         implements RecipeDetailsFragment.StepClickCallback, ManageSimpleExoPlayerInterface{
     // **Constants** //
     private static final String TAG = RecipeDetailsActivity.class.getSimpleName();
+    private static final String RECIPE_DETAILS_FRAG = "recipe_details_fragment";
     private static final String STEP_DETAILS_FRAG = "step_details_fragment";
     private static final int STEP_ACTIVITY_REQUEST_CODE = 2731;
 
@@ -78,7 +79,7 @@ public class RecipeDetailsActivity extends MediaSourceActivity
             fragment.setArguments(args);
 
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.container_recipe_details, fragment)
+                    .replace(R.id.container_recipe_details, fragment, RECIPE_DETAILS_FRAG)
                     .commit();
 
             // Check whether StepDetailsFragment needs to be inflated
@@ -194,9 +195,26 @@ public class RecipeDetailsActivity extends MediaSourceActivity
 
             // Swap the StepDetailsFragment with one containing the step info
             swapStepDetailsFragment(recipeId, stepId);
+
+            // Scroll to the step's position in the RecipeDetailsFragment
+            scrollToStep(stepId);
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
+    }
+
+    /**
+     * Sends the stepId that the RecipeDetailsFragment needs to be scrolled to to the Fragment
+     *
+     * @param stepId ID of the Step to scroll to
+     */
+    private void scrollToStep(long stepId) {
+        // Get a reference to the RecipeDetailsFragment
+        RecipeDetailsFragment fragment =
+                (RecipeDetailsFragment) getSupportFragmentManager().findFragmentByTag(RECIPE_DETAILS_FRAG);
+
+        // Scroll to the Step's position
+        fragment.scrollToStep(stepId);
     }
 
     /**
