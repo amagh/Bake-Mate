@@ -59,7 +59,7 @@ public class IngredientWidgetConfigureActivity extends Activity {
         if (titleValue != null) {
             return titleValue;
         } else {
-            return null;
+            return context.getString(R.string.appwidget_text);
         }
     }
 
@@ -77,7 +77,7 @@ public class IngredientWidgetConfigureActivity extends Activity {
         // out of the widget placement if the user presses the back button.
         setResult(RESULT_CANCELED);
 
-        setContentView(R.layout.widget_ingredient_configure);
+        setContentView(R.layout.ingredient_widget_configure);
         mAppWidgetText = (EditText) findViewById(R.id.appwidget_text);
         findViewById(R.id.add_button).setOnClickListener(mOnClickListener);
 
