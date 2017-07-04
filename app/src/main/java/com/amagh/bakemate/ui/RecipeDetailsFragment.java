@@ -167,6 +167,15 @@ public class RecipeDetailsFragment extends Fragment implements LoaderManager.Loa
     }
 
     /**
+     * Retrieves the instance of the DetailsAdapter with the recipe's details
+     *
+     * @return The DetailsAdapter being used
+     */
+    public DetailsAdapter getAdapter() {
+        return mAdapter;
+    }
+
+    /**
      * Scrolls the DetailsAdapter to the position matching the Step's ID
      *
      * @param stepId    ID of the Step to scroll to

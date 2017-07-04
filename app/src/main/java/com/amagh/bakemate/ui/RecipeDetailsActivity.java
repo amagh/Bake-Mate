@@ -215,6 +215,9 @@ public class RecipeDetailsActivity extends MediaSourceActivity
 
         // Scroll to the Step's position
         fragment.scrollToStep(stepId);
+
+        // Set the Step's list item to be selected
+        fragment.getAdapter().setSelected(stepId);
     }
 
     /**
