@@ -1,5 +1,6 @@
 package com.amagh.bakemate.ui;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.databinding.DataBindingUtil;
@@ -24,6 +25,7 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 
 import static com.amagh.bakemate.ui.RecipeDetailsActivity.SavedInstanceStateKeys.PREVIOUS_CONFIGURATION_KEY;
 import static com.amagh.bakemate.ui.StepDetailsActivity.BundleKeys.STEP_ID;
+import static com.amagh.bakemate.ui.StepDetailsActivity.BundleKeys.VIDEO_POSITION;
 
 public class StepDetailsActivity extends MediaSourceActivity
         implements LoaderManager.LoaderCallbacks<Cursor>, ManageSimpleExoPlayerInterface {
@@ -33,6 +35,7 @@ public class StepDetailsActivity extends MediaSourceActivity
 
     interface BundleKeys {
         String STEP_ID          = "step_id";
+        String VIDEO_POSITION   = "video_position";
     }
 
     // **Member Variables** //
@@ -79,11 +82,23 @@ public class StepDetailsActivity extends MediaSourceActivity
                 long recipeId = RecipeProvider.getRecipeIdFromUri(mStepsUri);
                 Uri recipeUri = RecipeProvider.Recipes.withId(recipeId);
 
+                // Generate an Intent to be used to either start a new RecipeDetailsActivity if
+                // there is no CallinActivity or as a result if there is
                 Intent recipeDetailsIntent = new Intent(this, RecipeDetailsActivity.class);
                 recipeDetailsIntent.setData(recipeUri);
                 recipeDetailsIntent.putExtra(STEP_ID, sCurrentPosition);
+                recipeDetailsIntent.putExtra(
+                        VIDEO_POSITION,
+                        savedInstanceState.getLong(RecipeDetailsActivity.SavedInstanceStateKeys.VIDEO_POSITION, 0));
 
-                startActivity(recipeDetailsIntent);
+                // Check if this Activity was started for result
+                if (getCallingActivity() != null) {
+                    // Called from startActivityForResult
+                    setResult(Activity.RESULT_OK, recipeDetailsIntent);
+                } else {
+                    // Called from StartActivity
+                    startActivity(recipeDetailsIntent);
+                }
 
                 // Close this Activity to release resources and prevent errors if a second
                 // configuration change occurs
@@ -147,6 +162,9 @@ public class StepDetailsActivity extends MediaSourceActivity
 
         // Move to the page the user selected
         mBinding.stepDetailsVp.setCurrentItem(sCurrentPosition);
+
+        // Seek to the same time in the video
+        mPlayer.seekTo(getIntent().getLongExtra(VIDEO_POSITION, 0));
     }
 
     @Override
@@ -206,5 +224,8 @@ public class StepDetailsActivity extends MediaSourceActivity
 
         // Save the layout config in the Bundle
         outState.putInt(PREVIOUS_CONFIGURATION_KEY, layoutConfig);
+
+        // Save the video's position in the Bundle
+        outState.putLong(RecipeDetailsActivity.SavedInstanceStateKeys.VIDEO_POSITION, mPlayer.getCurrentPosition());
     }
 }

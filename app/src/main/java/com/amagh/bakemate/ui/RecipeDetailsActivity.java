@@ -25,6 +25,7 @@ import static com.amagh.bakemate.ui.RecipeDetailsActivity.LayoutConfiguration.MA
 import static com.amagh.bakemate.ui.RecipeDetailsActivity.LayoutConfiguration.SINGLE_PANEL;
 import static com.amagh.bakemate.ui.RecipeDetailsActivity.SavedInstanceStateKeys.PREVIOUS_CONFIGURATION_KEY;
 import static com.amagh.bakemate.ui.StepDetailsActivity.BundleKeys.STEP_ID;
+import static com.amagh.bakemate.ui.StepDetailsActivity.BundleKeys.VIDEO_POSITION;
 import static junit.framework.Assert.assertNotNull;
 
 public class RecipeDetailsActivity extends MediaSourceActivity
@@ -32,9 +33,11 @@ public class RecipeDetailsActivity extends MediaSourceActivity
     // **Constants** //
     private static final String TAG = RecipeDetailsActivity.class.getSimpleName();
     private static final String STEP_DETAILS_FRAG = "step_details_fragment";
+    private static final int STEP_ACTIVITY_REQUEST_CODE = 2731;
 
     interface SavedInstanceStateKeys {
-        String PREVIOUS_CONFIGURATION_KEY = "previous_config";
+        String PREVIOUS_CONFIGURATION_KEY   = "previous_config";
+        String VIDEO_POSITION               = "video_position";
     }
 
     @Retention(RetentionPolicy.SOURCE)
@@ -85,13 +88,8 @@ public class RecipeDetailsActivity extends MediaSourceActivity
                 }
                 // Create the StepDetailsFragment and swap it into the container
                 long recipeId = RecipeProvider.getRecipeIdFromUri(mRecipeUri);
-                int stepId = 0;
 
-                // Check whether the Activity should pre-load to a specified step
-                if (args.containsKey(STEP_ID)) {
-                    stepId = args.getInt(STEP_ID);
-                }
-                swapStepDetailsFragment(recipeId, stepId);
+                swapStepDetailsFragment(recipeId, 0);
             }
         } else {
             // Check whether a layout configuration change has occurred
@@ -100,8 +98,11 @@ public class RecipeDetailsActivity extends MediaSourceActivity
 
             if (previousConfig == MASTER_DETAIL_FLOW && !getResources().getBoolean(R.bool.two_pane)) {
                 // Switch from master-detail-flow to single panel. Start StepDetailsActivity,
-                // pre-loaded to the current step
-                startStepDetailsActivity(recipeId, sCurrentPosition);
+                // pre-loaded to the current step and video position
+                startStepDetailsActivityForResult(
+                        recipeId,
+                        sCurrentPosition,
+                        savedInstanceState.getLong(SavedInstanceStateKeys.VIDEO_POSITION, 0));
             } else if (previousConfig == SINGLE_PANEL && getResources().getBoolean(R.bool.two_pane)) {
                 // Switching from single panel to master-detail-flow. Start the SimpleExoPlayer if
                 // it hasn't already been loaded
@@ -129,6 +130,26 @@ public class RecipeDetailsActivity extends MediaSourceActivity
     }
 
     /**
+     * Creates the Intent to start the StepDetailsActivity
+     *
+     * @param recipeId  The ID of the recipe to display the steps for in StepDetailsActivity
+     * @param stepId    The ID of the step to show in StepDetailsActivity
+     * @return Intent to launch StepDetailsActivity for the recipe and step Id parameters
+     */
+    private Intent getStepDetailsActivityIntent(long recipeId, long stepId) {
+        // Create the URI that will point to the steps for the recipe
+        Uri stepsUri = RecipeProvider.Steps.forRecipe(recipeId);
+
+        // Create Intent for StepDetailsActivity, set the URI, and put the page selected as an
+        // extra
+        Intent intent = new Intent(this, StepDetailsActivity.class);
+        intent.setData(stepsUri);
+        intent.putExtra(STEP_ID, stepId);
+
+        return intent;
+    }
+
+    /**
      * Starts the StepDetailsActivity for the specific recipe and pre-loaded with a Fragment
      * representing the stepId for that recipe.
      *
@@ -136,17 +157,46 @@ public class RecipeDetailsActivity extends MediaSourceActivity
      * @param stepId    The ID of the step to be shown when the Activity has loaded
      */
     private void startStepDetailsActivity(long recipeId, long stepId) {
-        // Create the URI that will point to the steps for the recipe
-        Uri stepsUri = RecipeProvider.Steps.forRecipe(recipeId);
+        // Init then launch the intent
+        startActivity(getStepDetailsActivityIntent(recipeId, stepId));
+    }
 
-        // Create Intent for RecipeDetailsActivity, set the URI, and put the page selected as an
-        // extra
-        Intent intent = new Intent(this, StepDetailsActivity.class);
-        intent.setData(stepsUri);
-        intent.putExtra(STEP_ID, stepId);
+    /**
+     * Starts the StepDetailsActivity and waits for a Result to be used to generate an equivalent
+     * StepDetailsFragment in the case of layout configuration change.
+     *
+     * @param recipeId         The ID of the recipe to generate the StepDetailsActivity for
+     * @param stepId           The ID of the step to generate the StepDetailsActivity for
+     * @param videoPosition    The position of the video prior to the layout change
+     */
+    private void startStepDetailsActivityForResult(long recipeId, long stepId, long videoPosition) {
+        // Generate an Intent to launch the StepDetailsActivity
+        Intent intent = getStepDetailsActivityIntent(recipeId, stepId);
 
-        // Launch the intent
-        startActivity(intent);
+        // Add the video's position
+        intent.putExtra(VIDEO_POSITION, videoPosition);
+
+        // Start the Activity and await a result (only occurs if there is a layout configuration
+        // change)
+        startActivityForResult(intent, STEP_ACTIVITY_REQUEST_CODE);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == STEP_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
+            // Retrieve the information to be used to generate the StepDetailsFragment
+            long recipeId = RecipeProvider.getRecipeIdFromUri(mRecipeUri);
+            int stepId = data.getIntExtra(STEP_ID, 0);
+
+            // Seek the Player to the correct position in the video
+            long videoPosition = data.getLongExtra(VIDEO_POSITION, 0);
+            mPlayer.seekTo(videoPosition);
+
+            // Swap the StepDetailsFragment with one containing the step info
+            swapStepDetailsFragment(recipeId, stepId);
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
     /**
@@ -172,7 +222,8 @@ public class RecipeDetailsActivity extends MediaSourceActivity
         StepDetailsFragment detailsFragment =
                 (StepDetailsFragment)getSupportFragmentManager().findFragmentByTag(STEP_DETAILS_FRAG);
 
-        if (detailsFragment == null) {
+        // Check to see if a valid StepDetailsFragment has already been inflated
+        if (detailsFragment == null || detailsFragment.getView() == null) {
             // Initialize the StepDetailsFragment with the Step
             detailsFragment = StepDetailsFragment.newInstance(step, (int) stepId);
 
@@ -220,5 +271,10 @@ public class RecipeDetailsActivity extends MediaSourceActivity
 
         // Save the layout config in the Bundle
         outState.putInt(PREVIOUS_CONFIGURATION_KEY, layoutConfig);
+
+        // Save the video's position in the Bundle
+        if (mPlayer != null) {
+            outState.putLong(SavedInstanceStateKeys.VIDEO_POSITION, mPlayer.getCurrentPosition());
+        }
     }
 }
