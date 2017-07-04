@@ -11,6 +11,9 @@ import android.view.ViewGroup;
 import com.amagh.bakemate.R;
 import com.amagh.bakemate.databinding.FragmentStepDetailsBinding;
 import com.amagh.bakemate.models.Step;
+import com.amagh.bakemate.utils.LayoutUtils;
+import com.google.android.exoplayer2.source.ExtractorMediaSource;
+import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 
 import static com.amagh.bakemate.ui.StepDetailsFragment.BundleKeys.STEP;
 import static junit.framework.Assert.assertNotNull;
@@ -24,7 +27,6 @@ public class StepDetailsFragment extends Fragment {
     private static final String TAG = StepDetailsFragment.class.getSimpleName();
     interface BundleKeys {
         String STEP = "step";
-        String STEP_ID = "step_id";
     }
 
     // **Member Variables** //
@@ -62,11 +64,11 @@ public class StepDetailsFragment extends Fragment {
             Log.d(TAG, "No Step passed to the fragment");
         }
 
-        // Bind data to the View
-        mBinding.setStep(mStep);
-
         // Setup the SimpleExoPlayer for the Step
         if (getActivity() instanceof StepDetailsActivity) {
+            // Bind data to the View
+            mBinding.setStep(mStep);
+
             if (StepDetailsActivity.sCurrentPosition == mStep.getStepId()) {
                 mStep.setPlayer(
                         getActivity(),
@@ -77,26 +79,45 @@ public class StepDetailsFragment extends Fragment {
                 // track page changes
                 ((StepDetailsActivity) getActivity()).getPagerAdapter().setCurrentPage(mStep.getStepId());
             }
+        } else if (getActivity() instanceof MediaSourceActivity) {
+            // Swap the Step being used by the Fragment
+            swapStep(mStep);
         }
 
         return rootView;
     }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-
-        // Release the Player
-        releasePlayer();
-    }
+    // Runnable to be run after the Views have been laid out so that the width of the PlayerView can
+    // be properly attained and the height properly calculated
+    Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+            // Set the Player's height based on the PlayerView's width
+            LayoutUtils.setPlayerViewHeight(mBinding.stepDetailsExo);
+        }
+    };
 
     /**
-     * Stops media playback and released the player
+     * Swaps the Step data being used to bind the Views
+     *
+     * @param step  The Step to be used to populate the Views
      */
-    private void releasePlayer() {
-        if (mStep.getPlayer() == null) return;
+    public void swapStep(Step step) {
+        if (mStep != step) {
+            // Set the Step as the mem var
+            mStep = step;
+        }
 
-        mStep.getPlayer().stop();
-        mStep.getPlayer().release();
+        // Bind the data to the View
+        mBinding.setStep(mStep);
+
+        // Generate the ExtractorMediaSource
+        ExtractorMediaSource mediaSource = ((MediaSourceActivity) getActivity()).getMediaSource(mStep);
+
+        // Set the SimpleExoPlayer for the Step to utilize the ExtractorMediaSource
+        mStep.setPlayer(getActivity(), mediaSource);
+
+        // Set the PlayerView's height to properly display at 16:9 video
+        mBinding.stepDetailsExo.post(runnable);
     }
 }

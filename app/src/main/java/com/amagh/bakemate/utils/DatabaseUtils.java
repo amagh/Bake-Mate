@@ -148,4 +148,29 @@ public class DatabaseUtils {
 
         return videoUrl;
     }
+
+    /**
+     * Queries the database and generates a Cursor pointing to a specific step for a recipe
+     *
+     * @param context   Interface to global Context
+     * @param stepUri   Uri pointing to a specific recipe and step
+     * @return Cursor containing the details for a single step, already moved to the first row
+     */
+    public static Cursor getCursorForStep(@NonNull Context context, Uri stepUri) {
+        // Generate a Cursor using the Uri pointing to the specific Step
+        Cursor cursor = context.getContentResolver().query(
+                stepUri,
+                null,
+                null,
+                null,
+                null
+        );
+
+        // Return the valid Cursor if there is content
+        if (cursor != null && cursor.moveToFirst()) {
+            return cursor;
+        } else {
+            return null;
+        }
+    }
 }

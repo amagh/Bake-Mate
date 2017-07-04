@@ -35,6 +35,7 @@
         </activity>
         <activity
             android:name=".ui.StepDetailsActivity"
+            android:launchMode="singleTop"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

@@ -74,6 +74,7 @@ public class DetailsAdapter extends RecyclerView.Adapter<DetailsAdapter.DetailsV
     private Cursor mRecipeCursor;
     private Cursor mIngredientsCursor;
     private Cursor mStepsCursor;
+    private int mSelectedItem;
 
     private final ClickHandler mClickHandler;
 
@@ -190,6 +191,19 @@ public class DetailsAdapter extends RecyclerView.Adapter<DetailsAdapter.DetailsV
         }
     }
 
+    /**
+     * Sets the step item to be selected to control its background to indicate its state
+     *
+     * @param stepId ID of the Step to set to be activated
+     */
+    public void setSelected(long stepId) {
+        // Set the mem var to the parameter
+        mSelectedItem = (int) stepId;
+
+        // Refresh the item to the background shows
+        notifyItemChanged(mSelectedItem + 3 + mIngredientsCursor.getCount());
+    }
+
     public interface ClickHandler {
         void onStepClicked(long stepId);
     }
@@ -215,6 +229,16 @@ public class DetailsAdapter extends RecyclerView.Adapter<DetailsAdapter.DetailsV
 
                         // Pass the ID to the ClickHandler
                         mClickHandler.onStepClicked(stepId);
+
+                        // Get the position of the previously selected item so it can be de-activated
+                        int previousItem = mSelectedItem + 3 + mIngredientsCursor.getCount();
+
+                        // Get the position of the currently activated item
+                        mSelectedItem = position;
+
+                        // Refresh the background of the items to be de-activated/activated
+                        notifyItemChanged(previousItem);
+                        notifyItemChanged(getAdapterPosition());
                     }
                 });
             }
@@ -272,6 +296,9 @@ public class DetailsAdapter extends RecyclerView.Adapter<DetailsAdapter.DetailsV
                     Step step = new Step(videoUrl, shortDescription, description);
 
                     ((ListItemStepBinding) mBinding).setStep(step);
+
+                    // Set selected status of the item
+                    mBinding.getRoot().setSelected(position == mSelectedItem);
                     break;
                 }
             }

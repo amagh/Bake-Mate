@@ -10,10 +10,12 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import com.amagh.bakemate.R;
 import com.amagh.bakemate.data.RecipeContract;
 import com.amagh.bakemate.models.Step;
+import com.amagh.bakemate.ui.MediaSourceActivity;
 import com.amagh.bakemate.ui.StepDetailsActivity;
 import com.amagh.bakemate.ui.StepDetailsFragment;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
+import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 
@@ -110,23 +112,10 @@ public class StepSectionAdapter extends FragmentStatePagerAdapter implements Ste
      * @param position The position of the Step to create a MediaSource for
      */
     private void prepareMediaSources(int position) {
-        // Retrieve the URL of the video to load into the MediaSource
-        String videoUrl = mSteps[position].getVideoUrl();
-
-        // If the step has not accompanying video, do nothing
-        if (videoUrl == null || videoUrl.isEmpty()) return;
-
-        // Create a MediaSource for the video
-        Uri videoUri = Uri.parse(videoUrl);
-        String userAgent = Util.getUserAgent(mContext, "BakeMate");
-
-        mMediaSources[position] = new ExtractorMediaSource(
-                videoUri,
-                new DefaultDataSourceFactory(mContext, userAgent),
-                new DefaultExtractorsFactory(),
-                null,
-                null
-        );
+        if (mContext instanceof MediaSourceActivity) {
+            mMediaSources[position] =
+                    ((MediaSourceActivity) mContext).getMediaSource(mSteps[position]);
+        }
     }
 
     /**
