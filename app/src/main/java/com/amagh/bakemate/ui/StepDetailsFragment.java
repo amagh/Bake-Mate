@@ -32,7 +32,6 @@ public class StepDetailsFragment extends Fragment {
     // **Member Variables** //
     private Step mStep;
     private FragmentStepDetailsBinding mBinding;
-    private int mPlayerHeight;
 
     public static StepDetailsFragment newInstance(Step step, int stepId) {
         // Init a new Bundle to pass Step
@@ -94,17 +93,18 @@ public class StepDetailsFragment extends Fragment {
         @Override
         public void run() {
             // Set the Player's height based on the PlayerView's width
-            mPlayerHeight = LayoutUtils.setPlayerViewHeight(mBinding.stepDetailsExo);
+            LayoutUtils.setPlayerViewHeight(mBinding.stepDetailsExo);
         }
     };
 
     /**
      * Swaps the Step data being used to bind the Views
-     * @param step
+     *
+     * @param step  The Step to be used to populate the Views
      */
     public void swapStep(Step step) {
         if (mStep != step) {
-            // Set the Step as the input
+            // Set the Step as the mem var
             mStep = step;
         }
 
@@ -118,8 +118,6 @@ public class StepDetailsFragment extends Fragment {
         mStep.setPlayer(getActivity(), mediaSource);
 
         // Set the PlayerView's height to properly display at 16:9 video
-        if (mPlayerHeight == 0) {
-            mBinding.stepDetailsExo.post(runnable);
-        }
+        mBinding.stepDetailsExo.post(runnable);
     }
 }
