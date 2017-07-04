@@ -18,6 +18,7 @@ import com.amagh.bakemate.R;
 import com.amagh.bakemate.adapters.StepSectionAdapter;
 import com.amagh.bakemate.data.RecipeProvider;
 import com.amagh.bakemate.databinding.ActivityStepDetailsBinding;
+import com.amagh.bakemate.utils.LayoutUtils;
 import com.amagh.bakemate.utils.ManageSimpleExoPlayerInterface;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -76,14 +77,14 @@ public class StepDetailsActivity extends MediaSourceActivity
 
             // Check whether a layout configuration change has occurred
             if (previousConfig == RecipeDetailsActivity.LayoutConfiguration.SINGLE_PANEL &&
-                    getResources().getBoolean(R.bool.two_pane)) {
+                    LayoutUtils.inTwoPane(this)) {
                 // Switching from single panel layout to master-detail flow, launch the
                 // RecipeDetailsActivity and pre-load the current Step in the details pane
                 long recipeId = RecipeProvider.getRecipeIdFromUri(mStepsUri);
                 Uri recipeUri = RecipeProvider.Recipes.withId(recipeId);
 
                 // Generate an Intent to be used to either start a new RecipeDetailsActivity if
-                // there is no CallinActivity or as a result if there is
+                // there is no Calling Activity or as a result if there is
                 Intent recipeDetailsIntent = new Intent(this, RecipeDetailsActivity.class);
                 recipeDetailsIntent.setData(recipeUri);
                 recipeDetailsIntent.putExtra(STEP_ID, sCurrentPosition);
@@ -216,7 +217,7 @@ public class StepDetailsActivity extends MediaSourceActivity
         @RecipeDetailsActivity.LayoutConfiguration int layoutConfig;
 
         // Set layoutConfig based on whether layout uses master-detail-flow
-        if (getResources().getBoolean(R.bool.two_pane)) {
+        if (LayoutUtils.inTwoPane(this)) {
             layoutConfig = RecipeDetailsActivity.LayoutConfiguration.MASTER_DETAIL_FLOW;
         } else {
             layoutConfig = RecipeDetailsActivity.LayoutConfiguration.SINGLE_PANEL;

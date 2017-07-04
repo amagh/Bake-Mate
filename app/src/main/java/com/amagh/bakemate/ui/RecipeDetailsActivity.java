@@ -97,14 +97,14 @@ public class RecipeDetailsActivity extends MediaSourceActivity
             @LayoutConfiguration int previousConfig = savedInstanceState.getInt(PREVIOUS_CONFIGURATION_KEY);
             long recipeId = RecipeProvider.getRecipeIdFromUri(mRecipeUri);
 
-            if (previousConfig == MASTER_DETAIL_FLOW && !getResources().getBoolean(R.bool.two_pane)) {
+            if (previousConfig == MASTER_DETAIL_FLOW && !LayoutUtils.inTwoPane(this)) {
                 // Switch from master-detail-flow to single panel. Start StepDetailsActivity,
                 // pre-loaded to the current step and video position
                 startStepDetailsActivityForResult(
                         recipeId,
                         sCurrentPosition,
                         savedInstanceState.getLong(SavedInstanceStateKeys.VIDEO_POSITION, 0));
-            } else if (previousConfig == SINGLE_PANEL && getResources().getBoolean(R.bool.two_pane)) {
+            } else if (previousConfig == SINGLE_PANEL && LayoutUtils.inTwoPane(this)) {
                 // Switching from single panel to master-detail-flow. Start the SimpleExoPlayer if
                 // it hasn't already been loaded
                 if (mPlayer == null) {
@@ -121,7 +121,7 @@ public class RecipeDetailsActivity extends MediaSourceActivity
     @Override
     public void onStepClicked(long recipeId, long stepId) {
         // Check whether the Activity is using a two-pane layout
-        if (getResources().getBoolean(R.bool.two_pane)) {
+        if (LayoutUtils.inTwoPane(this)) {
             // Swap the Step being used by the StepDetailsFragment
             swapStepDetailsFragment(recipeId, stepId);
         } else {
@@ -284,7 +284,7 @@ public class RecipeDetailsActivity extends MediaSourceActivity
         @LayoutConfiguration int layoutConfig;
 
         // Set layoutConfig based on whether layout uses master-detail-flow
-        if (getResources().getBoolean(R.bool.two_pane)) {
+        if (LayoutUtils.inTwoPane(this)) {
             layoutConfig = LayoutConfiguration.MASTER_DETAIL_FLOW;
         } else {
             layoutConfig = LayoutConfiguration.SINGLE_PANEL;
