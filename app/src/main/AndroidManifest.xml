@@ -22,7 +22,7 @@
         <provider
             android:name=".data.generated.RecipeProvider"
             android:authorities="com.amagh.bakemate.provider"
-            android:exported="false" />
+            android:exported="true" />
 
         <activity
             android:name=".ui.RecipeDetailsActivity"
@@ -42,7 +42,8 @@
                 android:value="com.amagh.bakemate.ui.RecipeDetailsActivity" />
         </activity>
 
-        <receiver android:name=".widgets.IngredientWidget">
+        <receiver
+            android:name=".widgets.IngredientWidget">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -52,11 +53,17 @@
                 android:resource="@xml/ingredient_widget_info" />
         </receiver>
 
-        <activity android:name=".widgets.IngredientWidgetConfigureActivity">
+        <activity
+            android:name=".widgets.IngredientWidgetConfigureActivity">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
             </intent-filter>
         </activity>
+
+        <service
+            android:name=".widgets.IngredientsWidgetService"
+            android:permission="android.permission.BIND_REMOTEVIEWS" />
+
     </application>
 
 </manifest>

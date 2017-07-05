@@ -14,25 +14,33 @@ import com.amagh.bakemate.utils.FormattingUtils;
 import static com.amagh.bakemate.adapters.DetailsAdapter.IngredientProjection.IDX_INGREDIENT_MEASURE;
 import static com.amagh.bakemate.adapters.DetailsAdapter.IngredientProjection.IDX_INGREDIENT_NAME;
 import static com.amagh.bakemate.adapters.DetailsAdapter.IngredientProjection.IDX_INGREDIENT_QUANTITY;
+import static com.amagh.bakemate.widgets.IngredientsWidgetService.BundleKeys.RECIPE_ID;
 
 /**
  * Created by Nocturna on 7/4/2017.
  */
 
 public class IngredientsWidgetService extends RemoteViewsService {
+    // **Constants** //
+    private static final String TAG = IngredientsWidgetService.class.getSimpleName();
+    interface BundleKeys {
+        String RECIPE_ID = "recipe_id";
+    }
 
     @Override
     public RemoteViewsFactory onGetViewFactory(Intent intent) {
-        return null;
+        long recipeId = intent.getLongExtra(RECIPE_ID, 0);
+
+        return new IngredientsRemoteViewsFactory(this, recipeId);
     }
 
-    class IngredientsRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
+    private class IngredientsRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
         // **Member Variables** //
         Context mContext;
         Cursor mCursor;
         long mRecipeId;
 
-        public IngredientsRemoteViewsFactory(Context context, long recipeId) {
+        IngredientsRemoteViewsFactory(Context context, long recipeId) {
             mContext = context;
             mRecipeId = recipeId;
         }
@@ -46,19 +54,22 @@ public class IngredientsWidgetService extends RemoteViewsService {
         public void onDataSetChanged() {
             // Init the Cursor that will display the data if it is not already initialized
             if (mCursor != null) {
-                mCursor = mContext.getContentResolver().query(
-                        RecipeProvider.Ingredients.forRecipe(mRecipeId),
-                        DetailsAdapter.IngredientProjection.INGREDIENT_PROJECTION,
-                        null,
-                        null,
-                        null);
-
+                mCursor.close();
             }
+
+            mCursor = mContext.getContentResolver().query(
+                    RecipeProvider.Ingredients.forRecipe(mRecipeId),
+                    DetailsAdapter.IngredientProjection.INGREDIENT_PROJECTION,
+                    null,
+                    null,
+                    null);
         }
 
         @Override
         public void onDestroy() {
-
+            if (mCursor != null) {
+                mCursor.close();
+            }
         }
 
         @Override
@@ -85,7 +96,7 @@ public class IngredientsWidgetService extends RemoteViewsService {
                     FormattingUtils.formatQuantityAndMeasurement(mContext, quantity, measure);
 
             // Init the RemoteViews and bind the data to the Views
-            RemoteViews view = new RemoteViews(mContext.getPackageName(), R.layout.list_item_ingredient);
+            RemoteViews view = new RemoteViews(mContext.getPackageName(), R.layout.list_item_ingredient_widget);
             view.setTextViewText(R.id.list_ingredient_quantity_tv, formattedQuantityAndMeasure);
             view.setTextViewText(R.id.list_ingredient_tv, ingredient);
 
@@ -99,7 +110,7 @@ public class IngredientsWidgetService extends RemoteViewsService {
 
         @Override
         public int getViewTypeCount() {
-            return 0;
+            return 1;
         }
 
         @Override
