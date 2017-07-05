@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.support.annotation.IntDef;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.util.LongSparseArray;
+import android.util.SparseArray;
 
 import com.amagh.bakemate.R;
 import com.amagh.bakemate.data.RecipeProvider;
@@ -51,6 +53,7 @@ public class RecipeDetailsActivity extends MediaSourceActivity
     // **Member Variables**//
     private Uri mRecipeUri;
     private SimpleExoPlayer mPlayer;
+    private LongSparseArray<Step> mStepArray;
     @LayoutConfiguration private int mLayoutConfig;
     public static int sCurrentPosition;
 
@@ -112,7 +115,7 @@ public class RecipeDetailsActivity extends MediaSourceActivity
                         recipeId,
                         sCurrentPosition,
                         savedInstanceState.getLong(SavedInstanceStateKeys.VIDEO_POSITION, 0));
-            } else if (previousConfig == SINGLE_PANEL && LayoutUtils.inTwoPane(this)) {
+            } else if (LayoutUtils.inTwoPane(this)) {
                 // Switching from single panel to master-detail-flow. Start the SimpleExoPlayer if
                 // it hasn't already been loaded
                 if (mPlayer == null) {
@@ -235,17 +238,33 @@ public class RecipeDetailsActivity extends MediaSourceActivity
      * @param stepId    The ID of the step to generate a Fragment for
      */
     private void swapStepDetailsFragment(long recipeId, long stepId) {
-        // Generate a Cursor with the Step's details
-        Uri stepUri = RecipeProvider.Steps.forRecipeAndStep(recipeId, stepId);
-        Cursor cursor = DatabaseUtils.getCursorForStep(this, stepUri);
+        if (mStepArray != null) {
+            mStepArray.get(((Integer) sCurrentPosition).longValue()).stopPlayer();
+        }
 
-        // Generate a Step from the Cursor
-        Step step = Step.createStepFromCursor(cursor);
-        step.setStepId((int) stepId);
+        if (mStepArray == null) {
+            mStepArray = new LongSparseArray<>();
+        }
 
-        // Close the Cursor
-        assertNotNull(cursor);
-        cursor.close();
+        Step step;
+
+        if (mStepArray.get(stepId) == null) {
+            // Generate a Cursor with the Step's details
+            Uri stepUri = RecipeProvider.Steps.forRecipeAndStep(recipeId, stepId);
+            Cursor cursor = DatabaseUtils.getCursorForStep(this, stepUri);
+
+            // Generate a Step from the Cursor
+            step = Step.createStepFromCursor(cursor);
+            step.setStepId((int) stepId);
+
+            mStepArray.put(stepId, step);
+
+            // Close the Cursor
+            assertNotNull(cursor);
+            cursor.close();
+        } else {
+            step = mStepArray.get(stepId);
+        }
 
         // Check if the StepDetailsFragment has already been inflated
         StepDetailsFragment detailsFragment =

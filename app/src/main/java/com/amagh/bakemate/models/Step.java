@@ -81,6 +81,11 @@ public class Step extends BaseObservable implements Parcelable{
     }
 
     @Bindable
+    public long getPlayerPosition() {
+        return playerPosition;
+    }
+
+    @Bindable
     public RequestListener getListener() {
         // Return a RequestListener that merely hides the ProgressBar when Glide has finished
         // loading
@@ -124,8 +129,8 @@ public class Step extends BaseObservable implements Parcelable{
                 .into(imageView);
     }
 
-    @BindingAdapter({"bind:player", "bind:mediaSource"})
-    public static void loadVideoIntoPlayer(SimpleExoPlayerView playerView, SimpleExoPlayer player, ExtractorMediaSource mediaSource) {
+    @BindingAdapter({"bind:player", "bind:mediaSource", "bind:playerPosition"})
+    public static void loadVideoIntoPlayer(SimpleExoPlayerView playerView, SimpleExoPlayer player, ExtractorMediaSource mediaSource, long playerPosition) {
         if (player == null || mediaSource == null) {
             // No media, nothing to play
             return;
@@ -133,6 +138,8 @@ public class Step extends BaseObservable implements Parcelable{
 
         // Load the MediaSource into the SimpleExoPlayer
         player.prepare(mediaSource);
+
+        player.seekTo(playerPosition);
 
         // Set player to the SimpleExoPlayerView
         playerView.setPlayer(player);
