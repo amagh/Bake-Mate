@@ -46,6 +46,7 @@ public class StepDetailsActivity extends MediaSourceActivity
     private ActivityStepDetailsBinding mBinding;
     private PageChangeListener mPageChangeListener;
     private SimpleExoPlayer mPlayer;
+    @RecipeDetailsActivity.LayoutConfiguration private int mLayoutConfig;
 
     public static int sCurrentPosition = -1;
 
@@ -64,9 +65,18 @@ public class StepDetailsActivity extends MediaSourceActivity
             mStepsUri = intent.getData();
 
             // Position that the user selected
-            sCurrentPosition = (int) intent.getLongExtra(STEP_ID, 0);
+            if (sCurrentPosition == -1) {
+                sCurrentPosition = (int) intent.getLongExtra(STEP_ID, 0);
+            }
+
         } else {
             Log.d(TAG, "No URI passed");
+        }
+
+        if (LayoutUtils.inTwoPane(this)) {
+            mLayoutConfig = RecipeDetailsActivity.LayoutConfiguration.MASTER_DETAIL_FLOW;
+        } else {
+            mLayoutConfig = RecipeDetailsActivity.LayoutConfiguration.SINGLE_PANEL;
         }
 
         if (savedInstanceState != null) {
@@ -89,6 +99,10 @@ public class StepDetailsActivity extends MediaSourceActivity
                 recipeDetailsIntent.putExtra(
                         VIDEO_POSITION,
                         savedInstanceState.getLong(RecipeDetailsActivity.SavedInstanceStateKeys.VIDEO_POSITION, 0));
+
+                // Reset the current position so that the next time the Activity is launched, it
+                // properly reads the stepId from the Intent
+                sCurrentPosition = -1;
 
                 // Check if this Activity was started for result
                 if (getCallingActivity() != null) {
@@ -211,18 +225,8 @@ public class StepDetailsActivity extends MediaSourceActivity
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        // Init the int to be put into the Bundle
-        @RecipeDetailsActivity.LayoutConfiguration int layoutConfig;
-
-        // Set layoutConfig based on whether layout uses master-detail-flow
-        if (LayoutUtils.inTwoPane(this)) {
-            layoutConfig = RecipeDetailsActivity.LayoutConfiguration.MASTER_DETAIL_FLOW;
-        } else {
-            layoutConfig = RecipeDetailsActivity.LayoutConfiguration.SINGLE_PANEL;
-        }
-
         // Save the layout config in the Bundle
-        outState.putInt(PREVIOUS_CONFIGURATION_KEY, layoutConfig);
+        outState.putInt(PREVIOUS_CONFIGURATION_KEY, mLayoutConfig);
 
         // Save the video's position in the Bundle
         outState.putLong(RecipeDetailsActivity.SavedInstanceStateKeys.VIDEO_POSITION, mPlayer.getCurrentPosition());

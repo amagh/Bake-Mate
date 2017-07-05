@@ -51,6 +51,7 @@ public class RecipeDetailsActivity extends MediaSourceActivity
     // **Member Variables**//
     private Uri mRecipeUri;
     private SimpleExoPlayer mPlayer;
+    @LayoutConfiguration private int mLayoutConfig;
     public static int sCurrentPosition;
 
     @Override
@@ -68,6 +69,13 @@ public class RecipeDetailsActivity extends MediaSourceActivity
             mRecipeUri = intent.getData();
         } else {
             Log.d(TAG, "No URI passed!");
+        }
+
+        // Set the mem var to current LayoutConfiguration so it can be saved in onSaveInstanceState
+        if (LayoutUtils.inTwoPane(this)) {
+            mLayoutConfig = MASTER_DETAIL_FLOW;
+        } else {
+            mLayoutConfig = SINGLE_PANEL;
         }
 
         if (savedInstanceState == null) {
@@ -280,18 +288,8 @@ public class RecipeDetailsActivity extends MediaSourceActivity
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        // Init the int to be put into the Bundle
-        @LayoutConfiguration int layoutConfig;
-
-        // Set layoutConfig based on whether layout uses master-detail-flow
-        if (LayoutUtils.inTwoPane(this)) {
-            layoutConfig = LayoutConfiguration.MASTER_DETAIL_FLOW;
-        } else {
-            layoutConfig = LayoutConfiguration.SINGLE_PANEL;
-        }
-
         // Save the layout config in the Bundle
-        outState.putInt(PREVIOUS_CONFIGURATION_KEY, layoutConfig);
+        outState.putInt(PREVIOUS_CONFIGURATION_KEY, mLayoutConfig);
 
         // Save the video's position in the Bundle
         if (mPlayer != null) {
