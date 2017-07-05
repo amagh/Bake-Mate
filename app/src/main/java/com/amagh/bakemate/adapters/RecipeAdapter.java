@@ -2,6 +2,8 @@ package com.amagh.bakemate.adapters;
 
 import android.database.Cursor;
 import android.databinding.DataBindingUtil;
+import android.databinding.ViewDataBinding;
+import android.support.annotation.IntDef;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,9 +12,13 @@ import android.view.ViewGroup;
 import com.amagh.bakemate.R;
 import com.amagh.bakemate.data.RecipeContract;
 import com.amagh.bakemate.databinding.ListItemRecipeBinding;
+import com.amagh.bakemate.databinding.ListItemRecipeWidgetBinding;
 import com.amagh.bakemate.models.Recipe;
 import com.amagh.bakemate.utils.DatabaseUtils;
 import com.bumptech.glide.Glide;
+
+import static com.amagh.bakemate.adapters.RecipeAdapter.RecipeLayouts.NORMAL_LAYOUT;
+import static com.amagh.bakemate.adapters.RecipeAdapter.RecipeLayouts.WIDGET_LAYOUT;
 
 /**
  * Created by hnoct on 6/28/2017.
@@ -22,8 +28,15 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
     // **Constants** //
     private static final String TAG = RecipeAdapter.class.getSimpleName();
 
+    @IntDef({NORMAL_LAYOUT, WIDGET_LAYOUT})
+    public @interface RecipeLayouts {
+        int NORMAL_LAYOUT = 0;
+        int WIDGET_LAYOUT = 1;
+    }
+
     // **Member Variables** //
     private ClickHandler mClickHandler;
+    private int mLayoutType = NORMAL_LAYOUT;
 
     public RecipeAdapter(ClickHandler clickHandler) {
         mClickHandler = clickHandler;
@@ -46,9 +59,23 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
     public RecipeViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         // Use DataBinding to inflate the layout
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        ListItemRecipeBinding binding = DataBindingUtil.inflate(
+        int layoutId;
+
+        switch (viewType) {
+            case NORMAL_LAYOUT:
+                layoutId = R.layout.list_item_recipe;
+                break;
+
+            case WIDGET_LAYOUT:
+                layoutId = R.layout.list_item_recipe_widget;
+                break;
+
+            default: throw new UnsupportedOperationException("Unknown view type: " + viewType);
+        }
+
+        ViewDataBinding binding = DataBindingUtil.inflate(
                 inflater,
-                R.layout.list_item_recipe,
+                layoutId,
                 parent,
                 false
         );
@@ -77,6 +104,15 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
         return mCursor.getInt(Projection.IDX_RECIPE_ID);
     }
 
+    @Override
+    public int getItemViewType(int position) {
+        if (mLayoutType == NORMAL_LAYOUT) {
+            return NORMAL_LAYOUT;
+        } else {
+            return WIDGET_LAYOUT;
+        }
+    }
+
     public void swapCursor(Cursor newCursor) {
         // Set member variable to the new Cursor
         mCursor = newCursor;
@@ -87,15 +123,19 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
         }
     }
 
+    public void setLayout(@RecipeLayouts int layoutType) {
+        mLayoutType = layoutType;
+    }
+
     public interface ClickHandler {
         void onRecipeClicked(int recipeId);
     }
 
     public class RecipeViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         // **Member Variables** //
-        ListItemRecipeBinding mBinding;
+        ViewDataBinding mBinding;
 
-        public RecipeViewHolder(ListItemRecipeBinding binding) {
+        public RecipeViewHolder(ViewDataBinding binding) {
             super(binding.getRoot());
 
             mBinding = binding;
@@ -130,7 +170,12 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
             String videoUrl = DatabaseUtils.getVideoUrlForThumbnail(itemView.getContext(), recipeId);
 
             Recipe recipe = new Recipe(recipeName, videoUrl);
-            mBinding.setRecipe(recipe);
+
+            if (mLayoutType == NORMAL_LAYOUT) {
+                ((ListItemRecipeBinding) mBinding).setRecipe(recipe);
+            } else {
+                ((ListItemRecipeWidgetBinding) mBinding).setRecipe((recipe));
+            }
 
             // Force bindings to execute immediately
             mBinding.executePendingBindings();

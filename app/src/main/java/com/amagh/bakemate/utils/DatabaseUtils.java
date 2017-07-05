@@ -173,4 +173,68 @@ public class DatabaseUtils {
             return null;
         }
     }
+
+    /**
+     * Retrievse the recipe name given the recipe's ID
+     *
+     * @param context     Interface to global Context
+     * @param recipeId    The ID of the recipe to retrieve the recipe name for
+     * @return The name of the recipe corresponding to the recipeId
+     */
+    public static String getRecipeName(Context context, long recipeId) {
+        // Query the database, filtering only for the row that matches the recipeId
+        Cursor cursor = context.getContentResolver().query(
+                RecipeProvider.Recipes.CONTENT_URI,
+                new String[] {RecipeContract.RecipeEntry.COLUMN_RECIPE_NAME},
+                RecipeContract.RecipeEntry.COLUMN_RECIPE_ID + " = ?",
+                new String[] {Long.toString(recipeId)},
+                null
+        );
+
+        // Return the recipe name if the Cursor is valid
+        if (cursor != null) {
+            try {
+                if (cursor.moveToFirst()) {
+                    return cursor.getString(0);
+                }
+            } finally {
+                // Close the Cursor
+                cursor.close();
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Retrieves the ID associated with a recipe name
+     *
+     * @param context       Interface to global Context
+     * @param recipeName    The name of the recipe
+     * @return The ID of the recipe associated with the recipe name
+     */
+    public static long getRecipeId(Context context, String recipeName) {
+        // Query the database, filtering only for the row that matches the recipe name
+        Cursor cursor = context.getContentResolver().query(
+                RecipeProvider.Recipes.CONTENT_URI,
+                new String[] {RecipeContract.RecipeEntry.COLUMN_RECIPE_ID},
+                RecipeContract.RecipeEntry.COLUMN_RECIPE_NAME + " = ?",
+                new String[] {recipeName},
+                null
+        );
+
+        // Return the recipe ID if the Cursor is valid
+        if (cursor != null) {
+            try {
+                if (cursor.moveToFirst()) {
+                    return cursor.getLong(0);
+                }
+            } finally {
+                // Close the Cursor
+                cursor.close();
+            }
+        }
+
+        return -1;
+    }
 }
