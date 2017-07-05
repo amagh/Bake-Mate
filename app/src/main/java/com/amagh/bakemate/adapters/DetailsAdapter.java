@@ -298,7 +298,7 @@ public class DetailsAdapter extends RecyclerView.Adapter<DetailsAdapter.DetailsV
 
                     ((ListItemStepBinding) mBinding).setStep(step);
 
-                    // Set selected status of the item while using master-detail-flow
+                    // Set selected status of the item
                     if (LayoutUtils.inTwoPane(mBinding.getRoot().getContext())) {
                         mBinding.getRoot().setSelected(position == mSelectedItem);
                     }
