@@ -54,7 +54,8 @@
         </receiver>
 
         <activity
-            android:name=".widgets.IngredientWidgetConfigureActivity">
+            android:name=".widgets.IngredientWidgetConfigureActivity"
+            android:theme="@style/AppTheme.Dialog">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
             </intent-filter>

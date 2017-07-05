@@ -10,7 +10,6 @@ import android.database.Cursor;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
-import android.view.View;
 
 import com.amagh.bakemate.R;
 import com.amagh.bakemate.adapters.RecipeAdapter;
@@ -18,7 +17,7 @@ import com.amagh.bakemate.data.RecipeProvider;
 import com.amagh.bakemate.databinding.WidgetIngredientConfigureBinding;
 import com.amagh.bakemate.utils.DatabaseUtils;
 
-import static com.amagh.bakemate.adapters.RecipeAdapter.RecipeLayouts.WIDGET_LAYOUT;
+import static com.amagh.bakemate.adapters.RecipeAdapter.RecipeLayouts.*;
 
 /**
  * The configuration screen for the {@link IngredientWidget IngredientWidget} AppWidget.
