@@ -22,6 +22,7 @@
             android:padding="4dp"
             android:scaleType="centerCrop"
             app:videoUrl="@{recipe.videoUrl}"
+            app:listener="@{recipe.listener}"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
