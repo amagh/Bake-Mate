@@ -29,6 +29,9 @@
     <!-- String for the Recipe Intro tab -->
     <string name="step_intro">Intro</string>
 
+    <!-- Strings for Widget -->
+    <string name="widget_configure_instructions">Select a recipe to display ingredients for</string>
+
     <!-- Dummy text for layouts -->
     <!-- Recipe list layout -->
     <string name="list_recipe_title_placeholder">Cheesecake</string>
@@ -47,8 +50,9 @@
     <string name="list_step_description_placeholder">
         1. Preheat the oven to 350°F. Butter the bottoms and sides of two 9\" round pans with 2\"-high sides. Cover the bottoms of the pans with rounds of parchment paper, and butter the paper as well.
     </string>
+
+    <!-- Widget -->
     <string name="ingredient_widget_recipe_placeholder">Nutella Pie</string>
-    <string name="configure">Configure</string>
-    <string name="add_widget">Add widget</string>
+
 
 </resources>
