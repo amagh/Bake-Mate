@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="recipe"
+            type="com.amagh.bakemate.models.Recipe" />
+    </data>
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/list_recipe_iv"
+            android:layout_width="@dimen/list_step_thumbnail_size"
+            android:layout_height="@dimen/list_step_thumbnail_size"
+            android:layout_margin="@dimen/list_step_thumbnail_margin"
+            android:padding="4dp"
+            android:scaleType="centerCrop"
+            app:videoUrl="@{recipe.videoUrl}"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            tools:src="@drawable/recipe_thumbnail_placeholder" />
+
+        <ProgressBar
+            android:layout_width="@dimen/list_step_thumbnail_size"
+            android:layout_height="@dimen/list_step_thumbnail_size"
+            android:visibility="@{recipe.visibility}"
+            app:layout_constraintLeft_toLeftOf="@id/list_recipe_iv"
+            app:layout_constraintRight_toRightOf="@id/list_recipe_iv"
+            app:layout_constraintTop_toTopOf="@id/list_recipe_iv"
+            app:layout_constraintBottom_toBottomOf="@id/list_recipe_iv"/>
+
+        <TextView
+            android:id="@+id/list_recipe_name_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/list_step_thumbnail_margin"
+            android:layout_marginStart="@dimen/list_step_thumbnail_margin"
+            android:text="@{recipe.name}"
+            app:layout_constraintLeft_toRightOf="@id/list_recipe_iv"
+            app:layout_constraintTop_toTopOf="@id/list_recipe_iv"
+            app:layout_constraintBottom_toBottomOf="@id/list_recipe_iv"
+            style="@style/TextAppearance.AppCompat.Title"
+            tools:text="@string/list_recipe_title_placeholder"
+            />
+    </android.support.constraint.ConstraintLayout>
+</layout>
