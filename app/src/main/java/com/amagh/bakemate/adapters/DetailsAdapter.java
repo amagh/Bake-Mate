@@ -17,6 +17,7 @@ import com.amagh.bakemate.databinding.ListItemStepBinding;
 import com.amagh.bakemate.models.Ingredient;
 import com.amagh.bakemate.models.Recipe;
 import com.amagh.bakemate.models.Step;
+import com.amagh.bakemate.utils.LayoutUtils;
 
 /**
  * Created by hnoct on 6/28/2017.
@@ -298,7 +299,10 @@ public class DetailsAdapter extends RecyclerView.Adapter<DetailsAdapter.DetailsV
                     ((ListItemStepBinding) mBinding).setStep(step);
 
                     // Set selected status of the item
-                    mBinding.getRoot().setSelected(position == mSelectedItem);
+                    if (LayoutUtils.inTwoPane(mBinding.getRoot().getContext())) {
+                        mBinding.getRoot().setSelected(position == mSelectedItem);
+                    }
+
                     break;
                 }
             }
