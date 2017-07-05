@@ -39,6 +39,7 @@ public class Step extends BaseObservable implements Parcelable{
     private final String description;
 
     private int visibility;
+    private int imageVisibility;
     private SimpleExoPlayer player;
     private ExtractorMediaSource mediaSource;
     private long playerPosition;
@@ -51,6 +52,7 @@ public class Step extends BaseObservable implements Parcelable{
 
         // If there is no video thumbnail to load, then ProgressBar should be hidden
         this.visibility = !videoUrl.isEmpty() ? View.VISIBLE : View.GONE;
+        this.imageVisibility = !videoUrl.isEmpty() ? View.VISIBLE : View.GONE;
     }
 
     @Bindable
@@ -71,6 +73,11 @@ public class Step extends BaseObservable implements Parcelable{
     @Bindable
     public int getVisibility() {
         return visibility;
+    }
+
+    @Bindable
+    public int getImageVisibility() {
+        return imageVisibility;
     }
 
     @Bindable
@@ -119,7 +126,7 @@ public class Step extends BaseObservable implements Parcelable{
 
     @BindingAdapter({"bind:player", "bind:mediaSource"})
     public static void loadVideoIntoPlayer(SimpleExoPlayerView playerView, SimpleExoPlayer player, ExtractorMediaSource mediaSource) {
-        if (player == null) {
+        if (player == null || mediaSource == null) {
             // No media, nothing to play
             return;
         }
