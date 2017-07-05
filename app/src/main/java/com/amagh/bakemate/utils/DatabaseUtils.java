@@ -173,4 +173,26 @@ public class DatabaseUtils {
             return null;
         }
     }
+
+    public static String getRecipeName(Context context, long recipeId) {
+        Cursor cursor = context.getContentResolver().query(
+                RecipeProvider.Recipes.CONTENT_URI,
+                new String[] {RecipeContract.RecipeEntry.COLUMN_RECIPE_NAME},
+                RecipeContract.RecipeEntry.COLUMN_RECIPE_ID + " = ?",
+                new String[] {Long.toString(recipeId)},
+                null
+        );
+
+        if (cursor != null) {
+            try {
+                if (cursor.moveToFirst()) {
+                    return cursor.getString(0);
+                }
+            } finally {
+                cursor.close();
+            }
+        }
+
+        return null;
+    }
 }
