@@ -64,9 +64,7 @@ public class StepDetailsActivity extends MediaSourceActivity
             mStepsUri = intent.getData();
 
             // Position that the user selected
-            if (sCurrentPosition == -1) {
-                sCurrentPosition = (int) intent.getLongExtra(STEP_ID, 0);
-            }
+            sCurrentPosition = (int) intent.getLongExtra(STEP_ID, 0);
         } else {
             Log.d(TAG, "No URI passed");
         }
