@@ -26,7 +26,7 @@ import com.amagh.bakemate.sync.SyncRecipesTaskLoader;
 
 public class RecipeListFragment extends Fragment implements LoaderManager.LoaderCallbacks {
     // **Constants** //
-    private static final boolean deleteDatabase = true;
+    private static final boolean deleteDatabase = false;
     private static final int RECIPE_CURSOR_LOADER = 3249;
     private static final int SYNC_LOADER = 4654;
 
