@@ -7,9 +7,8 @@ import android.content.Intent;
 import android.widget.RemoteViews;
 
 import com.amagh.bakemate.R;
+import com.amagh.bakemate.data.RecipeProvider;
 import com.amagh.bakemate.utils.DatabaseUtils;
-
-import static com.amagh.bakemate.widgets.IngredientsWidgetService.BundleKeys.RECIPE_ID;
 
 /**
  * Implementation of App Widget functionality.
@@ -25,7 +24,7 @@ public class IngredientWidget extends AppWidgetProvider {
         // Construct the RemoteViews object
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_ingredient);
         Intent intent = new Intent(context, IngredientsWidgetService.class);
-        intent.putExtra(RECIPE_ID, recipeId);
+        intent.setData(RecipeProvider.Ingredients.forRecipe(recipeId));
 
         views.setRemoteAdapter(R.id.ingredient_widget_lv, intent);
         views.setTextViewText(R.id.ingredient_widget_recipe_tv, recipeName);
@@ -37,10 +36,15 @@ public class IngredientWidget extends AppWidgetProvider {
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         for (int appWidgetId : appWidgetIds) {
-            // Get the recipeId from the recipeName associated with the appWidgetid
+            // Get the recipeId from the recipeName associated with the appWidgetId
+            String recipeName = IngredientWidgetConfigureActivity.loadTitlePref(context, appWidgetId);
+            if (recipeName == null) {
+                return;
+            }
+
             long recipeId = DatabaseUtils.getRecipeId(
                     context,
-                    IngredientWidgetConfigureActivity.loadTitlePref(context, appWidgetId));
+                    recipeName);
 
             // Update the widget
             updateAppWidget(context, appWidgetManager, appWidgetId, recipeId);

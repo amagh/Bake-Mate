@@ -3,18 +3,17 @@ package com.amagh.bakemate.widgets;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
 import com.amagh.bakemate.R;
 import com.amagh.bakemate.adapters.DetailsAdapter;
-import com.amagh.bakemate.data.RecipeProvider;
 import com.amagh.bakemate.utils.FormattingUtils;
 
 import static com.amagh.bakemate.adapters.DetailsAdapter.IngredientProjection.IDX_INGREDIENT_MEASURE;
 import static com.amagh.bakemate.adapters.DetailsAdapter.IngredientProjection.IDX_INGREDIENT_NAME;
 import static com.amagh.bakemate.adapters.DetailsAdapter.IngredientProjection.IDX_INGREDIENT_QUANTITY;
-import static com.amagh.bakemate.widgets.IngredientsWidgetService.BundleKeys.RECIPE_ID;
 
 /**
  * Created by Nocturna on 7/4/2017.
@@ -23,26 +22,23 @@ import static com.amagh.bakemate.widgets.IngredientsWidgetService.BundleKeys.REC
 public class IngredientsWidgetService extends RemoteViewsService {
     // **Constants** //
     private static final String TAG = IngredientsWidgetService.class.getSimpleName();
-    interface BundleKeys {
-        String RECIPE_ID = "recipe_id";
-    }
 
     @Override
     public RemoteViewsFactory onGetViewFactory(Intent intent) {
-        long recipeId = intent.getLongExtra(RECIPE_ID, 0);
+        Uri recipeUri = intent.getData();
 
-        return new IngredientsRemoteViewsFactory(this, recipeId);
+        return new IngredientsRemoteViewsFactory(this, recipeUri);
     }
 
     private class IngredientsRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
         // **Member Variables** //
         Context mContext;
         Cursor mCursor;
-        long mRecipeId;
+        Uri mRecipeUri;
 
-        IngredientsRemoteViewsFactory(Context context, long recipeId) {
+        IngredientsRemoteViewsFactory(Context context, Uri recipeUri) {
             mContext = context;
-            mRecipeId = recipeId;
+            mRecipeUri = recipeUri;
         }
 
         @Override
@@ -58,7 +54,7 @@ public class IngredientsWidgetService extends RemoteViewsService {
             }
 
             mCursor = mContext.getContentResolver().query(
-                    RecipeProvider.Ingredients.forRecipe(mRecipeId),
+                    mRecipeUri,
                     DetailsAdapter.IngredientProjection.INGREDIENT_PROJECTION,
                     null,
                     null,
