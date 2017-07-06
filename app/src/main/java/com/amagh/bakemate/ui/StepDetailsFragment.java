@@ -69,11 +69,19 @@ public class StepDetailsFragment extends Fragment {
             // Bind data to the View
             mBinding.setStep(mStep);
 
+            // Start the video playback if the Fragment is visible
             if (StepDetailsActivity.sCurrentPosition == mStep.getStepId()) {
-                mStep.setPlayer(
-                        getActivity(),
-                        ((StepDetailsActivity) getActivity()).getPagerAdapter().getMediaSource(mStep.getStepId())
-                );
+                // Because the Step is not destroyed during rotation, it will still have a reference
+                // to the media source. Only set the media source if the Fragment is new.
+                ExtractorMediaSource mediaSource;
+
+                if (savedInstanceState == null) {
+                    mediaSource = ((StepDetailsActivity) getActivity()).getPagerAdapter().getMediaSource(mStep.getStepId());
+                } else {
+                    mediaSource = null;
+                }
+
+                mStep.setPlayer(getActivity(), mediaSource);
 
                 // Set the currentPage variable in the StepPagerAdapter so the Adapter can properly
                 // track page changes
@@ -119,5 +127,14 @@ public class StepDetailsFragment extends Fragment {
 
         // Set the PlayerView's height to properly display at 16:9 video
         mBinding.stepDetailsExo.post(runnable);
+    }
+
+    /**
+     * Retrieves the Step bound to this Fragment
+     *
+     * @return The Step bound to this Fragment
+     */
+    public Step getStep() {
+        return mStep;
     }
 }

@@ -193,8 +193,10 @@ public class Step extends BaseObservable implements Parcelable{
             this.player = ((ManageSimpleExoPlayerInterface) context).getPlayer();
         }
 
-        // Set member variable to parameter
-        this.mediaSource = mediaSource;
+        // Set member variable to parameter if it has not already been loaded
+        if (this.mediaSource == null) {
+            this.mediaSource = mediaSource;
+        }
 
         // Notify of property change
         notifyPropertyChanged(BR.mediaSource);
