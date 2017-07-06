@@ -238,16 +238,19 @@ public class RecipeDetailsActivity extends MediaSourceActivity
      * @param stepId    The ID of the step to generate a Fragment for
      */
     private void swapStepDetailsFragment(long recipeId, long stepId) {
+        // Check to see if the SparseArray has been initialized
         if (mStepArray != null) {
+            // Stop the Player and save its position
             mStepArray.get(((Integer) sCurrentPosition).longValue()).stopPlayer();
-        }
-
-        if (mStepArray == null) {
+        } else {
+            // Init the LongSparseArray
             mStepArray = new LongSparseArray<>();
         }
 
+        // Get a reference to the Step that will be used in the StepDetailsFragment
         Step step;
 
+        // Check if Step has been stored in the LongSparseArray
         if (mStepArray.get(stepId) == null) {
             // Generate a Cursor with the Step's details
             Uri stepUri = RecipeProvider.Steps.forRecipeAndStep(recipeId, stepId);
@@ -263,6 +266,7 @@ public class RecipeDetailsActivity extends MediaSourceActivity
             assertNotNull(cursor);
             cursor.close();
         } else {
+            // Obtain reference to the Step in the LongSparseArray
             step = mStepArray.get(stepId);
         }
 
