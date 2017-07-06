@@ -79,10 +79,8 @@ public class StepSectionAdapter extends FragmentStatePagerAdapter implements Ste
             mCursor.moveToPosition(position);
 
             // Create a Step to pass to the newInstance method
-            Step step = Step.createStepFromCursor(mCursor);
+            mStepsArray.put(position, Step.createStepFromCursor(mCursor));
             mStepsArray.get(position).setStepId(position);
-
-            mStepsArray.put(position, step);
 
             // Prepare the MediaSource for the Step
             prepareMediaSources(position);
@@ -164,5 +162,17 @@ public class StepSectionAdapter extends FragmentStatePagerAdapter implements Ste
 
         // Set member variable to the new currentPage
         mCurrentPage = currentPage;
+    }
+
+    /**
+     * Retrieves the Step being used for a Fragment
+     *
+     * @param position    The position of the Fragment to retrieve the Step for
+     * @return The Step corresponding to the Fragment's position
+     */
+    public Step getStep(int position) {
+        if (mStepsArray == null) return null;
+
+        return mStepsArray.get(position);
     }
 }

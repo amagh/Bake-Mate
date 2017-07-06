@@ -167,7 +167,7 @@ public class Step extends BaseObservable implements Parcelable{
      */
     public void stopPlayer() {
         // Save player's current position so it can be re-set when the user re-enters the Fragment
-        playerPosition = player.getCurrentPosition();
+        savePlayerPosition();
 
         // Stop the video playback
         player.stop();
@@ -179,6 +179,13 @@ public class Step extends BaseObservable implements Parcelable{
 
         // Notify of property change
         notifyPropertyChanged(BR.mediaSource);
+    }
+
+    /**
+     * Saves the player position as a member variable
+     */
+    public void savePlayerPosition() {
+        this.playerPosition = player.getCurrentPosition();
     }
 
     /**

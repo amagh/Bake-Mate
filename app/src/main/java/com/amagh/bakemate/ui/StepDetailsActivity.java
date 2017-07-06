@@ -216,6 +216,9 @@ public class StepDetailsActivity extends MediaSourceActivity
     protected void onDestroy() {
         super.onDestroy();
 
+        // Save the player's position
+        mPagerAdapter.getStep(sCurrentPosition).savePlayerPosition();
+
         // Release the player
         mPlayer.stop();
         mPlayer.release();
