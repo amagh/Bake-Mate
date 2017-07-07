@@ -98,7 +98,7 @@ public class MediaSourceActivity extends AppCompatActivity {
 
         // Save the playerPosition of the video playing
         if (mSteps != null && mSteps[mCurrentPosition] != null) {
-            mSteps[mCurrentPosition].savePlayerPosition();
+            mSteps[mCurrentPosition].stopPlayer();
         }
 
         // Save member variables
