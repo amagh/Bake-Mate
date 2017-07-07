@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.IntDef;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 
@@ -73,6 +74,11 @@ public class RecipeDetailsActivity extends MediaSourceActivity
             mSteps = Arrays.copyOf(parcelables, parcelables.length, Step[].class);
         }
 
+        // Check to see if the current position was passed in the Intent
+        if (intent.hasExtra(CURRENT_POSITION_KEY)) {
+            mCurrentPosition = intent.getIntExtra(CURRENT_POSITION_KEY, 0);
+        }
+
         // Set the mem var to current LayoutConfiguration so it can be saved in onSaveInstanceState
         if (LayoutUtils.inTwoPane(this)) {
             mLayoutConfig = MASTER_DETAIL_FLOW;
@@ -105,7 +111,10 @@ public class RecipeDetailsActivity extends MediaSourceActivity
                     mSteps = new Step[DatabaseUtils.getNumberOfSteps(this, recipeId)];
                 }
 
-                swapStepDetailsFragment(recipeId, 0);
+                swapStepDetailsFragment(recipeId, mCurrentPosition);
+
+                // Scroll to the step's position in the RecipeDetailsFragment
+                scrollToStep(fragment, mCurrentPosition);
             }
         } else {
             // Check whether a layout configuration change has occurred
@@ -208,7 +217,7 @@ public class RecipeDetailsActivity extends MediaSourceActivity
             swapStepDetailsFragment(recipeId, mCurrentPosition);
 
             // Scroll to the step's position in the RecipeDetailsFragment
-            scrollToStep(mCurrentPosition);
+            scrollToStep(null, mCurrentPosition);
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
@@ -219,16 +228,16 @@ public class RecipeDetailsActivity extends MediaSourceActivity
      *
      * @param stepId ID of the Step to scroll to
      */
-    private void scrollToStep(long stepId) {
+    private void scrollToStep(@Nullable RecipeDetailsFragment fragment, long stepId) {
         // Get a reference to the RecipeDetailsFragment
-        RecipeDetailsFragment fragment =
-                (RecipeDetailsFragment) getSupportFragmentManager().findFragmentByTag(RECIPE_DETAILS_FRAG);
+        if (fragment == null) {
+            fragment = (RecipeDetailsFragment) getSupportFragmentManager().findFragmentByTag(RECIPE_DETAILS_FRAG);
+        }
+
+        if (fragment == null) return;
 
         // Scroll to the Step's position
         fragment.scrollToStep(stepId);
-
-        // Set the Step's list item to be selected
-        fragment.getAdapter().setSelected(stepId);
     }
 
     /**
