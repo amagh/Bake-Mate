@@ -205,9 +205,7 @@ public class Step extends BaseObservable implements Parcelable{
         }
 
         // Set member variable to parameter if it has not already been loaded
-        if (this.mediaSource == null) {
-            this.mediaSource = mediaSource;
-        }
+        this.mediaSource = mediaSource;
 
         if (this.mediaSource != null) {
             // Notify of property change

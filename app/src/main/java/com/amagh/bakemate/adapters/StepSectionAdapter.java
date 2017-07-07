@@ -57,9 +57,11 @@ public class StepSectionAdapter extends FragmentStatePagerAdapter implements Ste
 
         // Check if the Step within the SparseArray is the Step being utilized by the Fragment
         if (object instanceof StepDetailsFragment) {
-            if (mActivity.getSteps()[position] == null) {
-                // Does not match, replace the Step in the SparseArray with the Step being utilized
-                // by the Fragment
+            StepDetailsFragment fragment = (StepDetailsFragment) object;
+            if (mActivity.getSteps()[position] == null ||
+                    (fragment.getStep() != null && mActivity.getSteps()[position] != fragment.getStep())) {
+                // Does not match, replace the Step in the Array with the Step being utilized by
+                // the Fragment
                 mActivity.getSteps()[position] = ((StepDetailsFragment) object).getStep();
             }
 
@@ -157,7 +159,6 @@ public class StepSectionAdapter extends FragmentStatePagerAdapter implements Ste
     public void onPageChanged(int currentPage) {
         // If steps have not been loaded yet, do nothing.
         if (mActivity.getSteps()[currentPage] == null) return;
-        Log.d(TAG, "Media Source: " + mMediaSourceArray.get(currentPage));
 
         // Start the player on the currentPage. Stop the previously playing page.
         mActivity.getSteps()[mCurrentPage].stopPlayer();
