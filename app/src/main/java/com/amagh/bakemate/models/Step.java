@@ -185,7 +185,7 @@ public class Step extends BaseObservable implements Parcelable{
      * Saves the player position as a member variable
      */
     public void savePlayerPosition() {
-        if (this.player != null) {
+        if (this.player != null && this.player.getCurrentPosition() != 0) {
             this.playerPosition = player.getCurrentPosition();
         }
     }
@@ -196,7 +196,7 @@ public class Step extends BaseObservable implements Parcelable{
      * @param context       Activity with getPlayer() method
      * @param mediaSource   The MediaSource that will be prepared by the player for video playback
      */
-    public void setPlayer(Context context, ExtractorMediaSource mediaSource) {
+    public void setPlayer(Context context, @Nullable ExtractorMediaSource mediaSource) {
         // Retrieve the SimpleExoPlayer from the Activity
         if (context instanceof ManageSimpleExoPlayerInterface) {
             this.player = ((ManageSimpleExoPlayerInterface) context).getPlayer();
@@ -207,8 +207,14 @@ public class Step extends BaseObservable implements Parcelable{
             this.mediaSource = mediaSource;
         }
 
-        // Notify of property change
-        notifyPropertyChanged(BR.mediaSource);
+        if (this.mediaSource != null) {
+            // Notify of property change
+            notifyPropertyChanged(BR.mediaSource);
+        } else {
+            // Another check to ensure the VideoPlayerView does not show
+            visibility = View.GONE;
+            notifyPropertyChanged(BR.visibility);
+        }
     }
 
     /**
@@ -250,7 +256,7 @@ public class Step extends BaseObservable implements Parcelable{
 
         @Override
         public Step[] newArray(int i) {
-            return new Step[0];
+            return new Step[i];
         }
     };
 
