@@ -63,6 +63,7 @@ public class StepSectionAdapter extends FragmentStatePagerAdapter implements Ste
                 // Does not match, replace the Step in the Array with the Step being utilized by
                 // the Fragment
                 mActivity.getSteps()[position] = ((StepDetailsFragment) object).getStep();
+                mActivity.getSteps()[position].setStepId(position);
             }
 
             if (!mActivity.getSteps()[position].getVideoUrl().isEmpty() &&
@@ -89,7 +90,7 @@ public class StepSectionAdapter extends FragmentStatePagerAdapter implements Ste
             prepareMediaSources(position);
         }
 
-        return StepDetailsFragment.newInstance(mActivity.getSteps()[position], position);
+        return StepDetailsFragment.newInstance(mActivity.getSteps()[position]);
     }
 
     @Override

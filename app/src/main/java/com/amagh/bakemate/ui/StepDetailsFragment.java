@@ -32,7 +32,7 @@ public class StepDetailsFragment extends Fragment {
     private Step mStep;
     private FragmentStepDetailsBinding mBinding;
 
-    public static StepDetailsFragment newInstance(Step step, int stepId) {
+    public static StepDetailsFragment newInstance(Step step) {
         // Init a new Bundle to pass Step
         Bundle args = new Bundle();
 

@@ -67,18 +67,6 @@ public class RecipeDetailsActivity extends MediaSourceActivity
             Log.d(TAG, "No URI passed!");
         }
 
-        // Check to see if Steps were passed in the Intent
-        if (intent.hasExtra(STEPS_KEY)) {
-            // Set mem var to the values stored in the Intent
-            Parcelable[] parcelables = intent.getParcelableArrayExtra(STEPS_KEY);
-            mSteps = Arrays.copyOf(parcelables, parcelables.length, Step[].class);
-        }
-
-        // Check to see if the current position was passed in the Intent
-        if (intent.hasExtra(CURRENT_POSITION_KEY)) {
-            mCurrentPosition = intent.getIntExtra(CURRENT_POSITION_KEY, 0);
-        }
-
         // Set the mem var to current LayoutConfiguration so it can be saved in onSaveInstanceState
         if (LayoutUtils.inTwoPane(this)) {
             mLayoutConfig = MASTER_DETAIL_FLOW;
@@ -87,6 +75,18 @@ public class RecipeDetailsActivity extends MediaSourceActivity
         }
 
         if (savedInstanceState == null) {
+            // Check to see if Steps were passed in the Intent
+            if (intent.hasExtra(STEPS_KEY)) {
+                // Set mem var to the values stored in the Intent
+                Parcelable[] parcelables = intent.getParcelableArrayExtra(STEPS_KEY);
+                mSteps = Arrays.copyOf(parcelables, parcelables.length, Step[].class);
+            }
+
+            // Check to see if the current position was passed in the Intent
+            if (intent.hasExtra(CURRENT_POSITION_KEY)) {
+                mCurrentPosition = intent.getIntExtra(CURRENT_POSITION_KEY, 0);
+            }
+
             // Pass the recipeUri to the Fragment as part of an attached Bundle
             Bundle args = new Bundle();
             args.putParcelable(RecipeDetailsFragment.BundleKeys.RECIPE_URI, mRecipeUri);
@@ -252,6 +252,7 @@ public class RecipeDetailsActivity extends MediaSourceActivity
             // Stop the Player and save its position
             Step step = mSteps[mCurrentPosition];
             if (step != null && step.getPlayer() != null) {
+                step.setStepId((int) stepId);
                 step.stopPlayer();
             }
 
@@ -289,7 +290,7 @@ public class RecipeDetailsActivity extends MediaSourceActivity
         // Check to see if a valid StepDetailsFragment has already been inflated
         if (detailsFragment == null || detailsFragment.getView() == null) {
             // Initialize the StepDetailsFragment with the Step
-            detailsFragment = StepDetailsFragment.newInstance(step, (int) stepId);
+            detailsFragment = StepDetailsFragment.newInstance(step);
 
             // Swap the Fragment into the container
             getSupportFragmentManager().beginTransaction()

@@ -210,6 +210,9 @@ public class Step extends BaseObservable implements Parcelable{
         if (this.mediaSource != null) {
             // Notify of property change
             notifyPropertyChanged(BR.mediaSource);
+
+            visibility = View.VISIBLE;
+            notifyPropertyChanged(BR.visibility);
         } else {
             // Another check to ensure the VideoPlayerView does not show
             visibility = View.GONE;
@@ -246,6 +249,7 @@ public class Step extends BaseObservable implements Parcelable{
         this.videoUrl = parcel.readString();
 
         this.playerPosition = parcel.readLong();
+        this.stepId = parcel.readInt();
     }
 
     public static final Parcelable.Creator<Step> CREATOR = new Parcelable.Creator<Step>() {
@@ -272,6 +276,7 @@ public class Step extends BaseObservable implements Parcelable{
         parcel.writeString(videoUrl);
 
         parcel.writeLong(playerPosition);
+        parcel.writeInt(stepId);
     }
 
 }
