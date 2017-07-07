@@ -21,13 +21,13 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.util.ArrayList;
+import java.util.Arrays;
 
 import static com.amagh.bakemate.ui.MediaSourceActivity.SavedInstanceStateKeys.CURRENT_POSITION_KEY;
 import static com.amagh.bakemate.ui.MediaSourceActivity.SavedInstanceStateKeys.PREVIOUS_CONFIGURATION_KEY;
 import static com.amagh.bakemate.ui.RecipeDetailsActivity.LayoutConfiguration.MASTER_DETAIL_FLOW;
 import static com.amagh.bakemate.ui.RecipeDetailsActivity.LayoutConfiguration.SINGLE_PANEL;
-import static com.amagh.bakemate.ui.StepDetailsActivity.BundleKeys.STEPS;
+import static com.amagh.bakemate.ui.StepDetailsActivity.BundleKeys.STEPS_KEY;
 import static com.amagh.bakemate.ui.StepDetailsActivity.BundleKeys.STEP_ID;
 import static junit.framework.Assert.assertNotNull;
 
@@ -66,6 +66,13 @@ public class RecipeDetailsActivity extends MediaSourceActivity
             Log.d(TAG, "No URI passed!");
         }
 
+        // Check to see if Steps were passed in the Intent
+        if (intent.hasExtra(STEPS_KEY)) {
+            // Set mem var to the values stored in the Intent
+            Parcelable[] parcelables = intent.getParcelableArrayExtra(STEPS_KEY);
+            mSteps = Arrays.copyOf(parcelables, parcelables.length, Step[].class);
+        }
+
         // Set the mem var to current LayoutConfiguration so it can be saved in onSaveInstanceState
         if (LayoutUtils.inTwoPane(this)) {
             mLayoutConfig = MASTER_DETAIL_FLOW;
@@ -93,9 +100,9 @@ public class RecipeDetailsActivity extends MediaSourceActivity
                 // Create the StepDetailsFragment and swap it into the container
                 long recipeId = RecipeProvider.getRecipeIdFromUri(mRecipeUri);
 
-                // Initialize the ArrayList that will hold all the Steps
-                for (int i = 0; i < DatabaseUtils.getNumberOfSteps(this, recipeId); i++) {
-                    mStepList.add(null);
+                // Initialize the Array that will hold all the Steps
+                if (mSteps == null) {
+                    mSteps = new Step[DatabaseUtils.getNumberOfSteps(this, recipeId)];
                 }
 
                 swapStepDetailsFragment(recipeId, 0);
@@ -179,6 +186,7 @@ public class RecipeDetailsActivity extends MediaSourceActivity
     private void startStepDetailsActivityForResult(long recipeId, long stepId) {
         // Generate an Intent to launch the StepDetailsActivity
         Intent intent = getStepDetailsActivityIntent(recipeId, stepId);
+        intent.putExtra(STEPS_KEY, mSteps);
 
         // Start the Activity and await a result (only occurs if there is a layout configuration
         // change)
@@ -192,20 +200,9 @@ public class RecipeDetailsActivity extends MediaSourceActivity
             long recipeId = RecipeProvider.getRecipeIdFromUri(mRecipeUri);
             mCurrentPosition = data.getIntExtra(CURRENT_POSITION_KEY, 0);
 
-            ArrayList<Parcelable> savedList = data.getParcelableArrayListExtra(STEPS);
-            if (savedList != null) {
-                // Initialize the StepList by adding null Objects to all the positions to prevent
-                // errors from adding Steps in positions greater than the size of the List
-                mStepList = new ArrayList<>(savedList.size());
-                for (int i = 0; i < savedList.size(); i++) {
-                    mStepList.add(null);
-                }
-
-                // Set the Steps to their correct positions
-                for (int i = 0; i < savedList.size(); i++) {
-                    mStepList.set(i, (Step) savedList.get(i));
-                }
-            }
+            // Retrieve the Steps stored in the Intent;
+            Parcelable[] parcelables = data.getParcelableArrayExtra(STEPS_KEY);
+            mSteps = Arrays.copyOf(parcelables, parcelables.length, Step[].class);
 
             // Swap the StepDetailsFragment with one containing the step info
             swapStepDetailsFragment(recipeId, mCurrentPosition);
@@ -241,26 +238,23 @@ public class RecipeDetailsActivity extends MediaSourceActivity
      * @param stepId    The ID of the step to generate a Fragment for
      */
     private void swapStepDetailsFragment(long recipeId, long stepId) {
-        // Check to see if the SparseArray has been initialized
-        if (mStepList != null) {
+        // Check to see if the Array has been initialized
+        if (mSteps != null) {
             // Stop the Player and save its position
-            Step step = mStepList.get(mCurrentPosition);
+            Step step = mSteps[mCurrentPosition];
             if (step != null && step.getPlayer() != null) {
-                mStepList.get(mCurrentPosition).stopPlayer();
+                step.stopPlayer();
             }
 
         } else {
-            mStepList = new ArrayList<>();
-            for (int i = 0; i < DatabaseUtils.getNumberOfSteps(this, recipeId); i++) {
-                mStepList.add(null);
-            }
+            mSteps = new Step[DatabaseUtils.getNumberOfSteps(this, recipeId)];
         }
 
         // Get a reference to the Step that will be used in the StepDetailsFragment
         Step step;
 
-        // Check if Step has been stored in the ArrayList
-        if (mStepList.get((int) stepId) == null) {
+        // Check if Step has been stored in the Array
+        if (mSteps[(int) stepId] == null) {
             // Generate a Cursor with the Step's details
             Uri stepUri = RecipeProvider.Steps.forRecipeAndStep(recipeId, stepId);
             Cursor cursor = DatabaseUtils.getCursorForStep(this, stepUri);
@@ -269,14 +263,14 @@ public class RecipeDetailsActivity extends MediaSourceActivity
             step = Step.createStepFromCursor(cursor);
             step.setStepId((int) stepId);
 
-            mStepList.set((int) stepId, step);
+            mSteps[(int) stepId] = step;
 
             // Close the Cursor
             assertNotNull(cursor);
             cursor.close();
         } else {
-            // Obtain reference to the Step in the ArrayList
-            step = mStepList.get((int) stepId);
+            // Obtain reference to the Step in the Array
+            step = mSteps[(int) stepId];
         }
 
         // Check if the StepDetailsFragment has already been inflated

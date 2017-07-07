@@ -36,7 +36,7 @@ public class MediaSourceActivity extends AppCompatActivity {
     }
 
     // **Member Variables** //
-    protected ArrayList<Step> mStepList = new ArrayList<>();
+    protected Step[] mSteps;
     protected int mCurrentPosition;
     protected SimpleExoPlayer mPlayer;
     @RecipeDetailsActivity.LayoutConfiguration protected int mLayoutConfig;
@@ -85,21 +85,8 @@ public class MediaSourceActivity extends AppCompatActivity {
 
         // Restore member variables
         if (savedInstanceState != null) {
-            ArrayList<Parcelable> savedList = savedInstanceState.getParcelableArrayList(STEPS_KEY);
-
-            if (savedList != null && savedList.size() > 0) {
-                // Initialize the ArrayList by filling it will null Objects up to the size of the
-                // savedList to prevent errors in adding Steps at a specific position
-                mStepList = new ArrayList<>(savedList.size());
-                for (int i = 0; i < savedList.size(); i++) {
-                    mStepList.add(null);
-                }
-
-                // Set the Step for each position to the Step from the savedList
-                for (int i = 0; i < savedList.size(); i++) {
-                    mStepList.set(i, (Step) savedList.get(i));
-                }
-            }
+            // Retrieve member variable values from savedInstanceState
+            mSteps = (Step[]) savedInstanceState.getParcelableArray(STEPS_KEY);
 
             mCurrentPosition = savedInstanceState.getInt(CURRENT_POSITION_KEY);
         }
@@ -109,22 +96,17 @@ public class MediaSourceActivity extends AppCompatActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
+        // Save the playerPosition of the video playing
+        if (mSteps != null && mSteps[mCurrentPosition] != null) {
+            mSteps[mCurrentPosition].savePlayerPosition();
+        }
+
         // Save member variables
-        outState.putParcelableArrayList(STEPS_KEY, mStepList);
+        outState.putParcelableArray(STEPS_KEY, mSteps);
         outState.putInt(CURRENT_POSITION_KEY, mCurrentPosition);
 
         // Save the layout config in the Bundle
         outState.putInt(PREVIOUS_CONFIGURATION_KEY, mLayoutConfig);
-
-        // Save the player's position
-        if (mStepList.size() == 0) {
-            return;
-        }
-
-        // Save the playerPosition of the video playing
-        if (mStepList.get(mCurrentPosition) != null) {
-            mStepList.get(mCurrentPosition).savePlayerPosition();
-        }
     }
 
     @Override

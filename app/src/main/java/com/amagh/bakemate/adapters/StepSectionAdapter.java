@@ -57,10 +57,10 @@ public class StepSectionAdapter extends FragmentStatePagerAdapter implements Ste
 
         // Check if the Step within the SparseArray is the Step being utilized by the Fragment
         if (object instanceof StepDetailsFragment) {
-            if (mActivity.getSteps().get(position) == null) {
+            if (mActivity.getSteps()[position] == null) {
                 // Does not match, replace the Step in the SparseArray with the Step being utilized
                 // by the Fragment
-                mActivity.getSteps().set(position, ((StepDetailsFragment) object).getStep());
+                mActivity.getSteps()[position] = ((StepDetailsFragment) object).getStep();
 
                 prepareMediaSources(position);
             }
@@ -71,30 +71,20 @@ public class StepSectionAdapter extends FragmentStatePagerAdapter implements Ste
 
     @Override
     public Fragment getItem(int position) {
-        while (mActivity.getSteps().size() <= position) {
-            mActivity.getSteps().add(null);
-        }
 
-        if (mActivity.getSteps().get(position) == null) {
+        if (mActivity.getSteps()[position] == null) {
             // Move Cursor to correct position
             mCursor.moveToPosition(position);
 
-            while (mActivity.getSteps().size() <= position) {
-                mActivity.getSteps().add(null);
-            }
-
             // Create a Step to pass to the newInstance method
-            Log.d(TAG, "Step made for position: " + position);
-            mActivity.getSteps().set(position, Step.createStepFromCursor(mCursor));
-            mActivity.getSteps().get(position).setStepId(position);
-
-            Log.d(TAG, "THIS FUCKING SHIT IS MADE: " + mActivity.getSteps().get(position).getStepId());
+            mActivity.getSteps()[position] = Step.createStepFromCursor(mCursor);
+            mActivity.getSteps()[position].setStepId(position);
 
             // Prepare the MediaSource for the Step
             prepareMediaSources(position);
         }
 
-        return StepDetailsFragment.newInstance(mActivity.getSteps().get(position), position);
+        return StepDetailsFragment.newInstance(mActivity.getSteps()[position], position);
     }
 
     @Override
@@ -136,7 +126,7 @@ public class StepSectionAdapter extends FragmentStatePagerAdapter implements Ste
     private void prepareMediaSources(int position) {
         mMediaSourceArray.put(
                 position,
-                mActivity.getMediaSource(mActivity.getSteps().get(position)));
+                mActivity.getMediaSource(mActivity.getSteps()[position]));
     }
 
     /**
@@ -161,13 +151,12 @@ public class StepSectionAdapter extends FragmentStatePagerAdapter implements Ste
 
     @Override
     public void onPageChanged(int currentPage) {
-        Log.d(TAG, "FUCKING SHIT SHOULD BE MAKE: " + currentPage);
         // If steps have not been loaded yet, do nothing.
-        if (mActivity.getSteps().get(currentPage) == null) return;
+        if (mActivity.getSteps()[currentPage] == null) return;
 
         // Start the player on the currentPage. Stop the previously playing page.
-        mActivity.getSteps().get(mCurrentPage).stopPlayer();
-        mActivity.getSteps().get(currentPage).setPlayer(mActivity, mMediaSourceArray.get(currentPage));
+        mActivity.getSteps()[mCurrentPage].stopPlayer();
+        mActivity.getSteps()[currentPage].setPlayer(mActivity, mMediaSourceArray.get(currentPage));
 
         // Set member variable to the new currentPage
         mCurrentPage = currentPage;

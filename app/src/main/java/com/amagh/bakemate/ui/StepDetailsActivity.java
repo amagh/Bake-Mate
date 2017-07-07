@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.databinding.DataBindingUtil;
 import android.net.Uri;
+import android.os.Parcelable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -24,10 +25,11 @@ import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 
 import static com.amagh.bakemate.ui.MediaSourceActivity.SavedInstanceStateKeys.CURRENT_POSITION_KEY;
 import static com.amagh.bakemate.ui.MediaSourceActivity.SavedInstanceStateKeys.PREVIOUS_CONFIGURATION_KEY;
+import static com.amagh.bakemate.ui.StepDetailsActivity.BundleKeys.STEPS_KEY;
 import static com.amagh.bakemate.ui.StepDetailsActivity.BundleKeys.STEP_ID;
 
 public class StepDetailsActivity extends MediaSourceActivity
@@ -38,7 +40,7 @@ public class StepDetailsActivity extends MediaSourceActivity
 
     interface BundleKeys {
         String STEP_ID          = "step_id";
-        String STEPS            = "steps";
+        String STEPS_KEY        = "steps";
     }
 
     // **Member Variables** //
@@ -73,6 +75,7 @@ public class StepDetailsActivity extends MediaSourceActivity
             // Check whether a layout configuration change has occurred
             if (previousConfig == RecipeDetailsActivity.LayoutConfiguration.SINGLE_PANEL &&
                     mLayoutConfig == RecipeDetailsActivity.LayoutConfiguration.MASTER_DETAIL_FLOW) {
+
                 // Switching from single panel layout to master-detail flow, launch the
                 // RecipeDetailsActivity and pre-load the current Step in the details pane
                 long recipeId = RecipeProvider.getRecipeIdFromUri(mStepsUri);
@@ -83,7 +86,7 @@ public class StepDetailsActivity extends MediaSourceActivity
                 Intent recipeDetailsIntent = new Intent(this, RecipeDetailsActivity.class);
                 recipeDetailsIntent.setData(recipeUri);
                 recipeDetailsIntent.putExtra(CURRENT_POSITION_KEY, mCurrentPosition);
-                recipeDetailsIntent.putParcelableArrayListExtra(BundleKeys.STEPS, mStepList);
+                recipeDetailsIntent.putExtra(BundleKeys.STEPS_KEY, mSteps);
 
                 // Check if this Activity was started for result
                 if (getCallingActivity() != null) {
@@ -101,6 +104,12 @@ public class StepDetailsActivity extends MediaSourceActivity
         } else {
             // Position that the user selected
             mCurrentPosition = (int) intent.getLongExtra(STEP_ID, 0);
+
+            // Retrieve the Array of Steps from the Intent if it is included
+            if (intent.hasExtra(STEPS_KEY)) {
+                Parcelable[] parcelables = intent.getParcelableArrayExtra(STEPS_KEY);
+                mSteps = Arrays.copyOf(parcelables, parcelables.length, Step[].class);
+            }
         }
 
         mPagerAdapter = new StepSectionAdapter(this, getSupportFragmentManager());
@@ -135,6 +144,16 @@ public class StepDetailsActivity extends MediaSourceActivity
         //Initialize the SimpleExoPlayer to be shared among all Fragments in the ViewPager
         mPlayer = ExoPlayerFactory.newSimpleInstance(this, new DefaultTrackSelector());
 
+        if (mSteps != null) {
+            int numSteps= 0;
+            for (Step step : mSteps) {
+                if (step != null) {
+                    numSteps++;
+                }
+            }
+            Log.d(TAG, "mSteps contains " + numSteps + " Steps");
+        }
+
         // Init the CursorLoader for the Steps
         getSupportLoaderManager().initLoader(STEP_CURSOR_LOADER1, null, this);
     }
@@ -155,13 +174,13 @@ public class StepDetailsActivity extends MediaSourceActivity
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         // Set the member variable and swap in the Cursor
         mCursor = data;
-        mPagerAdapter.swapCursor(mCursor);
 
-        // Initialize the ArrayList by putting a null Object for every position up to the size of
-        // the Cursor's count
-        for (int i = 0; i < data.getCount(); i++) {
-            mStepList.add(null);
+        if (mSteps == null) {
+            // Initialize the Array to hold the Steps
+            mSteps = new Step[data.getCount()];
         }
+
+        mPagerAdapter.swapCursor(mCursor);
 
         // Move to the page the user selected
         mBinding.stepDetailsVp.setCurrentItem(mCurrentPosition);
@@ -202,12 +221,12 @@ public class StepDetailsActivity extends MediaSourceActivity
     }
 
     /**
-     * Returns the ArrayList describing the Steps
+     * Returns the Array describing the Steps
      *
-     * @return The ArrayList desscribing the Steps
+     * @return The Array describing the Steps
      */
-    public ArrayList<Step> getSteps() {
-        return mStepList;
+    public Step[] getSteps() {
+        return mSteps;
     }
 
     /**
