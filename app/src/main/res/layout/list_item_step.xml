@@ -15,40 +15,39 @@
         android:clickable="true"
         android:background="@drawable/recipe_step_touch_selector">
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/list_step_thumbnail_iv"
+        <!--<de.hdodenhof.circleimageview.CircleImageView-->
+            <!--android:id="@+id/list_step_thumbnail_iv"-->
+            <!--android:layout_width="@dimen/list_step_thumbnail_size"-->
+            <!--android:layout_height="@dimen/list_step_thumbnail_size"-->
+            <!--android:layout_margin="@dimen/list_step_thumbnail_margin"-->
+            <!--android:padding="4dp"-->
+            <!--android:scaleType="centerCrop"-->
+            <!--android:visibility="@{step.imageVisibility}"-->
+            <!--app:layout_constraintLeft_toLeftOf="parent"-->
+            <!--app:layout_constraintTop_toTopOf="parent"-->
+            <!--app:videoUrl="@{step.videoUrl}"-->
+            <!--app:listener="@{step.listener}"-->
+            <!--tools:src="@drawable/recipe_thumbnail_placeholder"/>-->
+
+        <ImageView
+            android:id="@+id/list_step_play_iv"
             android:layout_width="@dimen/list_step_thumbnail_size"
             android:layout_height="@dimen/list_step_thumbnail_size"
             android:layout_margin="@dimen/list_step_thumbnail_margin"
-            android:padding="4dp"
-            android:scaleType="centerCrop"
             android:visibility="@{step.imageVisibility}"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:videoUrl="@{step.videoUrl}"
-            app:listener="@{step.listener}"
-            tools:src="@drawable/recipe_thumbnail_placeholder"/>
+            android:src="@drawable/ic_play_circle_filled" />
 
-        <ImageView
-            android:layout_width="@dimen/list_step_thumbnail_size"
-            android:layout_height="@dimen/list_step_thumbnail_size"
-            android:padding="4dp"
-            android:visibility="@{step.imageVisibility}"
-            app:layout_constraintLeft_toLeftOf="@id/list_step_thumbnail_iv"
-            app:layout_constraintRight_toRightOf="@id/list_step_thumbnail_iv"
-            app:layout_constraintTop_toTopOf="@id/list_step_thumbnail_iv"
-            app:layout_constraintBottom_toBottomOf="@id/list_step_thumbnail_iv"
-            android:src="@drawable/ic_play_arrow" />
-
-        <ProgressBar
-            android:id="@+id/list_step_thumbnail_pb"
-            android:layout_width="@dimen/list_step_thumbnail_size"
-            android:layout_height="@dimen/list_step_thumbnail_size"
-            android:visibility="@{step.visibility}"
-            app:layout_constraintLeft_toLeftOf="@id/list_step_thumbnail_iv"
-            app:layout_constraintRight_toRightOf="@id/list_step_thumbnail_iv"
-            app:layout_constraintTop_toTopOf="@id/list_step_thumbnail_iv"
-            app:layout_constraintBottom_toBottomOf="@id/list_step_thumbnail_iv"/>
+        <!--<ProgressBar-->
+            <!--android:id="@+id/list_step_thumbnail_pb"-->
+            <!--android:layout_width="@dimen/list_step_thumbnail_size"-->
+            <!--android:layout_height="@dimen/list_step_thumbnail_size"-->
+            <!--android:visibility="@{step.visibility}"-->
+            <!--app:layout_constraintLeft_toLeftOf="@id/list_step_thumbnail_iv"-->
+            <!--app:layout_constraintRight_toRightOf="@id/list_step_thumbnail_iv"-->
+            <!--app:layout_constraintTop_toTopOf="@id/list_step_thumbnail_iv"-->
+            <!--app:layout_constraintBottom_toBottomOf="@id/list_step_thumbnail_iv"/>-->
 
         <TextView
             android:id="@+id/list_step_short_description_tv"
@@ -63,7 +62,7 @@
             style="@style/TextAppearance.AppCompat.Body2"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="@id/list_step_thumbnail_iv"
+            app:layout_constraintTop_toTopOf="@id/list_step_play_iv"
             tools:text="@string/list_step_short_description_placeholder"/>
 
         <TextView
