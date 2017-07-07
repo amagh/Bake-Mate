@@ -185,7 +185,9 @@ public class Step extends BaseObservable implements Parcelable{
      * Saves the player position as a member variable
      */
     public void savePlayerPosition() {
-        this.playerPosition = player.getCurrentPosition();
+        if (this.player != null) {
+            this.playerPosition = player.getCurrentPosition();
+        }
     }
 
     /**
@@ -230,12 +232,14 @@ public class Step extends BaseObservable implements Parcelable{
         return new Step(videoUrl, shortDescription, description);
     }
 
-    // Parcelable Related Methods
+    // **Parcelable Related Methods** //
 
     public Step(Parcel parcel) {
-        this.videoUrl = parcel.readString();
         this.shortDescription = parcel.readString();
         this.description = parcel.readString();
+        this.videoUrl = parcel.readString();
+
+        this.playerPosition = parcel.readLong();
     }
 
     public static final Parcelable.Creator<Step> CREATOR = new Parcelable.Creator<Step>() {
@@ -260,6 +264,8 @@ public class Step extends BaseObservable implements Parcelable{
         parcel.writeString(shortDescription);
         parcel.writeString(description);
         parcel.writeString(videoUrl);
+
+        parcel.writeLong(playerPosition);
     }
 
 }

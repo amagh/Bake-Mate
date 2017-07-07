@@ -4,11 +4,10 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.IntDef;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.util.LongSparseArray;
-import android.util.SparseArray;
 
 import com.amagh.bakemate.R;
 import com.amagh.bakemate.data.RecipeProvider;
@@ -22,12 +21,14 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.util.ArrayList;
 
+import static com.amagh.bakemate.ui.MediaSourceActivity.SavedInstanceStateKeys.CURRENT_POSITION_KEY;
+import static com.amagh.bakemate.ui.MediaSourceActivity.SavedInstanceStateKeys.PREVIOUS_CONFIGURATION_KEY;
 import static com.amagh.bakemate.ui.RecipeDetailsActivity.LayoutConfiguration.MASTER_DETAIL_FLOW;
 import static com.amagh.bakemate.ui.RecipeDetailsActivity.LayoutConfiguration.SINGLE_PANEL;
-import static com.amagh.bakemate.ui.RecipeDetailsActivity.SavedInstanceStateKeys.PREVIOUS_CONFIGURATION_KEY;
+import static com.amagh.bakemate.ui.StepDetailsActivity.BundleKeys.STEPS;
 import static com.amagh.bakemate.ui.StepDetailsActivity.BundleKeys.STEP_ID;
-import static com.amagh.bakemate.ui.StepDetailsActivity.BundleKeys.VIDEO_POSITION;
 import static junit.framework.Assert.assertNotNull;
 
 public class RecipeDetailsActivity extends MediaSourceActivity
@@ -38,11 +39,6 @@ public class RecipeDetailsActivity extends MediaSourceActivity
     private static final String STEP_DETAILS_FRAG = "step_details_fragment";
     private static final int STEP_ACTIVITY_REQUEST_CODE = 2731;
 
-    interface SavedInstanceStateKeys {
-        String PREVIOUS_CONFIGURATION_KEY   = "previous_config";
-        String VIDEO_POSITION               = "video_position";
-    }
-
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({SINGLE_PANEL, MASTER_DETAIL_FLOW})
     @interface LayoutConfiguration {
@@ -52,10 +48,6 @@ public class RecipeDetailsActivity extends MediaSourceActivity
 
     // **Member Variables**//
     private Uri mRecipeUri;
-    private SimpleExoPlayer mPlayer;
-    private LongSparseArray<Step> mStepArray;
-    @LayoutConfiguration private int mLayoutConfig;
-    public static int sCurrentPosition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,6 +93,11 @@ public class RecipeDetailsActivity extends MediaSourceActivity
                 // Create the StepDetailsFragment and swap it into the container
                 long recipeId = RecipeProvider.getRecipeIdFromUri(mRecipeUri);
 
+                // Initialize the ArrayList that will hold all the Steps
+                for (int i = 0; i < DatabaseUtils.getNumberOfSteps(this, recipeId); i++) {
+                    mStepList.add(null);
+                }
+
                 swapStepDetailsFragment(recipeId, 0);
             }
         } else {
@@ -108,14 +105,13 @@ public class RecipeDetailsActivity extends MediaSourceActivity
             @LayoutConfiguration int previousConfig = savedInstanceState.getInt(PREVIOUS_CONFIGURATION_KEY);
             long recipeId = RecipeProvider.getRecipeIdFromUri(mRecipeUri);
 
-            if (previousConfig == MASTER_DETAIL_FLOW && !LayoutUtils.inTwoPane(this)) {
+            if (previousConfig == MASTER_DETAIL_FLOW && mLayoutConfig == SINGLE_PANEL) {
                 // Switch from master-detail-flow to single panel. Start StepDetailsActivity,
                 // pre-loaded to the current step and video position
                 startStepDetailsActivityForResult(
                         recipeId,
-                        sCurrentPosition,
-                        savedInstanceState.getLong(SavedInstanceStateKeys.VIDEO_POSITION, 0));
-            } else if (LayoutUtils.inTwoPane(this)) {
+                        mCurrentPosition);
+            } else if (mLayoutConfig == MASTER_DETAIL_FLOW) {
                 // Switching from single panel to master-detail-flow. Start the SimpleExoPlayer if
                 // it hasn't already been loaded
                 if (mPlayer == null) {
@@ -123,7 +119,7 @@ public class RecipeDetailsActivity extends MediaSourceActivity
                 }
 
                 // Swap the new Fragment into the container
-                swapStepDetailsFragment(recipeId, sCurrentPosition);
+                swapStepDetailsFragment(recipeId, mCurrentPosition);
             }
         }
 
@@ -179,14 +175,10 @@ public class RecipeDetailsActivity extends MediaSourceActivity
      *
      * @param recipeId         The ID of the recipe to generate the StepDetailsActivity for
      * @param stepId           The ID of the step to generate the StepDetailsActivity for
-     * @param videoPosition    The position of the video prior to the layout change
      */
-    private void startStepDetailsActivityForResult(long recipeId, long stepId, long videoPosition) {
+    private void startStepDetailsActivityForResult(long recipeId, long stepId) {
         // Generate an Intent to launch the StepDetailsActivity
         Intent intent = getStepDetailsActivityIntent(recipeId, stepId);
-
-        // Add the video's position
-        intent.putExtra(VIDEO_POSITION, videoPosition);
 
         // Start the Activity and await a result (only occurs if there is a layout configuration
         // change)
@@ -198,17 +190,28 @@ public class RecipeDetailsActivity extends MediaSourceActivity
         if (requestCode == STEP_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
             // Retrieve the information to be used to generate the StepDetailsFragment
             long recipeId = RecipeProvider.getRecipeIdFromUri(mRecipeUri);
-            int stepId = data.getIntExtra(STEP_ID, 0);
+            mCurrentPosition = data.getIntExtra(CURRENT_POSITION_KEY, 0);
 
-            // Seek the Player to the correct position in the video
-            long videoPosition = data.getLongExtra(VIDEO_POSITION, 0);
-            mPlayer.seekTo(videoPosition);
+            ArrayList<Parcelable> savedList = data.getParcelableArrayListExtra(STEPS);
+            if (savedList != null) {
+                // Initialize the StepList by adding null Objects to all the positions to prevent
+                // errors from adding Steps in positions greater than the size of the List
+                mStepList = new ArrayList<>(savedList.size());
+                for (int i = 0; i < savedList.size(); i++) {
+                    mStepList.add(null);
+                }
+
+                // Set the Steps to their correct positions
+                for (int i = 0; i < savedList.size(); i++) {
+                    mStepList.set(i, (Step) savedList.get(i));
+                }
+            }
 
             // Swap the StepDetailsFragment with one containing the step info
-            swapStepDetailsFragment(recipeId, stepId);
+            swapStepDetailsFragment(recipeId, mCurrentPosition);
 
             // Scroll to the step's position in the RecipeDetailsFragment
-            scrollToStep(stepId);
+            scrollToStep(mCurrentPosition);
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
@@ -239,19 +242,25 @@ public class RecipeDetailsActivity extends MediaSourceActivity
      */
     private void swapStepDetailsFragment(long recipeId, long stepId) {
         // Check to see if the SparseArray has been initialized
-        if (mStepArray != null) {
+        if (mStepList != null) {
             // Stop the Player and save its position
-            mStepArray.get(((Integer) sCurrentPosition).longValue()).stopPlayer();
+            Step step = mStepList.get(mCurrentPosition);
+            if (step != null && step.getPlayer() != null) {
+                mStepList.get(mCurrentPosition).stopPlayer();
+            }
+
         } else {
-            // Init the LongSparseArray
-            mStepArray = new LongSparseArray<>();
+            mStepList = new ArrayList<>();
+            for (int i = 0; i < DatabaseUtils.getNumberOfSteps(this, recipeId); i++) {
+                mStepList.add(null);
+            }
         }
 
         // Get a reference to the Step that will be used in the StepDetailsFragment
         Step step;
 
-        // Check if Step has been stored in the LongSparseArray
-        if (mStepArray.get(stepId) == null) {
+        // Check if Step has been stored in the ArrayList
+        if (mStepList.get((int) stepId) == null) {
             // Generate a Cursor with the Step's details
             Uri stepUri = RecipeProvider.Steps.forRecipeAndStep(recipeId, stepId);
             Cursor cursor = DatabaseUtils.getCursorForStep(this, stepUri);
@@ -260,14 +269,14 @@ public class RecipeDetailsActivity extends MediaSourceActivity
             step = Step.createStepFromCursor(cursor);
             step.setStepId((int) stepId);
 
-            mStepArray.put(stepId, step);
+            mStepList.set((int) stepId, step);
 
             // Close the Cursor
             assertNotNull(cursor);
             cursor.close();
         } else {
-            // Obtain reference to the Step in the LongSparseArray
-            step = mStepArray.get(stepId);
+            // Obtain reference to the Step in the ArrayList
+            step = mStepList.get((int) stepId);
         }
 
         // Check if the StepDetailsFragment has already been inflated
@@ -289,34 +298,11 @@ public class RecipeDetailsActivity extends MediaSourceActivity
         }
 
         // Set the current position to the stepId
-        sCurrentPosition = (int) stepId;
+        mCurrentPosition = (int) stepId;
     }
 
     @Override
     public SimpleExoPlayer getPlayer() {
         return mPlayer;
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
-        // Release SimpleExoPlayer assets
-        if (mPlayer != null) {
-            mPlayer.stop();
-            mPlayer.release();
-        }
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        // Save the layout config in the Bundle
-        outState.putInt(PREVIOUS_CONFIGURATION_KEY, mLayoutConfig);
-
-        // Save the video's position in the Bundle
-        if (mPlayer != null) {
-            outState.putLong(SavedInstanceStateKeys.VIDEO_POSITION, mPlayer.getCurrentPosition());
-        }
     }
 }

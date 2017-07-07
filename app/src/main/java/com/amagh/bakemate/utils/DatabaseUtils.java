@@ -237,4 +237,33 @@ public class DatabaseUtils {
 
         return -1;
     }
+
+    /**
+     * Retrieves the number of steps a recipe has
+     *
+     * @param context     Interface to global Context
+     * @param recipeId    The ID of the recipe to query the number of steps for
+     * @return The number of Steps for a recipe
+     */
+    public static int getNumberOfSteps(Context context, long recipeId) {
+        // Query the database for the steps of a recipe
+        Cursor cursor = context.getContentResolver().query(
+                RecipeProvider.Steps.forRecipe(recipeId),
+                null,
+                null,
+                null,
+                null);
+
+        // If the Cursor is valid, return the Cursor's count
+        if (cursor != null) {
+            try {
+                return cursor.getCount();
+            } finally {
+                // Close the Cursor
+                cursor.close();
+            }
+        }
+
+        return -1;
+    }
 }

@@ -13,7 +13,6 @@ import com.amagh.bakemate.databinding.FragmentStepDetailsBinding;
 import com.amagh.bakemate.models.Step;
 import com.amagh.bakemate.utils.LayoutUtils;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
-import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 
 import static com.amagh.bakemate.ui.StepDetailsFragment.BundleKeys.STEP;
 import static junit.framework.Assert.assertNotNull;
@@ -70,7 +69,7 @@ public class StepDetailsFragment extends Fragment {
             mBinding.setStep(mStep);
 
             // Start the video playback if the Fragment is visible
-            if (StepDetailsActivity.sCurrentPosition == mStep.getStepId()) {
+            if (((StepDetailsActivity) getActivity()).getCurrentPosition() == mStep.getStepId()) {
                 // Because the Step is not destroyed during rotation, it will still have a reference
                 // to the media source. Only set the media source if the Fragment is new.
                 ExtractorMediaSource mediaSource;
@@ -87,9 +86,15 @@ public class StepDetailsFragment extends Fragment {
                 // track page changes
                 ((StepDetailsActivity) getActivity()).getPagerAdapter().setCurrentPage(mStep.getStepId());
             }
+
         } else if (getActivity() instanceof MediaSourceActivity) {
             // Swap the Step being used by the Fragment
             swapStep(mStep);
+        }
+
+        // Resize the SimpleExoVideoPlayerView to fit 16:9 aspect ratio
+        if (!mStep.getVideoUrl().isEmpty()) {
+            mBinding.stepDetailsCl.post(setExoPlayerHeightRunnable);
         }
 
         return rootView;
@@ -97,11 +102,12 @@ public class StepDetailsFragment extends Fragment {
 
     // Runnable to be run after the Views have been laid out so that the width of the PlayerView can
     // be properly attained and the height properly calculated
-    Runnable runnable = new Runnable() {
+    Runnable setExoPlayerHeightRunnable = new Runnable() {
         @Override
         public void run() {
             // Set the Player's height based on the PlayerView's width
-            LayoutUtils.setPlayerViewHeight(mBinding.stepDetailsExo);
+            int height = mBinding.stepDetailsCl.getWidth() / 16 * 9;
+            mBinding.stepDetailsExo.setMinimumHeight(height);
         }
     };
 
@@ -126,7 +132,9 @@ public class StepDetailsFragment extends Fragment {
         mStep.setPlayer(getActivity(), mediaSource);
 
         // Set the PlayerView's height to properly display at 16:9 video
-        mBinding.stepDetailsExo.post(runnable);
+        if (!mStep.getVideoUrl().isEmpty()) {
+            mBinding.stepDetailsCl.post(setExoPlayerHeightRunnable);
+        }
     }
 
     /**

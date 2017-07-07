@@ -18,15 +18,17 @@ import com.amagh.bakemate.R;
 import com.amagh.bakemate.adapters.StepSectionAdapter;
 import com.amagh.bakemate.data.RecipeProvider;
 import com.amagh.bakemate.databinding.ActivityStepDetailsBinding;
-import com.amagh.bakemate.utils.LayoutUtils;
+import com.amagh.bakemate.models.Step;
 import com.amagh.bakemate.utils.ManageSimpleExoPlayerInterface;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 
-import static com.amagh.bakemate.ui.RecipeDetailsActivity.SavedInstanceStateKeys.PREVIOUS_CONFIGURATION_KEY;
+import java.util.ArrayList;
+
+import static com.amagh.bakemate.ui.MediaSourceActivity.SavedInstanceStateKeys.CURRENT_POSITION_KEY;
+import static com.amagh.bakemate.ui.MediaSourceActivity.SavedInstanceStateKeys.PREVIOUS_CONFIGURATION_KEY;
 import static com.amagh.bakemate.ui.StepDetailsActivity.BundleKeys.STEP_ID;
-import static com.amagh.bakemate.ui.StepDetailsActivity.BundleKeys.VIDEO_POSITION;
 
 public class StepDetailsActivity extends MediaSourceActivity
         implements LoaderManager.LoaderCallbacks<Cursor>, ManageSimpleExoPlayerInterface {
@@ -36,7 +38,7 @@ public class StepDetailsActivity extends MediaSourceActivity
 
     interface BundleKeys {
         String STEP_ID          = "step_id";
-        String VIDEO_POSITION   = "video_position";
+        String STEPS            = "steps";
     }
 
     // **Member Variables** //
@@ -46,9 +48,6 @@ public class StepDetailsActivity extends MediaSourceActivity
     private ActivityStepDetailsBinding mBinding;
     private PageChangeListener mPageChangeListener;
     private SimpleExoPlayer mPlayer;
-    @RecipeDetailsActivity.LayoutConfiguration private int mLayoutConfig;
-
-    public static int sCurrentPosition = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,20 +62,8 @@ public class StepDetailsActivity extends MediaSourceActivity
         Intent intent = getIntent();
         if (intent.getData() != null) {
             mStepsUri = intent.getData();
-
-            // Position that the user selected
-            if (sCurrentPosition == -1) {
-                sCurrentPosition = (int) intent.getLongExtra(STEP_ID, 0);
-            }
-
         } else {
             Log.d(TAG, "No URI passed");
-        }
-
-        if (LayoutUtils.inTwoPane(this)) {
-            mLayoutConfig = RecipeDetailsActivity.LayoutConfiguration.MASTER_DETAIL_FLOW;
-        } else {
-            mLayoutConfig = RecipeDetailsActivity.LayoutConfiguration.SINGLE_PANEL;
         }
 
         if (savedInstanceState != null) {
@@ -85,7 +72,7 @@ public class StepDetailsActivity extends MediaSourceActivity
 
             // Check whether a layout configuration change has occurred
             if (previousConfig == RecipeDetailsActivity.LayoutConfiguration.SINGLE_PANEL &&
-                    LayoutUtils.inTwoPane(this)) {
+                    mLayoutConfig == RecipeDetailsActivity.LayoutConfiguration.MASTER_DETAIL_FLOW) {
                 // Switching from single panel layout to master-detail flow, launch the
                 // RecipeDetailsActivity and pre-load the current Step in the details pane
                 long recipeId = RecipeProvider.getRecipeIdFromUri(mStepsUri);
@@ -95,14 +82,8 @@ public class StepDetailsActivity extends MediaSourceActivity
                 // there is no Calling Activity or as a result if there is
                 Intent recipeDetailsIntent = new Intent(this, RecipeDetailsActivity.class);
                 recipeDetailsIntent.setData(recipeUri);
-                recipeDetailsIntent.putExtra(STEP_ID, sCurrentPosition);
-                recipeDetailsIntent.putExtra(
-                        VIDEO_POSITION,
-                        savedInstanceState.getLong(RecipeDetailsActivity.SavedInstanceStateKeys.VIDEO_POSITION, 0));
-
-                // Reset the current position so that the next time the Activity is launched, it
-                // properly reads the stepId from the Intent
-                sCurrentPosition = -1;
+                recipeDetailsIntent.putExtra(CURRENT_POSITION_KEY, mCurrentPosition);
+                recipeDetailsIntent.putParcelableArrayListExtra(BundleKeys.STEPS, mStepList);
 
                 // Check if this Activity was started for result
                 if (getCallingActivity() != null) {
@@ -117,6 +98,9 @@ public class StepDetailsActivity extends MediaSourceActivity
                 // configuration change occurs
                 finish();
             }
+        } else {
+            // Position that the user selected
+            mCurrentPosition = (int) intent.getLongExtra(STEP_ID, 0);
         }
 
         mPagerAdapter = new StepSectionAdapter(this, getSupportFragmentManager());
@@ -134,7 +118,7 @@ public class StepDetailsActivity extends MediaSourceActivity
             public void onPageSelected(int position) {
                 // Set the current position whenever the user changes it so it can be persisted
                 // through state changes
-                sCurrentPosition = position;
+                mCurrentPosition = position;
 
                 // Notify registered PageChangeListener of page change
                 if (mPageChangeListener != null) {
@@ -173,11 +157,16 @@ public class StepDetailsActivity extends MediaSourceActivity
         mCursor = data;
         mPagerAdapter.swapCursor(mCursor);
 
+        // Initialize the ArrayList by putting a null Object for every position up to the size of
+        // the Cursor's count
+        for (int i = 0; i < data.getCount(); i++) {
+            mStepList.add(null);
+        }
+
         // Move to the page the user selected
-        mBinding.stepDetailsVp.setCurrentItem(sCurrentPosition);
+        mBinding.stepDetailsVp.setCurrentItem(mCurrentPosition);
 
         // Seek to the same time in the video
-        mPlayer.seekTo(getIntent().getLongExtra(VIDEO_POSITION, 0));
     }
 
     @Override
@@ -212,26 +201,21 @@ public class StepDetailsActivity extends MediaSourceActivity
         return mPagerAdapter;
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
-        // Save the player's position
-        mPagerAdapter.getStep(sCurrentPosition).savePlayerPosition();
-
-        // Release the player
-        mPlayer.stop();
-        mPlayer.release();
-        mPlayer = null;
+    /**
+     * Returns the ArrayList describing the Steps
+     *
+     * @return The ArrayList desscribing the Steps
+     */
+    public ArrayList<Step> getSteps() {
+        return mStepList;
     }
 
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        // Save the layout config in the Bundle
-        outState.putInt(PREVIOUS_CONFIGURATION_KEY, mLayoutConfig);
-
-        // Save the video's position in the Bundle
-        outState.putLong(RecipeDetailsActivity.SavedInstanceStateKeys.VIDEO_POSITION, mPlayer.getCurrentPosition());
+    /**
+     * Retrieves the position of the currently displayed Fragment
+     *
+     * @return Position of the Fragment currently displayed
+     */
+    public int getCurrentPosition() {
+        return mCurrentPosition;
     }
 }
