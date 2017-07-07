@@ -170,8 +170,10 @@ public class Step extends BaseObservable implements Parcelable{
         savePlayerPosition();
 
         // Stop the video playback
-        player.stop();
-        player.prepare(null);
+        if (player != null) {
+            player.stop();
+            player.prepare(null);
+        }
 
         // Set member variables to null so they can't be loaded by loadVideoIntoPlayer()
         player = null;
