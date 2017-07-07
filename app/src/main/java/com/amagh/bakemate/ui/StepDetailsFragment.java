@@ -72,13 +72,7 @@ public class StepDetailsFragment extends Fragment {
             if (((StepDetailsActivity) getActivity()).getCurrentPosition() == mStep.getStepId()) {
                 // Because the Step is not destroyed during rotation, it will still have a reference
                 // to the media source. Only set the media source if the Fragment is new.
-                ExtractorMediaSource mediaSource;
-
-                if (savedInstanceState == null) {
-                    mediaSource = ((StepDetailsActivity) getActivity()).getPagerAdapter().getMediaSource(mStep.getStepId());
-                } else {
-                    mediaSource = null;
-                }
+                ExtractorMediaSource mediaSource = ((StepDetailsActivity) getActivity()).getPagerAdapter().getMediaSource(mStep.getStepId());
 
                 mStep.setPlayer(getActivity(), mediaSource);
 

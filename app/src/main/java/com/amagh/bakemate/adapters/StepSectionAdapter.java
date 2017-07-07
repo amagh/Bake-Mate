@@ -142,7 +142,11 @@ public class StepSectionAdapter extends FragmentStatePagerAdapter implements Ste
      * @return ExtractorMediaSource for the Step's video
      */
     public ExtractorMediaSource getMediaSource(int position) {
-
+        // Prepare the media source if it wasn't properly created before
+        if (mMediaSourceArray.get(position) == null &&
+                !mActivity.getSteps()[position].getVideoUrl().isEmpty()) {
+            prepareMediaSources(position);
+        }
         return mMediaSourceArray.get(position);
     }
 
