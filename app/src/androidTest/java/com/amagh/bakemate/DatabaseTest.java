@@ -21,6 +21,7 @@ import static junit.framework.Assert.assertTrue;
  * Created by hnoct on 6/27/2017.
  */
 
+@SuppressWarnings("WeakerAccess")
 @RunWith(AndroidJUnit4.class)
 public class DatabaseTest {
     // **Member Variables** //

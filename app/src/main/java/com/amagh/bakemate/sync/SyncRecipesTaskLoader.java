@@ -19,9 +19,7 @@ import java.io.IOException;
  */
 
 public class SyncRecipesTaskLoader extends AsyncTaskLoader<Void> {
-    // **Constants** //
-    private static final String TAG = SyncRecipesTaskLoader.class.getSimpleName();
-    private Context mContext;
+    private final Context mContext;
 
     public SyncRecipesTaskLoader(Context context) {
         super(context);

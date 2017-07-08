@@ -27,8 +27,6 @@ import static junit.framework.Assert.assertNotNull;
  */
 
 public class DatabaseUtils {
-    // **Constants** //
-    private static final String TAG = DatabaseUtils.class.getSimpleName();
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({RECIPE, INGREDIENT, STEP})
@@ -46,6 +44,7 @@ public class DatabaseUtils {
      * @param type          The type of data described in contentValues
      * @return Number of ContentValues inserted into the database
      */
+    @SuppressWarnings("UnusedReturnValue")
     public static int insertRecipeValues(@NonNull Context context, ContentValues[] contentValues, @ValueType int type) {
         // Init variables
         Set<Integer> databaseRecipeIds = new HashSet<>();

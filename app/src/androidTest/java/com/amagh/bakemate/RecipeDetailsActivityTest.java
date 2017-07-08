@@ -26,13 +26,13 @@ import static org.hamcrest.Matchers.allOf;
  * Created by Nocturna on 7/4/2017.
  */
 
+@SuppressWarnings("WeakerAccess")
 @RunWith(AndroidJUnit4.class)
 public class RecipeDetailsActivityTest {
     public static final String STEP_SHORT_DESC = "Starting prep";
-    public static final String RECIPE_DETAILS_ACTIVITY_PACKAGE = "com.amagh.bakemate.ui";
 
     @Rule
-    public ActivityTestRule<RecipeDetailsActivity> mActivityRule =
+    public final ActivityTestRule<RecipeDetailsActivity> mActivityRule =
             new ActivityTestRule<>(RecipeDetailsActivity.class, false, false);
 
     @Test

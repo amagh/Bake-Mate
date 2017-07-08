@@ -16,13 +16,13 @@ import android.view.ViewGroup;
 
 import com.amagh.bakemate.R;
 import com.amagh.bakemate.adapters.DetailsAdapter;
-import com.amagh.bakemate.adapters.RecipeAdapter;
 import com.amagh.bakemate.data.RecipeProvider;
 import com.amagh.bakemate.databinding.FragmentRecipeDetailsBinding;
 
 /**
  * A placeholder fragment containing a simple view.
  */
+@SuppressWarnings("WeakerAccess")
 public class RecipeDetailsFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
     // **Constants** //
     private static final String TAG = RecipeDetailsFragment.class.getSimpleName();

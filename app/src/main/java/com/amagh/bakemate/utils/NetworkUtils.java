@@ -10,8 +10,6 @@ import java.util.Scanner;
  */
 
 public class NetworkUtils {
-    // **Constants** //
-    private static final String TAG = NetworkUtils.class.getSimpleName();
 
     /**
      * Connects to the site and retrieves the document for the link.

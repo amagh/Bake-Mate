@@ -1,6 +1,5 @@
 package com.amagh.bakemate.ui;
 
-import android.content.ContentUris;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;

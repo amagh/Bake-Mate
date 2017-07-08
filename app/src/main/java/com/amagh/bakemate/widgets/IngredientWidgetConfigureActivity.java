@@ -22,6 +22,7 @@ import static com.amagh.bakemate.adapters.RecipeAdapter.RecipeLayouts.*;
 /**
  * The configuration screen for the {@link IngredientWidget IngredientWidget} AppWidget.
  */
+@SuppressWarnings("WeakerAccess")
 public class IngredientWidgetConfigureActivity extends Activity
         implements android.app.LoaderManager.LoaderCallbacks<Cursor>{
     // **Constants** //

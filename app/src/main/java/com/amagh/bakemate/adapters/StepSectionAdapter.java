@@ -4,14 +4,12 @@ import android.database.Cursor;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import android.util.Log;
 import android.util.SparseArray;
 import android.view.ViewGroup;
 
 import com.amagh.bakemate.R;
 import com.amagh.bakemate.data.RecipeContract;
 import com.amagh.bakemate.models.Step;
-import com.amagh.bakemate.ui.MediaSourceActivity;
 import com.amagh.bakemate.ui.StepDetailsActivity;
 import com.amagh.bakemate.ui.StepDetailsFragment;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
@@ -21,8 +19,6 @@ import com.google.android.exoplayer2.source.ExtractorMediaSource;
  */
 
 public class StepSectionAdapter extends FragmentStatePagerAdapter implements StepDetailsActivity.PageChangeListener {
-    // **Constants** //
-    private static final String TAG = StepSectionAdapter.class.getSimpleName();
     public interface StepProjection {
         String[] STEP_PROJECTION = {
                 RecipeContract.StepEntry.COLUMN_SHORT_DESC,
@@ -37,8 +33,8 @@ public class StepSectionAdapter extends FragmentStatePagerAdapter implements Ste
 
     // **Member Variables** //
     private Cursor mCursor;
-    private SparseArray<ExtractorMediaSource> mMediaSourceArray;
-    private StepDetailsActivity mActivity;
+    private final SparseArray<ExtractorMediaSource> mMediaSourceArray;
+    private final StepDetailsActivity mActivity;
     private int mCurrentPage;
 
     public StepSectionAdapter(StepDetailsActivity activity, FragmentManager fm) {

@@ -11,11 +11,9 @@ import android.view.ViewGroup;
 import com.amagh.bakemate.R;
 import com.amagh.bakemate.databinding.FragmentStepDetailsBinding;
 import com.amagh.bakemate.models.Step;
-import com.amagh.bakemate.utils.LayoutUtils;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 
 import static com.amagh.bakemate.ui.StepDetailsFragment.BundleKeys.STEP;
-import static junit.framework.Assert.assertNotNull;
 
 /**
  * Created by hnoct on 6/29/2017.
