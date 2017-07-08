@@ -3,21 +3,11 @@ package com.amagh.bakemate.models;
 import android.content.Context;
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
-import android.databinding.BindingAdapter;
-import android.graphics.drawable.Drawable;
-import android.support.annotation.Nullable;
-import android.view.View;
-import android.widget.ImageView;
 
-import com.amagh.bakemate.BR;
+import android.view.View;
+
 import com.amagh.bakemate.R;
-import com.amagh.bakemate.glide.GlideApp;
-import com.amagh.bakemate.glide.RecipeGlideSignature;
-import com.bumptech.glide.load.DataSource;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.engine.GlideException;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
+
 
 import static junit.framework.Assert.assertNotNull;
 
