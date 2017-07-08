@@ -52,8 +52,7 @@ public class RecipeListFragment extends Fragment implements LoaderManager.Loader
         }
 
         // Set up the RecyclerView
-        int columns = getResources().getInteger(R.integer.recipe_columns);
-        GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), columns);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
 
         mAdapter = new RecipeAdapter(new RecipeAdapter.ClickHandler() {
             @Override
