@@ -2,5 +2,57 @@
     <string name="app_name">Bake Mate</string>
 
     <!-- URL for recipes -->
-    <string name="udacity_recipe_url">http://go.udacity.com/android-baking-app-json</string>
+    <string name="udacity_recipe_url" translatable="false">
+        https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/baking.json
+    </string>
+
+    <!-- List item recipe details item -->
+    <string name="list_details_servings_format">Servings: %d</string>
+
+    <!-- List item ingredient -->
+    <string name="list_ingredient_header">Ingredients</string>
+
+    <!-- List item step -->
+    <string name="list_step_header">Directions</string>
+
+    <!-- Measurements units to be displayed in RecipeDetailsActivity -->
+    <string name="measurement_gram">g</string>
+    <string name="measurement_tablespoon">Tbsp</string>
+    <string name="measurement_teaspoon">tsp</string>
+    <string name="measurement_package">pkg</string>
+    <string name="measurement_cup">cup</string>
+    <string name="measurement_ounce">oz</string>
+
+    <!-- String format for the tab indicator for StepDetailsActivity -->
+    <string name="step">Step %d</string>
+
+    <!-- String for the Recipe Intro tab -->
+    <string name="step_intro">Intro</string>
+
+    <!-- Strings for Widget -->
+    <string name="widget_configure_instructions">Select a recipe to display ingredients for</string>
+
+    <!-- Dummy text for layouts -->
+    <!-- Recipe list layout -->
+    <string name="list_recipe_title_placeholder">Cheesecake</string>
+
+    <!-- List item ingredient -->
+    <string name="list_ingredient_quantity_placeholder">12</string>
+    <string name="list_ingredient_measure_placeholder">cups</string>
+    <string name="list_ingredient_placeholder">cream</string>
+
+    <!-- List item recipe -->
+    <string name="list_details_placeholder">Nutella Pie</string>
+    <string name="list_details_servings_placeholder">Servings: 8</string>
+
+    <!-- List item step -->
+    <string name="list_step_short_description_placeholder">Starting prep</string>
+    <string name="list_step_description_placeholder">
+        1. Preheat the oven to 350°F. Butter the bottoms and sides of two 9\" round pans with 2\"-high sides. Cover the bottoms of the pans with rounds of parchment paper, and butter the paper as well.
+    </string>
+
+    <!-- Widget -->
+    <string name="ingredient_widget_recipe_placeholder">Nutella Pie</string>
+
+
 </resources>

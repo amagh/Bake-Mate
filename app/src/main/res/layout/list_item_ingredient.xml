@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="ingredient"
+            type="com.amagh.bakemate.models.Ingredient" />
+    </data>
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/list_ingredient_vertical_separation"
+        android:layout_marginBottom="@dimen/list_ingredient_vertical_separation">
+
+        <TextView
+            android:id="@+id/list_ingredient_quantity_tv"
+            android:layout_width="@dimen/list_ingredient_quantity_width"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/list_step_thumbnail_key_line"
+            android:layout_marginStart="@dimen/list_step_thumbnail_key_line"
+            android:text="@{ingredient.quantity}"
+            style="@style/Base.TextAppearance.AppCompat.Body1"
+            app:layout_constraintLeft_toLeftOf="parent"
+            tools:text="@string/list_ingredient_quantity_placeholder"
+            />
+
+        <TextView
+            android:id="@+id/list_ingredient_tv"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/text_horizontal_margin"
+            android:layout_marginStart="@dimen/text_horizontal_margin"
+            android:layout_marginRight="@dimen/default_horizontal_activity_margin"
+            android:layout_marginEnd="@dimen/default_horizontal_activity_margin"
+            android:text="@{ingredient.ingredient}"
+            style="@style/Base.TextAppearance.AppCompat.Body1"
+            app:layout_constraintLeft_toRightOf="@id/list_ingredient_quantity_tv"
+            app:layout_constraintRight_toRightOf="parent"
+            tools:text="@string/list_ingredient_placeholder"/>
+
+    </android.support.constraint.ConstraintLayout>
+</layout>

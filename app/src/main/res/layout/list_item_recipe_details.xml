@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    
+    <data>
+        <variable
+            name="details"
+            type="com.amagh.bakemate.models.Recipe" />
+    </data>
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/list_details_name_tv"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@{details.name}"
+            android:layout_marginLeft="@dimen/list_step_thumbnail_key_line"
+            android:layout_marginStart="@dimen/list_step_thumbnail_key_line"
+            android:layout_marginRight="@dimen/list_details_name_right_margin"
+            android:layout_marginEnd="@dimen/list_details_name_right_margin"
+            android:layout_marginTop="@dimen/default_vertical_activity_margin"
+            style="@style/Base.TextAppearance.AppCompat.Headline"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="@string/list_details_placeholder" />
+
+        <TextView
+            android:id="@+id/list_details_servings_tv"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/default_horizontal_activity_margin"
+            android:layout_marginEnd="@dimen/default_horizontal_activity_margin"
+            android:text="@{details.servings}"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBaseline_toBaselineOf="@id/list_details_name_tv"
+            tools:text="@string/list_details_servings_placeholder"/>
+
+    </android.support.constraint.ConstraintLayout>
+</layout>
