@@ -65,42 +65,4 @@ public class Recipe extends BaseObservable {
         assertNotNull(mContext);
         return mContext.getString(R.string.list_details_servings_format, servings);
     }
-
-    @Bindable
-    public int getVisibility() {
-        return visibility;
-    }
-
-    @Bindable
-    public RequestListener getListener() {
-        // Return a RequestListener that hides the ProgressBar when Glide finishes loading
-        return new RequestListener() {
-            @Override
-            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target target, boolean isFirstResource) {
-                hideProgressBar();
-                return false;
-            }
-
-            @Override
-            public boolean onResourceReady(Object resource, Object model, Target target, DataSource dataSource, boolean isFirstResource) {
-                hideProgressBar();
-                return false;
-            }
-        };
-    }
-
-    @BindingAdapter({"bind:videoUrl", "bind:listener"})
-    public static void loadVideoThumbnail(ImageView imageView, String videoUrl, RequestListener<Drawable> listener) {
-        GlideApp.with(imageView.getContext())
-                .load(videoUrl)
-                .signature(new RecipeGlideSignature(imageView.getContext().getResources().getInteger(R.integer.glide_current_version)))
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .listener(listener)
-                .into(imageView);
-    }
-
-    private void hideProgressBar() {
-        visibility = View.GONE;
-        notifyPropertyChanged(BR.visibility);
-    }
 }

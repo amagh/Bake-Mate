@@ -86,25 +86,6 @@ public class Step extends BaseObservable implements Parcelable{
     }
 
     @Bindable
-    public RequestListener getListener() {
-        // Return a RequestListener that merely hides the ProgressBar when Glide has finished
-        // loading
-        return new RequestListener() {
-            @Override
-            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target target, boolean isFirstResource) {
-                hideProgressBar();
-                return false;
-            }
-
-            @Override
-            public boolean onResourceReady(Object resource, Object model, Target target, DataSource dataSource, boolean isFirstResource) {
-                hideProgressBar();
-                return false;
-            }
-        };
-    }
-
-    @Bindable
     public SimpleExoPlayer getPlayer() {
         return player;
     }
@@ -112,21 +93,6 @@ public class Step extends BaseObservable implements Parcelable{
     @Bindable
     public ExtractorMediaSource getMediaSource( ) {
         return mediaSource;
-    }
-
-    @BindingAdapter({"bind:videoUrl", "bind:listener"})
-    public static void loadVideoThumbnail(ImageView imageView, String videoUrl, RequestListener<Drawable> listener) {
-        if (videoUrl == null || videoUrl.isEmpty()) {
-            // Nothing to load
-            return;
-        }
-
-        GlideApp.with(imageView.getContext())
-                .load(videoUrl)
-                .signature(new RecipeGlideSignature(imageView.getContext().getResources().getInteger(R.integer.glide_current_version)))
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .listener(listener)
-                .into(imageView);
     }
 
     @BindingAdapter({"bind:player", "bind:mediaSource", "bind:playerPosition"})
@@ -146,12 +112,6 @@ public class Step extends BaseObservable implements Parcelable{
 
         // Start the media once the Layout has been inflated
         player.setPlayWhenReady(true);
-    }
-
-    private void hideProgressBar() {
-        // Set visibility to GONE and then notify the Listener of the change in property
-        visibility = View.GONE;
-        notifyPropertyChanged(BR.visibility);
     }
 
     public int getStepId() {
