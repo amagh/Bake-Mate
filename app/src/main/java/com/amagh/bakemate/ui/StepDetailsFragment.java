@@ -139,4 +139,11 @@ public class StepDetailsFragment extends Fragment {
     public Step getStep() {
         return mStep;
     }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        mStep.stopPlayer();
+    }
 }
