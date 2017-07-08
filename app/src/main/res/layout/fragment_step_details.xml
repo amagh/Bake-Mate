@@ -15,6 +15,7 @@
 
         <android.support.constraint.ConstraintLayout
             android:id="@+id/step_details_cl"
+            android:paddingBottom="@dimen/default_vertical_activity_margin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -58,7 +59,6 @@
                 app:layout_constraintLeft_toLeftOf="@+id/step_details_short_description_tv"
                 app:layout_constraintRight_toRightOf="@+id/step_details_short_description_tv"
                 app:layout_constraintTop_toBottomOf="@+id/step_details_short_description_tv"
-                app:layout_constraintBottom_toBottomOf="parent"
                 tools:text="@string/list_step_description_placeholder"/>
 
         </android.support.constraint.ConstraintLayout>
