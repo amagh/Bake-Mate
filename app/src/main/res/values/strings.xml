@@ -38,7 +38,6 @@
 
     <!-- List item ingredient -->
     <string name="list_ingredient_quantity_placeholder">12</string>
-    <string name="list_ingredient_measure_placeholder">cups</string>
     <string name="list_ingredient_placeholder">cream</string>
 
     <!-- List item recipe -->

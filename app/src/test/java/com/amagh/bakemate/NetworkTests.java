@@ -1,6 +1,5 @@
 package com.amagh.bakemate;
 
-import android.app.Instrumentation;
 import android.util.Log;
 
 import com.amagh.bakemate.utils.NetworkUtils;
@@ -8,7 +7,6 @@ import com.amagh.bakemate.utils.NetworkUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;

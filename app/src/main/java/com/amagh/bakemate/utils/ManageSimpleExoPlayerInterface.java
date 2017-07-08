@@ -1,8 +1,6 @@
 package com.amagh.bakemate.utils;
 
-import com.amagh.bakemate.models.Step;
 import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.source.ExtractorMediaSource;
 
 /**
  * Created by Nocturna on 7/3/2017.

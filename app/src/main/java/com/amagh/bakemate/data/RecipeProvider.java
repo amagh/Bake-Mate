@@ -3,8 +3,6 @@ package com.amagh.bakemate.data;
 import android.content.ContentUris;
 import android.net.Uri;
 
-import com.amagh.bakemate.models.Ingredient;
-
 import net.simonvt.schematic.annotation.ContentProvider;
 import net.simonvt.schematic.annotation.ContentUri;
 import net.simonvt.schematic.annotation.InexactContentUri;
@@ -17,6 +15,7 @@ import java.util.List;
  * define URIs for the provider
  */
 
+@SuppressWarnings("WeakerAccess")
 @ContentProvider(
         authority = RecipeProvider.AUTHORITY,
         database = RecipeDatabase.class)

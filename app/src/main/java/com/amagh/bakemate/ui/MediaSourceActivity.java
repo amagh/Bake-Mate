@@ -1,8 +1,8 @@
 package com.amagh.bakemate.ui;
 
+import android.annotation.SuppressLint;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
@@ -15,8 +15,6 @@ import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 
-import java.util.ArrayList;
-
 import static com.amagh.bakemate.ui.MediaSourceActivity.SavedInstanceStateKeys.CURRENT_POSITION_KEY;
 import static com.amagh.bakemate.ui.MediaSourceActivity.SavedInstanceStateKeys.PREVIOUS_CONFIGURATION_KEY;
 import static com.amagh.bakemate.ui.MediaSourceActivity.SavedInstanceStateKeys.STEPS_KEY;
@@ -27,6 +25,8 @@ import static com.amagh.bakemate.ui.RecipeDetailsActivity.LayoutConfiguration.SI
  * Created by Nocturna on 7/3/2017.
  */
 
+@SuppressWarnings("WeakerAccess")
+@SuppressLint("Registered")
 public class MediaSourceActivity extends AppCompatActivity {
     // **Constants** //
     interface SavedInstanceStateKeys {

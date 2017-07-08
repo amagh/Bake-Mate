@@ -20,6 +20,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
  * Created by Nocturna on 7/4/2017.
  */
 
+@SuppressWarnings("WeakerAccess")
 @RunWith(AndroidJUnit4.class)
 public class RecipeListActivityTest {
     public static final String RECIPE_NAME = "Nutella Pie";

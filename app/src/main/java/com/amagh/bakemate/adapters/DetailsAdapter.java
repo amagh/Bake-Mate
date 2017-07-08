@@ -4,7 +4,6 @@ import android.database.Cursor;
 import android.databinding.DataBindingUtil;
 import android.databinding.ViewDataBinding;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,8 +23,6 @@ import com.amagh.bakemate.utils.LayoutUtils;
  */
 
 public class DetailsAdapter extends RecyclerView.Adapter<DetailsAdapter.DetailsViewHolder> {
-    // **Constants** //
-    private final String TAG = DetailsAdapter.class.getSimpleName();
 
     // ViewTypes
     private static final int RECIPE_DETAILS_VIEW        = 0;
@@ -162,7 +159,8 @@ public class DetailsAdapter extends RecyclerView.Adapter<DetailsAdapter.DetailsV
 
     /**
      * Determines whether all necessary Cursors have been swapped into the Adapter
-     * @return
+     *
+     * @return True if all Cursors have been loaded. False otherwise
      */
     private boolean cursorsAreValid() {
         return mRecipeCursor != null && mIngredientsCursor != null && mStepsCursor != null;

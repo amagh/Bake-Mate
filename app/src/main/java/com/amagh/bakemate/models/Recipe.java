@@ -22,7 +22,6 @@ public class Recipe extends BaseObservable {
     private final int servings;
 
     private final String videoUrl;
-    private int visibility = View.VISIBLE;
 
     // Used for recipe details screen
     public Recipe(Context context, String name, int servings) {
@@ -43,11 +42,6 @@ public class Recipe extends BaseObservable {
     @Bindable
     public String getName() {
         return name;
-    }
-
-    @Bindable
-    public String getVideoUrl() {
-        return videoUrl;
     }
 
     @Bindable

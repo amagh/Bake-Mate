@@ -7,6 +7,7 @@ import net.simonvt.schematic.annotation.Table;
  * Created by hnoct on 6/27/2017.
  */
 
+@SuppressWarnings("WeakerAccess")
 @Database(version = RecipeDatabase.VERSION,
         fileName = RecipeDatabase.DATABASE_NAME)
 public class RecipeDatabase {

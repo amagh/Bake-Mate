@@ -4,10 +4,7 @@ import android.content.Context;
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 
-import com.amagh.bakemate.R;
 import com.amagh.bakemate.utils.FormattingUtils;
-
-import java.util.Locale;
 
 /**
  * ViewModel for the Ingredient List Item
@@ -15,10 +12,10 @@ import java.util.Locale;
 
 public class Ingredient extends BaseObservable {
     // **Member Variables** //
-    private Context mContext;
-    private double quantity;
-    private String measure;
-    private String ingredient;
+    private final Context mContext;
+    private final double quantity;
+    private final String measure;
+    private final String ingredient;
 
     public Ingredient(Context context, double quantity, String measure, String ingredient) {
         mContext = context;

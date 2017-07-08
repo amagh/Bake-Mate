@@ -20,8 +20,6 @@ import static com.amagh.bakemate.adapters.DetailsAdapter.IngredientProjection.ID
  */
 
 public class IngredientsWidgetService extends RemoteViewsService {
-    // **Constants** //
-    private static final String TAG = IngredientsWidgetService.class.getSimpleName();
 
     @Override
     public RemoteViewsFactory onGetViewFactory(Intent intent) {
@@ -32,9 +30,9 @@ public class IngredientsWidgetService extends RemoteViewsService {
 
     private class IngredientsRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
         // **Member Variables** //
-        Context mContext;
+        final Context mContext;
         Cursor mCursor;
-        Uri mRecipeUri;
+        final Uri mRecipeUri;
 
         IngredientsRemoteViewsFactory(Context context, Uri recipeUri) {
             mContext = context;

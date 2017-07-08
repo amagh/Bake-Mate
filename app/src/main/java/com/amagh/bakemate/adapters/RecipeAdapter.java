@@ -15,7 +15,6 @@ import com.amagh.bakemate.databinding.ListItemRecipeBinding;
 import com.amagh.bakemate.databinding.ListItemRecipeWidgetBinding;
 import com.amagh.bakemate.models.Recipe;
 import com.amagh.bakemate.utils.DatabaseUtils;
-import com.bumptech.glide.Glide;
 
 import static com.amagh.bakemate.adapters.RecipeAdapter.RecipeLayouts.NORMAL_LAYOUT;
 import static com.amagh.bakemate.adapters.RecipeAdapter.RecipeLayouts.WIDGET_LAYOUT;
@@ -25,8 +24,6 @@ import static com.amagh.bakemate.adapters.RecipeAdapter.RecipeLayouts.WIDGET_LAY
  */
 
 public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeViewHolder> {
-    // **Constants** //
-    private static final String TAG = RecipeAdapter.class.getSimpleName();
 
     @IntDef({NORMAL_LAYOUT, WIDGET_LAYOUT})
     public @interface RecipeLayouts {
@@ -35,7 +32,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
     }
 
     // **Member Variables** //
-    private ClickHandler mClickHandler;
+    private final ClickHandler mClickHandler;
     private int mLayoutType = NORMAL_LAYOUT;
 
     public RecipeAdapter(ClickHandler clickHandler) {
@@ -133,7 +130,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
 
     public class RecipeViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         // **Member Variables** //
-        ViewDataBinding mBinding;
+        final ViewDataBinding mBinding;
 
         public RecipeViewHolder(ViewDataBinding binding) {
             super(binding.getRoot());

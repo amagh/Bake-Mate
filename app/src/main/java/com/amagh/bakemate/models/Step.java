@@ -21,6 +21,7 @@ import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
  * Created by hnoct on 6/29/2017.
  */
 
+@SuppressWarnings("WeakerAccess")
 public class Step extends BaseObservable implements Parcelable{
     // **Member Variables** //
     private final String videoUrl;
