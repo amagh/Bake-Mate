@@ -86,24 +86,8 @@ public class StepDetailsFragment extends Fragment {
             swapStep(mStep);
         }
 
-        // Resize the SimpleExoVideoPlayerView to fit 16:9 aspect ratio
-        if (!mStep.getVideoUrl().isEmpty()) {
-            mBinding.stepDetailsCl.post(setExoPlayerHeightRunnable);
-        }
-
         return rootView;
     }
-
-    // Runnable to be run after the Views have been laid out so that the width of the PlayerView can
-    // be properly attained and the height properly calculated
-    Runnable setExoPlayerHeightRunnable = new Runnable() {
-        @Override
-        public void run() {
-            // Set the Player's height based on the PlayerView's width
-            int height = mBinding.stepDetailsCl.getWidth() / 16 * 9;
-            mBinding.stepDetailsExo.setMinimumHeight(height);
-        }
-    };
 
     /**
      * Swaps the Step data being used to bind the Views
@@ -124,11 +108,6 @@ public class StepDetailsFragment extends Fragment {
 
         // Set the SimpleExoPlayer for the Step to utilize the ExtractorMediaSource
         mStep.setPlayer(getActivity(), mediaSource);
-
-        // Set the PlayerView's height to properly display at 16:9 video
-        if (!mStep.getVideoUrl().isEmpty()) {
-            mBinding.stepDetailsCl.post(setExoPlayerHeightRunnable);
-        }
     }
 
     /**

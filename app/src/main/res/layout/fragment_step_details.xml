@@ -22,14 +22,15 @@
             <com.google.android.exoplayer2.ui.SimpleExoPlayerView
                 android:id="@+id/step_details_exo"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
                 android:visibility="@{step.visibility}"
                 app:player="@{step.player}"
                 app:mediaSource="@{step.mediaSource}"
                 app:playerPosition="@{step.playerPosition}"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent" />
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintDimensionRatio="H,16:9"/>
 
             <TextView
                 android:id="@+id/step_details_short_description_tv"
