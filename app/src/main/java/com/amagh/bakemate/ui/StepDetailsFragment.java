@@ -13,7 +13,6 @@ import com.amagh.bakemate.databinding.FragmentStepDetailsBinding;
 import com.amagh.bakemate.models.Step;
 import com.amagh.bakemate.utils.LayoutUtils;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
-import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 
 import static com.amagh.bakemate.ui.StepDetailsFragment.BundleKeys.STEP;
 import static junit.framework.Assert.assertNotNull;
@@ -33,7 +32,7 @@ public class StepDetailsFragment extends Fragment {
     private Step mStep;
     private FragmentStepDetailsBinding mBinding;
 
-    public static StepDetailsFragment newInstance(Step step, int stepId) {
+    public static StepDetailsFragment newInstance(Step step) {
         // Init a new Bundle to pass Step
         Bundle args = new Bundle();
 
@@ -69,16 +68,19 @@ public class StepDetailsFragment extends Fragment {
             // Bind data to the View
             mBinding.setStep(mStep);
 
-            if (StepDetailsActivity.sCurrentPosition == mStep.getStepId()) {
-                mStep.setPlayer(
-                        getActivity(),
-                        ((StepDetailsActivity) getActivity()).getPagerAdapter().getMediaSource(mStep.getStepId())
-                );
+            // Start the video playback if the Fragment is visible
+            if (((StepDetailsActivity) getActivity()).getCurrentPosition() == mStep.getStepId()) {
+                // Because the Step is not destroyed during rotation, it will still have a reference
+                // to the media source. Only set the media source if the Fragment is new.
+                ExtractorMediaSource mediaSource = ((StepDetailsActivity) getActivity()).getPagerAdapter().getMediaSource(mStep.getStepId());
+
+                mStep.setPlayer(getActivity(), mediaSource);
 
                 // Set the currentPage variable in the StepPagerAdapter so the Adapter can properly
                 // track page changes
                 ((StepDetailsActivity) getActivity()).getPagerAdapter().setCurrentPage(mStep.getStepId());
             }
+
         } else if (getActivity() instanceof MediaSourceActivity) {
             // Swap the Step being used by the Fragment
             swapStep(mStep);
@@ -86,16 +88,6 @@ public class StepDetailsFragment extends Fragment {
 
         return rootView;
     }
-
-    // Runnable to be run after the Views have been laid out so that the width of the PlayerView can
-    // be properly attained and the height properly calculated
-    Runnable runnable = new Runnable() {
-        @Override
-        public void run() {
-            // Set the Player's height based on the PlayerView's width
-            LayoutUtils.setPlayerViewHeight(mBinding.stepDetailsExo);
-        }
-    };
 
     /**
      * Swaps the Step data being used to bind the Views
@@ -116,8 +108,21 @@ public class StepDetailsFragment extends Fragment {
 
         // Set the SimpleExoPlayer for the Step to utilize the ExtractorMediaSource
         mStep.setPlayer(getActivity(), mediaSource);
+    }
 
-        // Set the PlayerView's height to properly display at 16:9 video
-        mBinding.stepDetailsExo.post(runnable);
+    /**
+     * Retrieves the Step bound to this Fragment
+     *
+     * @return The Step bound to this Fragment
+     */
+    public Step getStep() {
+        return mStep;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        mStep.stopPlayer();
     }
 }

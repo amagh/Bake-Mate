@@ -1,11 +1,12 @@
 package com.amagh.bakemate.adapters;
 
-import android.content.Context;
 import android.database.Cursor;
-import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.util.Log;
+import android.util.SparseArray;
+import android.view.ViewGroup;
 
 import com.amagh.bakemate.R;
 import com.amagh.bakemate.data.RecipeContract;
@@ -13,11 +14,7 @@ import com.amagh.bakemate.models.Step;
 import com.amagh.bakemate.ui.MediaSourceActivity;
 import com.amagh.bakemate.ui.StepDetailsActivity;
 import com.amagh.bakemate.ui.StepDetailsFragment;
-import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
-import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
-import com.google.android.exoplayer2.util.Util;
 
 /**
  * Created by hnoct on 6/29/2017.
@@ -40,35 +37,60 @@ public class StepSectionAdapter extends FragmentStatePagerAdapter implements Ste
 
     // **Member Variables** //
     private Cursor mCursor;
-    private Step[] mSteps;
-    private ExtractorMediaSource[] mMediaSources;
-    private Context mContext;
+    private SparseArray<ExtractorMediaSource> mMediaSourceArray;
+    private StepDetailsActivity mActivity;
     private int mCurrentPage;
 
     public StepSectionAdapter(StepDetailsActivity activity, FragmentManager fm) {
         super(fm);
 
-        mContext = activity;
+        mActivity = activity;
         activity.setPageChangeCallBack(this);
+
+        // Init the SparseArray
+        mMediaSourceArray = new SparseArray<>();
+    }
+
+    @Override
+    public Object instantiateItem(ViewGroup container, int position) {
+        Object object = super.instantiateItem(container, position);
+
+        // Check if the Step within the SparseArray is the Step being utilized by the Fragment
+        if (object instanceof StepDetailsFragment) {
+            StepDetailsFragment fragment = (StepDetailsFragment) object;
+            if (mActivity.getSteps()[position] == null ||
+                    (fragment.getStep() != null && mActivity.getSteps()[position] != fragment.getStep())) {
+                // Does not match, replace the Step in the Array with the Step being utilized by
+                // the Fragment
+                mActivity.getSteps()[position] = ((StepDetailsFragment) object).getStep();
+                mActivity.getSteps()[position].setStepId(position);
+            }
+
+            if (!mActivity.getSteps()[position].getVideoUrl().isEmpty() &&
+                    mMediaSourceArray.get(position) == null) {
+                prepareMediaSources(position);
+            }
+        }
+
+        return object;
     }
 
     @Override
     public Fragment getItem(int position) {
-        if (mSteps[position] == null) {
+
+        if (mActivity.getSteps()[position] == null) {
             // Move Cursor to correct position
             mCursor.moveToPosition(position);
 
             // Create a Step to pass to the newInstance method
-            Step step = Step.createStepFromCursor(mCursor);
-            step.setStepId(position);
-
-            mSteps[position] = step;
+            mActivity.getSteps()[position] = Step.createStepFromCursor(mCursor);
+            mActivity.getSteps()[position].setStepId(position);
 
             // Prepare the MediaSource for the Step
             prepareMediaSources(position);
         }
 
-        return StepDetailsFragment.newInstance(mSteps[position], position);
+        return StepDetailsFragment.newInstance(mActivity.getSteps()[position]);
     }
 
     @Override
@@ -82,14 +104,14 @@ public class StepSectionAdapter extends FragmentStatePagerAdapter implements Ste
     public CharSequence getPageTitle(int position) {
         // Set the title for the first tab to "Intro"
         if (position == 0) {
-            return mContext.getString(R.string.step_intro);
+            return mActivity.getString(R.string.step_intro);
         }
 
         // Move Cursor to correct position
         mCursor.moveToPosition(position);
 
         // Return formatted String
-        return mContext.getString(R.string.step, position);
+        return mActivity.getString(R.string.step, position);
     }
 
     public void swapCursor(Cursor newCursor) {
@@ -97,10 +119,6 @@ public class StepSectionAdapter extends FragmentStatePagerAdapter implements Ste
         mCursor = newCursor;
 
         if (mCursor != null) {
-            // Initialize new Array for Steps
-            mSteps = new Step[mCursor.getCount()];
-            mMediaSources = new ExtractorMediaSource[mCursor.getCount()];
-
             notifyDataSetChanged();
         }
     }
@@ -112,10 +130,9 @@ public class StepSectionAdapter extends FragmentStatePagerAdapter implements Ste
      * @param position The position of the Step to create a MediaSource for
      */
     private void prepareMediaSources(int position) {
-        if (mContext instanceof MediaSourceActivity) {
-            mMediaSources[position] =
-                    ((MediaSourceActivity) mContext).getMediaSource(mSteps[position]);
-        }
+        mMediaSourceArray.put(
+                position,
+                mActivity.getMediaSource(mActivity.getSteps()[position]));
     }
 
     /**
@@ -125,7 +142,12 @@ public class StepSectionAdapter extends FragmentStatePagerAdapter implements Ste
      * @return ExtractorMediaSource for the Step's video
      */
     public ExtractorMediaSource getMediaSource(int position) {
-        return mMediaSources[position];
+        // Prepare the media source if it wasn't properly created before
+        if (mMediaSourceArray.get(position) == null &&
+                !mActivity.getSteps()[position].getVideoUrl().isEmpty()) {
+            prepareMediaSources(position);
+        }
+        return mMediaSourceArray.get(position);
     }
 
     /**
@@ -141,11 +163,11 @@ public class StepSectionAdapter extends FragmentStatePagerAdapter implements Ste
     @Override
     public void onPageChanged(int currentPage) {
         // If steps have not been loaded yet, do nothing.
-        if (mSteps[currentPage] == null) return;
+        if (mActivity.getSteps()[currentPage] == null) return;
 
         // Start the player on the currentPage. Stop the previously playing page.
-        mSteps[mCurrentPage].stopPlayer();
-        mSteps[currentPage].setPlayer(mContext, mMediaSources[currentPage]);
+        mActivity.getSteps()[mCurrentPage].stopPlayer();
+        mActivity.getSteps()[currentPage].setPlayer(mActivity, mMediaSourceArray.get(currentPage));
 
         // Set member variable to the new currentPage
         mCurrentPage = currentPage;

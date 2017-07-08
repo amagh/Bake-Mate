@@ -86,25 +86,6 @@ public class Step extends BaseObservable implements Parcelable{
     }
 
     @Bindable
-    public RequestListener getListener() {
-        // Return a RequestListener that merely hides the ProgressBar when Glide has finished
-        // loading
-        return new RequestListener() {
-            @Override
-            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target target, boolean isFirstResource) {
-                hideProgressBar();
-                return false;
-            }
-
-            @Override
-            public boolean onResourceReady(Object resource, Object model, Target target, DataSource dataSource, boolean isFirstResource) {
-                hideProgressBar();
-                return false;
-            }
-        };
-    }
-
-    @Bindable
     public SimpleExoPlayer getPlayer() {
         return player;
     }
@@ -112,21 +93,6 @@ public class Step extends BaseObservable implements Parcelable{
     @Bindable
     public ExtractorMediaSource getMediaSource( ) {
         return mediaSource;
-    }
-
-    @BindingAdapter({"bind:videoUrl", "bind:listener"})
-    public static void loadVideoThumbnail(ImageView imageView, String videoUrl, RequestListener<Drawable> listener) {
-        if (videoUrl == null || videoUrl.isEmpty()) {
-            // Nothing to load
-            return;
-        }
-
-        GlideApp.with(imageView.getContext())
-                .load(videoUrl)
-                .signature(new RecipeGlideSignature(imageView.getContext().getResources().getInteger(R.integer.glide_current_version)))
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .listener(listener)
-                .into(imageView);
     }
 
     @BindingAdapter({"bind:player", "bind:mediaSource", "bind:playerPosition"})
@@ -148,12 +114,6 @@ public class Step extends BaseObservable implements Parcelable{
         player.setPlayWhenReady(true);
     }
 
-    private void hideProgressBar() {
-        // Set visibility to GONE and then notify the Listener of the change in property
-        visibility = View.GONE;
-        notifyPropertyChanged(BR.visibility);
-    }
-
     public int getStepId() {
         return stepId;
     }
@@ -167,11 +127,13 @@ public class Step extends BaseObservable implements Parcelable{
      */
     public void stopPlayer() {
         // Save player's current position so it can be re-set when the user re-enters the Fragment
-        playerPosition = player.getCurrentPosition();
+        savePlayerPosition();
 
         // Stop the video playback
-        player.stop();
-        player.prepare(null);
+        if (player != null) {
+            player.stop();
+            player.prepare(null);
+        }
 
         // Set member variables to null so they can't be loaded by loadVideoIntoPlayer()
         player = null;
@@ -182,22 +144,40 @@ public class Step extends BaseObservable implements Parcelable{
     }
 
     /**
+     * Saves the player position as a member variable
+     */
+    public void savePlayerPosition() {
+        if (this.player != null && this.player.getCurrentPosition() != 0) {
+            this.playerPosition = player.getCurrentPosition();
+        }
+    }
+
+    /**
      * Retrieves the SimpleExoVideoPlayer instance held by the Activity
      *
      * @param context       Activity with getPlayer() method
      * @param mediaSource   The MediaSource that will be prepared by the player for video playback
      */
-    public void setPlayer(Context context, ExtractorMediaSource mediaSource) {
+    public void setPlayer(Context context, @Nullable ExtractorMediaSource mediaSource) {
         // Retrieve the SimpleExoPlayer from the Activity
         if (context instanceof ManageSimpleExoPlayerInterface) {
             this.player = ((ManageSimpleExoPlayerInterface) context).getPlayer();
         }
 
-        // Set member variable to parameter
+        // Set member variable to parameter if it has not already been loaded
         this.mediaSource = mediaSource;
 
-        // Notify of property change
-        notifyPropertyChanged(BR.mediaSource);
+        if (this.mediaSource != null) {
+            // Notify of property change
+            notifyPropertyChanged(BR.mediaSource);
+
+            visibility = View.VISIBLE;
+            notifyPropertyChanged(BR.visibility);
+        } else {
+            // Another check to ensure the VideoPlayerView does not show
+            visibility = View.GONE;
+            notifyPropertyChanged(BR.visibility);
+        }
     }
 
     /**
@@ -221,12 +201,15 @@ public class Step extends BaseObservable implements Parcelable{
         return new Step(videoUrl, shortDescription, description);
     }
 
-    // Parcelable Related Methods
+    // **Parcelable Related Methods** //
 
     public Step(Parcel parcel) {
-        this.videoUrl = parcel.readString();
         this.shortDescription = parcel.readString();
         this.description = parcel.readString();
+        this.videoUrl = parcel.readString();
+
+        this.playerPosition = parcel.readLong();
+        this.stepId = parcel.readInt();
     }
 
     public static final Parcelable.Creator<Step> CREATOR = new Parcelable.Creator<Step>() {
@@ -237,7 +220,7 @@ public class Step extends BaseObservable implements Parcelable{
 
         @Override
         public Step[] newArray(int i) {
-            return new Step[0];
+            return new Step[i];
         }
     };
 
@@ -251,6 +234,9 @@ public class Step extends BaseObservable implements Parcelable{
         parcel.writeString(shortDescription);
         parcel.writeString(description);
         parcel.writeString(videoUrl);
+
+        parcel.writeLong(playerPosition);
+        parcel.writeInt(stepId);
     }
 
 }

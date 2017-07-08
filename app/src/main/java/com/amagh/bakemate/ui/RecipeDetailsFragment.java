@@ -50,6 +50,8 @@ public class RecipeDetailsFragment extends Fragment implements LoaderManager.Loa
     private Cursor mStepsCursor;
     private Cursor mIngredientsCursor;
 
+    private CursorListener mCursorListener;
+
     public RecipeDetailsFragment() {
     }
 
@@ -151,6 +153,9 @@ public class RecipeDetailsFragment extends Fragment implements LoaderManager.Loa
             case INGREDIENTS_CURSOR_LOADER: {
                 mIngredientsCursor = data;
                 mAdapter.swapIngredientsCursor(mIngredientsCursor);
+
+                // Scroll to the correct position if a Listener has been registered
+                if (mCursorListener != null) mCursorListener.onIngredientCursorLoaded();
                 break;
             }
         }
@@ -180,12 +185,31 @@ public class RecipeDetailsFragment extends Fragment implements LoaderManager.Loa
      *
      * @param stepId    ID of the Step to scroll to
      */
-    public void scrollToStep(long stepId) {
+    public void scrollToStep(final long stepId) {
+        // Check to ensure mIngredientsCursor has been loaded
+        if (mIngredientsCursor == null) {
+            // If no, set a listener to trigger this method once it has loaded
+            mCursorListener = new CursorListener() {
+                @Override
+                public void onIngredientCursorLoaded() {
+                    scrollToStep(stepId);
+                }
+            };
+
+            return;
+        }
         // Offset the position by adding 3 for the headers and the recipe details and then the
         // count of ingredients
         int position = (int) stepId + 3 + mIngredientsCursor.getCount();
 
         // Smooth scroll to the offset position
         mBinding.recipeDetailsRv.smoothScrollToPosition(position);
+
+        // Set the selected item in the Adapter
+        getAdapter().setSelected(stepId);
+    }
+
+    interface CursorListener {
+        void onIngredientCursorLoaded();
     }
 }

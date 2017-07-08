@@ -9,68 +9,28 @@
             type="com.amagh.bakemate.models.Recipe" />
     </data>
 
-    <android.support.v7.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/list_recipe_vertical_separation"
-        android:layout_marginBottom="@dimen/list_recipe_vertical_separation"
-        android:layout_marginLeft="@dimen/default_horizontal_activity_margin"
-        android:layout_marginStart="@dimen/default_horizontal_activity_margin"
-        android:layout_marginRight="@dimen/default_horizontal_activity_margin"
-        android:layout_marginEnd="@dimen/default_horizontal_activity_margin"
-        app:cardCornerRadius="@dimen/card_corner_radius">
-
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-
-            <ImageView
-                android:id="@+id/list_recipe_iv"
-                android:scaleType="centerCrop"
-                android:adjustViewBounds="true"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/list_recipe_image_height"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:videoUrl="@{recipe.videoUrl}"
-                app:listener="@{recipe.listener}"
-                tools:src="@drawable/recipe_thumbnail_placeholder"
-                android:layout_marginTop="0dp"
-                app:layout_constraintHorizontal_bias="0.5" />
-
-            <ProgressBar
-                android:layout_width="@dimen/list_step_thumbnail_size"
-                android:layout_height="@dimen/list_step_thumbnail_size"
-                android:visibility="@{recipe.visibility}"
-                app:layout_constraintTop_toTopOf="@id/list_recipe_iv"
-                app:layout_constraintBottom_toBottomOf="@id/list_recipe_iv"
-                app:layout_constraintLeft_toLeftOf="@id/list_recipe_iv"
-                app:layout_constraintRight_toRightOf="@id/list_recipe_iv"
-                />
-
-            <ImageView
-                android:layout_width="0dp"
-                android:layout_height="50dp"
-                app:layout_constraintBottom_toBottomOf="@id/list_recipe_iv"
-                app:layout_constraintLeft_toLeftOf="@id/list_recipe_iv"
-                app:layout_constraintRight_toRightOf="@id/list_recipe_iv"
-                android:src="@drawable/recipe_image_gradient"
-                android:id="@+id/imageView" />
 
             <TextView
                 android:id="@+id/list_recipe_name_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 style="@style/TextAppearance.AppCompat.Headline"
-                android:layout_marginTop="@dimen/text_vertical_margin"
-                android:layout_marginBottom="@dimen/text_vertical_margin"
+                android:layout_marginTop="@dimen/default_vertical_activity_margin"
+                android:layout_marginBottom="@dimen/default_vertical_activity_margin"
                 android:text="@{recipe.name}"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/list_recipe_iv"
+                app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 tools:text="@string/list_recipe_title_placeholder"/>
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:background="@color/grey_300"
+                app:layout_constraintBottom_toBottomOf="parent"/>
         </android.support.constraint.ConstraintLayout>
-    </android.support.v7.widget.CardView>
 </layout>
