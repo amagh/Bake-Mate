@@ -31,7 +31,7 @@ public class ParsingUtils {
     private static final String JSON_DESCRIPTION = "description";
     private static final String JSON_VIDEO_URL = "videoURL";
     private static final String JSON_THUMBNAIL_URL = "thumbnailURL";
-    private static final String JSON_IMAGE_URL = "imageUrl";
+    private static final String JSON_IMAGE_URL = "image";
     private static final String JSON_SERVINGS = "servings";
 
     /**
