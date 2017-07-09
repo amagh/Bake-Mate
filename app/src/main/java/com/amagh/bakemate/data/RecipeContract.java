@@ -32,7 +32,7 @@ public class RecipeContract {
         public static final String COLUMN_RECIPE_SERVINGS   = "servings";
 
         @DataType(DataType.Type.TEXT)
-        public static final String COLUMN_IMAGE_URL         = "image_url";
+        public static final String COLUMN_RECIPE_IMAGE_URL = "image_url";
     }
 
     public class IngredientEntry {
