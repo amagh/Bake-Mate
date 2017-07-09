@@ -30,6 +30,9 @@ public class RecipeContract {
 
         @DataType(DataType.Type.INTEGER)
         public static final String COLUMN_RECIPE_SERVINGS   = "servings";
+
+        @DataType(DataType.Type.TEXT)
+        public static final String COLUMN_IMAGE_URL         = "image_url";
     }
 
     public class IngredientEntry {
@@ -85,5 +88,8 @@ public class RecipeContract {
 
         @DataType(DataType.Type.TEXT)
         public static final String COLUMN_VIDEO_URL         = "video_url";
+
+        @DataType(DataType.Type.TEXT)
+        public static final String COLUMN_THUMBNAIL_URL     = "thumbnail_url";
     }
 }
