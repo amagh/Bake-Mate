@@ -23,7 +23,7 @@
                 android:id="@+id/step_details_exo"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:visibility="@{step.visibility}"
+                android:visibility="@{step.playIconVisibility}"
                 app:player="@{step.player}"
                 app:mediaSource="@{step.mediaSource}"
                 app:playerPosition="@{step.playerPosition}"

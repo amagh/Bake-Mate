@@ -12,8 +12,15 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.amagh.bakemate.BR;
+import com.amagh.bakemate.R;
 import com.amagh.bakemate.data.RecipeContract;
+import com.amagh.bakemate.glide.GlideApp;
+import com.amagh.bakemate.glide.RecipeGlideSignature;
 import com.amagh.bakemate.utils.ManageSimpleExoPlayerInterface;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
@@ -30,12 +37,13 @@ public class Step extends BaseObservable implements Parcelable{
     private final String shortDescription;
     private final String description;
 
-    private int visibility;
     private int imageVisibility;
+    private int playIconVisibility;
     private SimpleExoPlayer player;
     private ExtractorMediaSource mediaSource;
     private long playerPosition;
     private int stepId;
+    private int playIcon;
 
     public Step(String videoUrl, String thumbnailUrl, String shortDescription, String description) {
         this.videoUrl = videoUrl;
@@ -44,8 +52,9 @@ public class Step extends BaseObservable implements Parcelable{
         this.description = description;
 
         // If there is no video thumbnail to load, then ProgressBar should be hidden
-        this.visibility = !videoUrl.isEmpty() ? View.VISIBLE : View.GONE;
-        this.imageVisibility = !videoUrl.isEmpty() ? View.VISIBLE : View.GONE;
+        this.imageVisibility = !thumbnailUrl.isEmpty() ? View.VISIBLE : View.INVISIBLE;
+        this.playIconVisibility = !videoUrl.isEmpty() ? View.VISIBLE : View.GONE;
+        this.playIcon = !thumbnailUrl.isEmpty() ? R.drawable.ic_play_arrow : R.drawable.ic_play_circle_filled;
     }
 
     @Bindable
@@ -64,13 +73,23 @@ public class Step extends BaseObservable implements Parcelable{
     }
 
     @Bindable
-    public int getVisibility() {
-        return visibility;
+    public int getImageVisibility() {
+        return imageVisibility;
     }
 
     @Bindable
-    public int getImageVisibility() {
-        return imageVisibility;
+    public int getPlayIcon() {
+        return playIcon;
+    }
+
+    @Bindable
+    public int getPlayIconVisibility() {
+        return playIconVisibility;
+    }
+
+    @Bindable
+    public String getThumbnailUrl() {
+        return thumbnailUrl;
     }
 
     @Bindable
@@ -86,6 +105,23 @@ public class Step extends BaseObservable implements Parcelable{
     @Bindable
     public ExtractorMediaSource getMediaSource( ) {
         return mediaSource;
+    }
+
+    @Bindable
+    public RequestListener getListener() {
+        return new RequestListener() {
+            @Override
+            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target target, boolean isFirstResource) {
+                hideProgressBar();
+                return false;
+            }
+
+            @Override
+            public boolean onResourceReady(Object resource, Object model, Target target, DataSource dataSource, boolean isFirstResource) {
+                hideProgressBar();
+                return false;
+            }
+        };
     }
 
     @BindingAdapter({"bind:player", "bind:mediaSource", "bind:playerPosition"})
@@ -107,9 +143,28 @@ public class Step extends BaseObservable implements Parcelable{
         player.setPlayWhenReady(true);
     }
 
-    @BindingAdapter({"bind:thumbnailUrl"})
-    public static void loadThumbnailUrl(ImageView imageView, String thumbnailUrl) {
+    @BindingAdapter({"bind:thumbnailUrl", "bind:listener"})
+    public static void loadThumbnailUrl(ImageView imageView, String thumbnailUrl, RequestListener listener) {
+        if (thumbnailUrl.isEmpty()) {
+            return;
+        }
 
+        GlideApp.with(imageView.getContext())
+                .load(thumbnailUrl)
+                .listener(listener)
+                .signature(new RecipeGlideSignature(imageView.getContext().getResources().getInteger(R.integer.glide_current_version)))
+                .into(imageView);
+    }
+
+    @BindingAdapter("bind:playIcon")
+    public static void loadPlayIcon(ImageView imageView, int playIcon) {
+        imageView.setImageResource(playIcon);
+    }
+
+    public void hideProgressBar() {
+        this.imageVisibility = View.GONE;
+
+        notifyPropertyChanged(BR.imageVisibility);
     }
 
     public int getStepId() {
@@ -169,12 +224,12 @@ public class Step extends BaseObservable implements Parcelable{
             // Notify of property change
             notifyPropertyChanged(BR.mediaSource);
 
-            visibility = View.VISIBLE;
-            notifyPropertyChanged(BR.visibility);
+            imageVisibility = View.VISIBLE;
+            notifyPropertyChanged(BR.playIconVisibility);
         } else {
             // Another check to ensure the VideoPlayerView does not show
-            visibility = View.GONE;
-            notifyPropertyChanged(BR.visibility);
+            imageVisibility = View.GONE;
+            notifyPropertyChanged(BR.playIconVisibility);
         }
     }
 
