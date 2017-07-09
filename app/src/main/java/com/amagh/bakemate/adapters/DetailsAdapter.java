@@ -35,11 +35,13 @@ public class DetailsAdapter extends RecyclerView.Adapter<DetailsAdapter.DetailsV
     public interface RecipeProjection {
         String[] RECIPE_DETAILS_PROJECTION = {
                 RecipeContract.RecipeEntry.COLUMN_RECIPE_NAME,
-                RecipeContract.RecipeEntry.COLUMN_RECIPE_SERVINGS
+                RecipeContract.RecipeEntry.COLUMN_RECIPE_SERVINGS,
+                RecipeContract.RecipeEntry.COLUMN_RECIPE_IMAGE_URL
         };
 
         int IDX_RECIPE_NAME             = 0;
         int IDX_RECIPE_SERVINGS         = 1;
+        int IDX_RECIPE_IMAGE_URL        = 2;
     }
 
     public interface IngredientProjection {
@@ -59,13 +61,15 @@ public class DetailsAdapter extends RecyclerView.Adapter<DetailsAdapter.DetailsV
                 RecipeContract.StepEntry.COLUMN_STEP_ID,
                 RecipeContract.StepEntry.COLUMN_SHORT_DESC,
                 RecipeContract.StepEntry.COLUMN_DESCRIPTION,
-                RecipeContract.StepEntry.COLUMN_VIDEO_URL
+                RecipeContract.StepEntry.COLUMN_VIDEO_URL,
+                RecipeContract.StepEntry.COLUMN_THUMBNAIL_URL
         };
 
         int IDX_STEP_ID                 = 0;
         int IDX_STEP_SHORT_DESC         = 1;
         int IDX_STEP_DESCRIPTION        = 2;
         int IDX_STEP_VIDEO_URL          = 3;
+        int IDX_STEP_THUMBNAIL_URL      = 4;
     }
 
     // **Member Variables** //
@@ -258,8 +262,9 @@ public class DetailsAdapter extends RecyclerView.Adapter<DetailsAdapter.DetailsV
 
                     String recipeName = mRecipeCursor.getString(RecipeProjection.IDX_RECIPE_NAME);
                     int servings = mRecipeCursor.getInt(RecipeProjection.IDX_RECIPE_SERVINGS);
+                    String imageUrl = mRecipeCursor.getString(RecipeProjection.IDX_RECIPE_IMAGE_URL);
 
-                    Recipe recipe = new Recipe(mBinding.getRoot().getContext(), recipeName, servings);
+                    Recipe recipe = new Recipe(mBinding.getRoot().getContext(), recipeName, servings, imageUrl);
 
                     ((ListItemRecipeDetailsBinding) mBinding).setDetails(recipe);
                     break;
@@ -291,8 +296,9 @@ public class DetailsAdapter extends RecyclerView.Adapter<DetailsAdapter.DetailsV
                     String shortDescription = mStepsCursor.getString(StepProjection.IDX_STEP_SHORT_DESC);
                     String description = mStepsCursor.getString(StepProjection.IDX_STEP_DESCRIPTION);
                     String videoUrl = mStepsCursor.getString(StepProjection.IDX_STEP_VIDEO_URL);
+                    String thumbnailUrl = mStepsCursor.getString(StepProjection.IDX_STEP_THUMBNAIL_URL);
 
-                    Step step = new Step(videoUrl, shortDescription, description);
+                    Step step = new Step(videoUrl, thumbnailUrl, shortDescription, description);
 
                     ((ListItemStepBinding) mBinding).setStep(step);
 

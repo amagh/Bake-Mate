@@ -9,6 +9,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.view.View;
+import android.widget.ImageView;
 
 import com.amagh.bakemate.BR;
 import com.amagh.bakemate.data.RecipeContract;
@@ -25,6 +26,7 @@ import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 public class Step extends BaseObservable implements Parcelable{
     // **Member Variables** //
     private final String videoUrl;
+    private final String thumbnailUrl;
     private final String shortDescription;
     private final String description;
 
@@ -35,8 +37,9 @@ public class Step extends BaseObservable implements Parcelable{
     private long playerPosition;
     private int stepId;
 
-    public Step(String videoUrl, String shortDescription, String description) {
+    public Step(String videoUrl, String thumbnailUrl, String shortDescription, String description) {
         this.videoUrl = videoUrl;
+        this.thumbnailUrl = thumbnailUrl;
         this.shortDescription = shortDescription;
         this.description = description;
 
@@ -102,6 +105,11 @@ public class Step extends BaseObservable implements Parcelable{
 
         // Start the media once the Layout has been inflated
         player.setPlayWhenReady(true);
+    }
+
+    @BindingAdapter({"bind:thumbnailUrl"})
+    public static void loadThumbnailUrl(ImageView imageView, String thumbnailUrl) {
+
     }
 
     public int getStepId() {
@@ -182,13 +190,15 @@ public class Step extends BaseObservable implements Parcelable{
         int IDX_SHORT_DESC = cursor.getColumnIndex(RecipeContract.StepEntry.COLUMN_SHORT_DESC);
         int IDX_DESCRIPTION = cursor.getColumnIndex(RecipeContract.StepEntry.COLUMN_DESCRIPTION);
         int IDX_VIDEO_URL = cursor.getColumnIndex(RecipeContract.StepEntry.COLUMN_VIDEO_URL);
+        int IDX_THUMBNAIL_URL = cursor.getColumnIndex(RecipeContract.StepEntry.COLUMN_THUMBNAIL_URL);
 
         // Retrieve info from database
         String shortDescription = cursor.getString(IDX_SHORT_DESC);
         String description = cursor.getString(IDX_DESCRIPTION);
         String videoUrl = cursor.getString(IDX_VIDEO_URL);
+        String thumbnailUrl = cursor.getString(IDX_THUMBNAIL_URL);
 
-        return new Step(videoUrl, shortDescription, description);
+        return new Step(videoUrl, thumbnailUrl, shortDescription, description);
     }
 
     // **Parcelable Related Methods** //
@@ -197,6 +207,7 @@ public class Step extends BaseObservable implements Parcelable{
         this.shortDescription = parcel.readString();
         this.description = parcel.readString();
         this.videoUrl = parcel.readString();
+        this.thumbnailUrl = parcel.readString();
 
         this.playerPosition = parcel.readLong();
         this.stepId = parcel.readInt();
@@ -224,6 +235,7 @@ public class Step extends BaseObservable implements Parcelable{
         parcel.writeString(shortDescription);
         parcel.writeString(description);
         parcel.writeString(videoUrl);
+        parcel.writeString(thumbnailUrl);
 
         parcel.writeLong(playerPosition);
         parcel.writeInt(stepId);
