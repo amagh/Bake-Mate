@@ -27,6 +27,7 @@
                 app:player="@{step.player}"
                 app:mediaSource="@{step.mediaSource}"
                 app:playerPosition="@{step.playerPosition}"
+                app:idlingResource="@{step.idlingResource}"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"

@@ -5,9 +5,11 @@ import android.database.Cursor;
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 import android.databinding.BindingAdapter;
+import android.media.session.PlaybackState;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
+import android.support.test.espresso.IdlingResource;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -16,13 +18,21 @@ import com.amagh.bakemate.R;
 import com.amagh.bakemate.data.RecipeContract;
 import com.amagh.bakemate.glide.GlideApp;
 import com.amagh.bakemate.glide.RecipeGlideSignature;
+import com.amagh.bakemate.ui.StepDetailsActivity;
 import com.amagh.bakemate.utils.ManageSimpleExoPlayerInterface;
+import com.amagh.bakemate.utils.idling.SimpleIdlingResource;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
+import com.google.android.exoplayer2.ExoPlaybackException;
+import com.google.android.exoplayer2.ExoPlayer;
+import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
+import com.google.android.exoplayer2.source.TrackGroupArray;
+import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 
 /**
@@ -44,6 +54,8 @@ public class Step extends BaseObservable implements Parcelable{
     private long playerPosition;
     private int stepId;
     private int playIcon;
+
+    private SimpleIdlingResource idlingResource;
 
     public Step(String videoUrl, String thumbnailUrl, String shortDescription, String description) {
         this.videoUrl = videoUrl;
@@ -108,6 +120,11 @@ public class Step extends BaseObservable implements Parcelable{
     }
 
     @Bindable
+    public SimpleIdlingResource getIdlingResource() {
+        return idlingResource;
+    }
+
+    @Bindable
     public RequestListener getListener() {
         return new RequestListener() {
             @Override
@@ -124,8 +141,9 @@ public class Step extends BaseObservable implements Parcelable{
         };
     }
 
-    @BindingAdapter({"bind:player", "bind:mediaSource", "bind:playerPosition"})
-    public static void loadVideoIntoPlayer(SimpleExoPlayerView playerView, SimpleExoPlayer player, ExtractorMediaSource mediaSource, long playerPosition) {
+    @BindingAdapter({"bind:player", "bind:mediaSource", "bind:playerPosition", "bind:idlingResource"})
+    public static void loadVideoIntoPlayer(final SimpleExoPlayerView playerView, final SimpleExoPlayer player,
+                                           ExtractorMediaSource mediaSource, long playerPosition, final SimpleIdlingResource idlingResource) {
         if (player == null || mediaSource == null) {
             // No media, nothing to play
             return;
@@ -138,6 +156,45 @@ public class Step extends BaseObservable implements Parcelable{
 
         // Set player to the SimpleExoPlayerView
         playerView.setPlayer(player);
+
+        if (idlingResource != null) {
+            player.addListener(new ExoPlayer.EventListener() {
+                @Override
+                public void onTimelineChanged(Timeline timeline, Object manifest) {
+
+                }
+
+                @Override
+                public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
+
+                }
+
+                @Override
+                public void onLoadingChanged(boolean isLoading) {
+
+                }
+
+                @Override
+                public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+                    idlingResource.setIdleState(true);
+                }
+
+                @Override
+                public void onPlayerError(ExoPlaybackException error) {
+
+                }
+
+                @Override
+                public void onPositionDiscontinuity() {
+
+                }
+
+                @Override
+                public void onPlaybackParametersChanged(PlaybackParameters playbackParameters) {
+
+                }
+            });
+        }
 
         // Start the media once the Layout has been inflated
         player.setPlayWhenReady(true);
@@ -231,6 +288,10 @@ public class Step extends BaseObservable implements Parcelable{
             imageVisibility = View.GONE;
             notifyPropertyChanged(BR.playIconVisibility);
         }
+    }
+
+    public void setIdlingResource(SimpleIdlingResource idlingResource) {
+        this.idlingResource = idlingResource;
     }
 
     /**
