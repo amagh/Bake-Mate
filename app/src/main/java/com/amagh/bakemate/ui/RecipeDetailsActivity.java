@@ -87,12 +87,8 @@ public class RecipeDetailsActivity extends MediaSourceActivity
                 mCurrentPosition = intent.getIntExtra(CURRENT_POSITION_KEY, 0);
             }
 
-            // Pass the recipeUri to the Fragment as part of an attached Bundle
-            Bundle args = new Bundle();
-            args.putParcelable(RecipeDetailsFragment.BundleKeys.RECIPE_URI, mRecipeUri);
-
-            RecipeDetailsFragment fragment = new RecipeDetailsFragment();
-            fragment.setArguments(args);
+            // Get an instance of RecipeDetailsFragment that will show the recipe details
+            RecipeDetailsFragment fragment = RecipeDetailsFragment.newInstance(mRecipeUri);
 
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.container_recipe_details, fragment, RECIPE_DETAILS_FRAG)
