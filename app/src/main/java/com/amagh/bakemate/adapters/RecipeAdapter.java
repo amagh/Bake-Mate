@@ -42,11 +42,13 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
     public interface Projection {
         String[] RECIPE_PROJECTION = {
                 RecipeContract.RecipeEntry.COLUMN_RECIPE_ID,
-                RecipeContract.RecipeEntry.COLUMN_RECIPE_NAME
+                RecipeContract.RecipeEntry.COLUMN_RECIPE_NAME,
+                RecipeContract.RecipeEntry.COLUMN_RECIPE_IMAGE_URL
         };
 
-        int IDX_RECIPE_ID       = 0;
-        int IDX_RECIPE_NAME     = 1;
+        int IDX_RECIPE_ID           = 0;
+        int IDX_RECIPE_NAME         = 1;
+        int IDX_RECIPE_IMAGE_URL    = 2;
     }
 
     // **Member Variables** //
@@ -159,14 +161,10 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
             mCursor.moveToPosition(position);
 
             // Retrieve recipe information from Cursor
-            int recipeId = mCursor.getInt(Projection.IDX_RECIPE_ID);
             String recipeName = mCursor.getString(Projection.IDX_RECIPE_NAME);
+            String imageUrl = mCursor.getString(Projection.IDX_RECIPE_IMAGE_URL);
 
-            // Get videoUrl to utilize a still frame as the image since no recipes contain a
-            // thumbnail
-            String videoUrl = DatabaseUtils.getVideoUrlForThumbnail(itemView.getContext(), recipeId);
-
-            Recipe recipe = new Recipe(recipeName, videoUrl);
+            Recipe recipe = new Recipe(recipeName, imageUrl);
 
             if (mLayoutType == NORMAL_LAYOUT) {
                 ((ListItemRecipeBinding) mBinding).setRecipe(recipe);

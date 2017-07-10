@@ -19,6 +19,8 @@ import com.amagh.bakemate.adapters.DetailsAdapter;
 import com.amagh.bakemate.data.RecipeProvider;
 import com.amagh.bakemate.databinding.FragmentRecipeDetailsBinding;
 
+import static com.amagh.bakemate.ui.RecipeDetailsFragment.BundleKeys.RECIPE_URI;
+
 /**
  * A placeholder fragment containing a simple view.
  */
@@ -55,6 +57,24 @@ public class RecipeDetailsFragment extends Fragment implements LoaderManager.Loa
     public RecipeDetailsFragment() {
     }
 
+    /**
+     * Factory for instantiating RecipeDetailsFragment
+     *
+     * @param recipeUri    URI for the recipe's details
+     * @return RecipeDetailsFragment showing the details for a recipe
+     */
+    public static RecipeDetailsFragment newInstance(Uri recipeUri) {
+        // Set the URI in the Bundle to attach to the Fragment
+        Bundle args = new Bundle();
+        args.putParcelable(RECIPE_URI, recipeUri);
+
+        // Initialize the Fragment and set the Arguments
+        RecipeDetailsFragment fragment = new RecipeDetailsFragment();
+        fragment.setArguments(args);
+
+        return fragment;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -64,8 +84,8 @@ public class RecipeDetailsFragment extends Fragment implements LoaderManager.Loa
         // Retrieve the recipeUri from the Bundle
         Bundle args = getArguments();
 
-        if (args.containsKey(BundleKeys.RECIPE_URI)) {
-            mRecipeUri = args.getParcelable(BundleKeys.RECIPE_URI);
+        if (args.containsKey(RECIPE_URI)) {
+            mRecipeUri = args.getParcelable(RECIPE_URI);
             mRecipeId = RecipeProvider.getRecipeIdFromUri(mRecipeUri);
         } else {
             Log.d(TAG, "No URI passed");

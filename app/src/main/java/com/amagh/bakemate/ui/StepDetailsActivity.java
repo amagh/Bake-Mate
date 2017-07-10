@@ -6,6 +6,10 @@ import android.database.Cursor;
 import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.annotation.VisibleForTesting;
+import android.support.test.espresso.IdlingResource;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -21,6 +25,7 @@ import com.amagh.bakemate.data.RecipeProvider;
 import com.amagh.bakemate.databinding.ActivityStepDetailsBinding;
 import com.amagh.bakemate.models.Step;
 import com.amagh.bakemate.utils.ManageSimpleExoPlayerInterface;
+import com.amagh.bakemate.utils.idling.SimpleIdlingResource;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
@@ -50,6 +55,8 @@ public class StepDetailsActivity extends MediaSourceActivity
     private ActivityStepDetailsBinding mBinding;
     private PageChangeListener mPageChangeListener;
     private SimpleExoPlayer mPlayer;
+
+    private SimpleIdlingResource mIdlingResource;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,6 +132,7 @@ public class StepDetailsActivity extends MediaSourceActivity
 
             @Override
             public void onPageSelected(int position) {
+                mSteps[mCurrentPosition].setIdlingResource(null);
                 // Set the current position whenever the user changes it so it can be persisted
                 // through state changes
                 mCurrentPosition = position;
@@ -133,6 +141,8 @@ public class StepDetailsActivity extends MediaSourceActivity
                 if (mPageChangeListener != null) {
                     mPageChangeListener.onPageChanged(position);
                 }
+
+                mSteps[mCurrentPosition].setIdlingResource(getIdlingResource());
             }
 
             @Override
@@ -144,18 +154,12 @@ public class StepDetailsActivity extends MediaSourceActivity
         //Initialize the SimpleExoPlayer to be shared among all Fragments in the ViewPager
         mPlayer = ExoPlayerFactory.newSimpleInstance(this, new DefaultTrackSelector());
 
-        if (mSteps != null) {
-            int numSteps= 0;
-            for (Step step : mSteps) {
-                if (step != null) {
-                    numSteps++;
-                }
-            }
-            Log.d(TAG, "mSteps contains " + numSteps + " Steps");
-        }
-
         // Init the CursorLoader for the Steps
         getSupportLoaderManager().initLoader(STEP_CURSOR_LOADER1, null, this);
+
+        // Init the IdlingResource to be used for testing
+        getIdlingResource();
+        getIdlingResource().setIdleState(false);
     }
 
     @Override
@@ -185,7 +189,7 @@ public class StepDetailsActivity extends MediaSourceActivity
         // Move to the page the user selected
         mBinding.stepDetailsVp.setCurrentItem(mCurrentPosition);
 
-        // Seek to the same time in the video
+//        mPagerAdapter.getItem(mCurrentPosition);
     }
 
     @Override
@@ -236,5 +240,15 @@ public class StepDetailsActivity extends MediaSourceActivity
      */
     public int getCurrentPosition() {
         return mCurrentPosition;
+    }
+
+    @NonNull
+    @VisibleForTesting
+    public SimpleIdlingResource getIdlingResource() {
+        if (mIdlingResource == null) {
+            mIdlingResource = new SimpleIdlingResource();
+        }
+
+        return mIdlingResource;
     }
 }

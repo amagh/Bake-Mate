@@ -11,19 +11,55 @@
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/default_list_item_separation"
+            android:layout_marginBottom="@dimen/default_list_item_separation"
+            android:background="@android:color/white">
+
+            <ImageView
+                android:id="@+id/list_recipe_iv"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:visibility="@{recipe.imageVisibility}"
+                app:imageUrl="@{recipe.imageUrl}"
+                app:listener="@{recipe.listener}"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintDimensionRatio="H,16:9"
+                tools:src="@drawable/recipe_thumbnail_placeholder" />
+
+            <ProgressBar
+                android:layout_width="@dimen/list_step_thumbnail_size"
+                android:layout_height="@dimen/list_step_thumbnail_size"
+                android:visibility="@{recipe.progressBarVisibility}"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="@id/list_recipe_iv"
+                app:layout_constraintLeft_toLeftOf="@id/list_recipe_iv"
+                app:layout_constraintRight_toRightOf="@id/list_recipe_iv"/>
+
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:visibility="@{recipe.imageVisibility}"
+                android:src="@drawable/recipe_image_gradient"
+                app:layout_constraintLeft_toLeftOf="@id/list_recipe_iv"
+                app:layout_constraintRight_toRightOf="@id/list_recipe_iv"
+                app:layout_constraintBottom_toBottomOf="@id/list_recipe_iv"
+                app:layout_constraintDimensionRatio="H,32:9"
+                />
 
             <TextView
                 android:id="@+id/list_recipe_name_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 style="@style/TextAppearance.AppCompat.Headline"
-                android:layout_marginTop="@dimen/default_vertical_activity_margin"
+                android:layout_marginTop="@dimen/text_vertical_margin"
                 android:layout_marginBottom="@dimen/default_vertical_activity_margin"
                 android:text="@{recipe.name}"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/list_recipe_iv"
                 app:layout_constraintBottom_toBottomOf="parent"
                 tools:text="@string/list_recipe_title_placeholder"/>
 

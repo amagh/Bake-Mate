@@ -23,12 +23,14 @@ public class StepSectionAdapter extends FragmentStatePagerAdapter implements Ste
         String[] STEP_PROJECTION = {
                 RecipeContract.StepEntry.COLUMN_SHORT_DESC,
                 RecipeContract.StepEntry.COLUMN_DESCRIPTION,
-                RecipeContract.StepEntry.COLUMN_VIDEO_URL
+                RecipeContract.StepEntry.COLUMN_VIDEO_URL,
+                RecipeContract.StepEntry.COLUMN_THUMBNAIL_URL
         };
 
-        int IDX_STEP_SHORT_DESC = 0;
-        int IDX_STEP_DESCRIPTION = 1;
-        int IDX_STEP_VIDEO_URL = 2;
+        int IDX_STEP_SHORT_DESC     = 0;
+        int IDX_STEP_DESCRIPTION    = 1;
+        int IDX_STEP_VIDEO_URL      = 2;
+        int IDX_STEP_THUMBNAIL_URL  = 3;
     }
 
     // **Member Variables** //

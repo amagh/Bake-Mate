@@ -15,15 +15,29 @@
         android:clickable="true"
         android:background="@drawable/recipe_step_touch_selector">
 
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/list_step_thumbnail_iv"
+            android:layout_width="@dimen/list_step_thumbnail_size"
+            android:layout_height="@dimen/list_step_thumbnail_size"
+            android:layout_margin="@dimen/list_step_thumbnail_margin"
+            app:thumbnailUrl="@{step.thumbnailUrl}"
+            app:listener="@{step.listener}"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@drawable/recipe_thumbnail_placeholder"/>
+
         <ImageView
             android:id="@+id/list_step_play_iv"
             android:layout_width="@dimen/list_step_thumbnail_size"
             android:layout_height="@dimen/list_step_thumbnail_size"
             android:layout_margin="@dimen/list_step_thumbnail_margin"
-            android:visibility="@{step.imageVisibility}"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:src="@drawable/ic_play_circle_filled" />
+            android:visibility="@{step.playIconVisibility}"
+            app:playIcon="@{step.playIcon}"
+            app:layout_constraintLeft_toLeftOf="@id/list_step_thumbnail_iv"
+            app:layout_constraintRight_toRightOf="@id/list_step_thumbnail_iv"
+            app:layout_constraintTop_toTopOf="@id/list_step_thumbnail_iv"
+            app:layout_constraintBottom_toBottomOf="@id/list_step_thumbnail_iv"
+            tools:src="@drawable/ic_play_arrow"/>
 
         <TextView
             android:id="@+id/list_step_short_description_tv"
@@ -38,7 +52,7 @@
             style="@style/TextAppearance.AppCompat.Body2"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="@id/list_step_play_iv"
+            app:layout_constraintTop_toTopOf="@id/list_step_thumbnail_iv"
             tools:text="@string/list_step_short_description_placeholder"/>
 
         <TextView

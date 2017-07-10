@@ -2,6 +2,7 @@ package com.amagh.bakemate.ui;
 
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.support.annotation.VisibleForTesting;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -68,6 +69,9 @@ public class StepDetailsFragment extends Fragment {
 
             // Start the video playback if the Fragment is visible
             if (((StepDetailsActivity) getActivity()).getCurrentPosition() == mStep.getStepId()) {
+                // Set the IdlingResource
+                setStepIdlingResource();
+
                 // Because the Step is not destroyed during rotation, it will still have a reference
                 // to the media source. Only set the media source if the Fragment is new.
                 ExtractorMediaSource mediaSource = ((StepDetailsActivity) getActivity()).getPagerAdapter().getMediaSource(mStep.getStepId());
@@ -122,5 +126,10 @@ public class StepDetailsFragment extends Fragment {
         super.onDestroyView();
 
         mStep.stopPlayer();
+    }
+
+    @VisibleForTesting
+    private void setStepIdlingResource() {
+        mStep.setIdlingResource(((StepDetailsActivity) getActivity()).getIdlingResource());
     }
 }

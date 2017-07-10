@@ -31,6 +31,7 @@ public class ParsingUtils {
     private static final String JSON_DESCRIPTION = "description";
     private static final String JSON_VIDEO_URL = "videoURL";
     private static final String JSON_THUMBNAIL_URL = "thumbnailURL";
+    private static final String JSON_IMAGE_URL = "image";
     private static final String JSON_SERVINGS = "servings";
 
     /**
@@ -56,10 +57,12 @@ public class ParsingUtils {
 
             int recipeId = recipeObject.getInt(JSON_ID);
             String recipeName = recipeObject.getString(JSON_NAME);
+            String imageUrl = recipeObject.getString(JSON_IMAGE_URL);
             int servings = recipeObject.getInt(JSON_SERVINGS);
 
             recipeValues.put(RecipeContract.RecipeEntry.COLUMN_RECIPE_ID, recipeId);
             recipeValues.put(RecipeContract.RecipeEntry.COLUMN_RECIPE_NAME, recipeName);
+            recipeValues.put(RecipeContract.RecipeEntry.COLUMN_RECIPE_IMAGE_URL, imageUrl);
             recipeValues.put(RecipeContract.RecipeEntry.COLUMN_RECIPE_SERVINGS, servings);
 
             contentValues[i] = recipeValues;
@@ -147,18 +150,23 @@ public class ParsingUtils {
                 int stepId = stepObject.getInt(JSON_ID);
                 String shortDesc = stepObject.getString(JSON_SHORT_DESC);
                 String description = stepObject.getString(JSON_DESCRIPTION);
+                String thumbnailUrl = stepObject.getString(JSON_THUMBNAIL_URL);
                 String videoUrl = stepObject.getString(JSON_VIDEO_URL);
 
                 // Due to an error in the JSON, for one of the steps, the video URL is stored as the
                 // thumbnail URL. This is to catch the special case
                 if (videoUrl.isEmpty()) {
-                    videoUrl = stepObject.getString(JSON_THUMBNAIL_URL);
+                    if (thumbnailUrl.matches(".*\\.mp4$")) {
+                        videoUrl = stepObject.getString(JSON_THUMBNAIL_URL);
+                        thumbnailUrl = "";
+                    }
                 }
 
                 stepValues.put(RecipeContract.StepEntry.COLUMN_RECIPE_ID, recipeId);
                 stepValues.put(RecipeContract.StepEntry.COLUMN_STEP_ID, stepId);
                 stepValues.put(RecipeContract.StepEntry.COLUMN_SHORT_DESC, shortDesc);
                 stepValues.put(RecipeContract.StepEntry.COLUMN_DESCRIPTION, description);
+                stepValues.put(RecipeContract.StepEntry.COLUMN_THUMBNAIL_URL, thumbnailUrl);
                 stepValues.put(RecipeContract.StepEntry.COLUMN_VIDEO_URL, videoUrl);
 
                 contentValuesList.add(stepValues);
