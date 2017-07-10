@@ -107,6 +107,11 @@ public class MediaSourceActivity extends AppCompatActivity {
 
         // Save the layout config in the Bundle
         outState.putInt(PREVIOUS_CONFIGURATION_KEY, mLayoutConfig);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
 
         // Release the player
         if (mPlayer != null) {

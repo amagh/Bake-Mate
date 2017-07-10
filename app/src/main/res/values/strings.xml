@@ -50,6 +50,10 @@
         1. Preheat the oven to 350°F. Butter the bottoms and sides of two 9\" round pans with 2\"-high sides. Cover the bottoms of the pans with rounds of parchment paper, and butter the paper as well.
     </string>
 
+    <!-- Error messages -->
+    <string name="error_network">Error connecting to the network. Please check your network settings and try again.</string>
+    <string name="snackbar_dismiss">Dismiss</string>
+
     <!-- Widget -->
     <string name="ingredient_widget_recipe_placeholder">Nutella Pie</string>
 

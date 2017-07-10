@@ -2,7 +2,10 @@ package com.amagh.bakemate.sync;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.AsyncTaskLoader;
+import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 
 import com.amagh.bakemate.R;
 import com.amagh.bakemate.utils.DatabaseUtils;
@@ -53,7 +56,30 @@ public class SyncRecipesTaskLoader extends AsyncTaskLoader<Void> {
             DatabaseUtils.insertRecipeValues(mContext, ingredientValues, DatabaseUtils.ValueType.INGREDIENT);
             DatabaseUtils.insertRecipeValues(mContext, stepValues, DatabaseUtils.ValueType.STEP);
 
-        } catch (IOException | JSONException e) {
+        } catch (IOException e) {
+            // Generate a Snackbar to show an error message to the user if unable to connect to the
+            // network
+            String error = mContext.getString(R.string.error_network);
+            final Snackbar snack = Snackbar.make(
+                    ((AppCompatActivity) mContext).findViewById(android.R.id.content),
+                    error,
+                    Snackbar.LENGTH_INDEFINITE);
+
+            // Set onClickListener to dismiss the Snackbar on click
+            String dismiss = mContext.getString(R.string.snackbar_dismiss);
+            snack.setAction(
+                    dismiss,
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            snack.dismiss();
+                        }
+                    });
+
+            snack.show();
+
+            e.printStackTrace();
+        } catch (JSONException e) {
             e.printStackTrace();
         }
         return null;
