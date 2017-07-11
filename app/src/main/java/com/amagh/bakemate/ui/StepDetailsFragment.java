@@ -122,8 +122,8 @@ public class StepDetailsFragment extends Fragment {
     }
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
+    public void onPause() {
+        super.onPause();
 
         mStep.stopPlayer();
     }
