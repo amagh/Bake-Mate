@@ -1,6 +1,10 @@
 # Bake-Mate
 Android Application utilizing ExoPlayer to display recipes and demonstrate steps
 
+# Installation
+You can find a [signed-APK file](https://github.com/amagh/Bake-Mate/releases/download/0.1.4/BakeMate_v0.1.4.apk) under the release tab. Simply download the APK file to your Android device and select it to install.
+
+# Additional Information
 Created as part of the Udacity Nanodegree Program to showcase:
  - Utilization of third-party libraries
    - Schematic by SimonVT
